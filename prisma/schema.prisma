@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("admin") // simple role system for the 3 users
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  gstin     String?
+  panNo     String?
+  stateCode String?
+  stateName String?
+  address   String?
+  email     String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  invoices  Invoice[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  hsn         String?
+  gstRate     Float    @default(0) // percentage
+  discount    Float    @default(0) // fixed discount amount
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  invoiceItems InvoiceItem[]
+}
+
+model CompanySettings {
+  id          String   @id @default("default")
+  brandName   String?
+  companyName String   @default("Your Company Name")
+  phone       String?
+  email       String?
+  address     String?
+  gstin       String?
+  businessType String?
+  altPhone    String?
+  website     String?
+  panNo       String?
+  logoUrl     String?
+  upiId       String?
+  lutNo       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ExchangeRate {
+  id        String   @id @default(cuid())
+  currency  String   @unique
+  rate      Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Bank {
+  id            String   @id @default(cuid())
+  bankName      String
+  accountNumber String
+  ifsc          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  invoices      Invoice[]
+}
+
+model Invoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique
+  date          DateTime @default(now())
+  dueDate       DateTime?
+  reference     String?
+  status        String   @default("draft") // draft, sent, paid, overdue
+  subTotal      Float    @default(0)
+  taxTotal      Float    @default(0)
+  discountType  String?  // 'FLAT' or 'PERCENTAGE'
+  discountValue Float    @default(0)
+  roundOff      Float    @default(0)
+  total         Float    @default(0)
+  notes         String?
+  currency      String   @default("INR")
+  exchangeRate  Float    @default(1.0)
+  invoiceType   String   @default("REGULAR") // 'REGULAR' or 'EXPORT'
+  paymentMethod String   @default("UPI") // 'UPI', 'BANK', 'NONE'
+  
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id])
+  
+  bankId        String?
+  bank          Bank?    @relation(fields: [bankId], references: [id])
+  
+  items         InvoiceItem[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model InvoiceItem {
+  id        String   @id @default(cuid())
+  quantity  Int      @default(1)
+  price     Float    // price at the time of invoice
+  tax       Float    // tax amount for this item
+  
+  invoiceId String
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+}
