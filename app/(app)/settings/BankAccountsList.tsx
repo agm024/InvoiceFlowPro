@@ -47,7 +47,12 @@ export default function BankAccountsList({ initialBanks }: { initialBanks: any[]
                 <div>
                   <h3 className="font-semibold text-foreground">{bank.bankName}</h3>
                   <p className="text-sm text-zinc-500 mt-1 tracking-wider">{bank.accountNumber}</p>
-                  <p className="text-xs text-zinc-400 mt-0.5">IFSC: {bank.ifsc}</p>
+                  <p className="text-xs text-zinc-400 mt-0.5">
+                    {bank.ifsc && <span>IFSC: {bank.ifsc}</span>}
+                    {bank.swiftCode && <span> SWIFT: {bank.swiftCode}</span>}
+                    {bank.routingNumber && <span> Routing: {bank.routingNumber}</span>}
+                    {bank.iban && <span> IBAN: {bank.iban}</span>}
+                  </p>
                 </div>
               </div>
               <button 
@@ -70,15 +75,27 @@ export default function BankAccountsList({ initialBanks }: { initialBanks: any[]
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Bank Name *</label>
-            <input type="text" name="bankName" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="HDFC Bank" />
+            <input type="text" name="bankName" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="HDFC / Razorpay Moneysaver" />
           </div>
           <div>
             <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Account Number *</label>
             <input type="text" name="accountNumber" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="50100..." />
           </div>
           <div>
-            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">IFSC Code *</label>
-            <input type="text" name="ifsc" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="HDFC000123" />
+            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">IFSC Code</label>
+            <input type="text" name="ifsc" className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="Required for Domestic" />
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">SWIFT Code</label>
+            <input type="text" name="swiftCode" className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="Optional" />
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Routing Number</label>
+            <input type="text" name="routingNumber" className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="Optional (US ACH)" />
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">IBAN</label>
+            <input type="text" name="iban" className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="Optional (Europe/UK)" />
           </div>
         </div>
         <div className="flex justify-end pt-2">

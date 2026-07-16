@@ -113,7 +113,7 @@ export default function ExportClient({ invoices, settings, expenses = [] }: { in
     const hsn_sc = {
       det: Object.entries(hsnMap).map(([hsn, data]) => ({
         hsn_sc: hsn,
-        desc: 'Services',
+        desc: 'Web Design and Development Services',
         uqc: 'OTH',
         qty: 0,
         txval: data.txval,
@@ -124,18 +124,18 @@ export default function ExportClient({ invoices, settings, expenses = [] }: { in
       }))
     }
 
-    // Document Sequencing (doc_issue)
-    const sortedInvoices = [...invoices].sort((a, b) => a.invoiceNumber.localeCompare(b.invoiceNumber))
+    // Document Sequencing (doc_issue) - ONLY FOR EXPORTED DOMESTIC INVOICES
+    const domesticInvoices = [...b2bInvoices, ...b2cInvoices].sort((a, b) => a.invoiceNumber.localeCompare(b.invoiceNumber))
     const doc_issue = {
       doc_det: [{
         doc_num: 1,
         docs: [{
           num: 1,
-          from: sortedInvoices.length > 0 ? sortedInvoices[0].invoiceNumber : '',
-          to: sortedInvoices.length > 0 ? sortedInvoices[sortedInvoices.length - 1].invoiceNumber : '',
-          totnum: sortedInvoices.length,
+          from: domesticInvoices.length > 0 ? domesticInvoices[0].invoiceNumber : '',
+          to: domesticInvoices.length > 0 ? domesticInvoices[domesticInvoices.length - 1].invoiceNumber : '',
+          totnum: domesticInvoices.length,
           cancel: 0,
-          net_issue: sortedInvoices.length
+          net_issue: domesticInvoices.length
         }]
       }]
     }

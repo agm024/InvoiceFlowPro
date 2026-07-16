@@ -77,7 +77,10 @@ model Bank {
   id            String    @id @default(cuid())
   bankName      String
   accountNumber String
-  ifsc          String
+  ifsc          String?
+  swiftCode     String?
+  routingNumber String?
+  iban          String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   invoices      Invoice[]

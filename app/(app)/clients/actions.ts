@@ -41,3 +41,26 @@ export async function deleteClient(id: string) {
     return { error: 'Failed to delete client' }
   }
 }
+
+export async function updateClient(id: string, formData: FormData) {
+  const name = formData.get('name') as string
+  const email = formData.get('email') as string
+  const phone = formData.get('phone') as string
+  const address = formData.get('address') as string
+  const gstin = formData.get('gstin') as string
+  const panNo = formData.get('panNo') as string
+  const stateCode = formData.get('stateCode') as string
+  const stateName = formData.get('stateName') as string
+
+  try {
+    const client = await prisma.client.update({
+      where: { id },
+      data: { name, email, phone, address, gstin, panNo, stateCode, stateName }
+    })
+    revalidatePath('/clients')
+    return { success: true, client }
+  } catch (error) {
+    console.error('Failed to update client:', error)
+    return { error: 'Failed to update client' }
+  }
+}

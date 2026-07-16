@@ -66,10 +66,13 @@ export async function createBank(formData: FormData) {
   const bankName = formData.get('bankName') as string
   const accountNumber = formData.get('accountNumber') as string
   const ifsc = formData.get('ifsc') as string
+  const swiftCode = formData.get('swiftCode') as string
+  const routingNumber = formData.get('routingNumber') as string
+  const iban = formData.get('iban') as string
 
   try {
     await prisma.bank.create({
-      data: { bankName, accountNumber, ifsc }
+      data: { bankName, accountNumber, ifsc, swiftCode, routingNumber, iban }
     })
     revalidatePath('/settings')
     return { success: true }
