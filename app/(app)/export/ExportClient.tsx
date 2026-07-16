@@ -121,6 +121,8 @@ export default function ExportClient({ invoices, settings }: { invoices: any[], 
     downloadAnchorNode.click()
     downloadAnchorNode.remove()
   }
+  
+  const handleDownload = () => {
     const wb = XLSX.utils.book_new()
     
     // 1. B2B Sheet (Registered Businesses with GSTIN)
