@@ -47,7 +47,9 @@ export default function BankAccountsList({ initialBanks }: { initialBanks: any[]
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground">{bank.bankName}</h3>
-                  <p className="text-sm text-zinc-500 mt-1 tracking-wider">{bank.accountNumber}</p>
+                  {bank.accountNumber !== bank.iban && (
+                    <p className="text-sm text-zinc-500 mt-1 tracking-wider">{bank.accountNumber}</p>
+                  )}
                   <p className="text-xs text-zinc-400 mt-0.5">
                     {bank.ifsc && <span>IFSC: {bank.ifsc}</span>}
                     {bank.swiftCode && <span> SWIFT: {bank.swiftCode}</span>}
@@ -89,10 +91,12 @@ export default function BankAccountsList({ initialBanks }: { initialBanks: any[]
             <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Bank Name *</label>
             <input type="text" name="bankName" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder={bankRegion === 'US' ? "e.g. Mercury, Razorpay US" : "e.g. HDFC Bank"} />
           </div>
-          <div>
-            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Account Number *</label>
-            <input type="text" name="accountNumber" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="A/C Number" />
-          </div>
+          {bankRegion !== 'EUROPE' && (
+            <div>
+              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Account Number *</label>
+              <input type="text" name="accountNumber" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="A/C Number" />
+            </div>
+          )}
           
           {(bankRegion === 'DOMESTIC' || bankRegion === 'OTHER') && (
             <div>

@@ -64,11 +64,16 @@ export async function getBanks() {
 
 export async function createBank(formData: FormData) {
   const bankName = formData.get('bankName') as string
-  const accountNumber = formData.get('accountNumber') as string
+  let accountNumber = formData.get('accountNumber') as string
   const ifsc = formData.get('ifsc') as string
   const swiftCode = formData.get('swiftCode') as string
   const routingNumber = formData.get('routingNumber') as string
   const iban = formData.get('iban') as string
+
+  // Europe accounts may only have IBAN
+  if (!accountNumber && iban) {
+    accountNumber = iban
+  }
 
   try {
     await prisma.bank.create({
