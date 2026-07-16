@@ -110,6 +110,7 @@ export default async function InvoicePrintView({ params }: { params: Promise<{ i
               </div>
             ) : (
               <>
+                {invoice.paymentMethod === 'BANK' && invoice.bank && (
                   <div>
                     <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-3">Convenient, Localized Payment</h3>
                     <p className="text-zinc-500 text-xs mb-3 font-medium">To ensure a smooth and fee-free transaction, please remit payment using our localized banking details below.</p>
