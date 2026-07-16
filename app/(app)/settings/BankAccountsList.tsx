@@ -7,6 +7,7 @@ import { Plus, Trash2, Loader2, Building2 } from 'lucide-react'
 export default function BankAccountsList({ initialBanks }: { initialBanks: any[] }) {
   const [isAdding, setIsAdding] = useState(false)
   const [banks, setBanks] = useState(initialBanks)
+  const [bankRegion, setBankRegion] = useState('DOMESTIC')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -72,31 +73,59 @@ export default function BankAccountsList({ initialBanks }: { initialBanks: any[]
 
       <form onSubmit={handleSubmit} className="p-6 bg-sidebar-bg border border-card-border rounded-xl space-y-4">
         <h3 className="font-medium text-foreground mb-2">Add New Bank Account</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-3 mb-2">
+            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Bank Region / Type</label>
+            <div className="flex flex-wrap gap-3">
+              {['DOMESTIC', 'US', 'UK', 'EUROPE', 'OTHER'].map(region => (
+                <label key={region} className={`px-4 py-2 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${bankRegion === region ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-background border-sidebar-border text-zinc-600 hover:bg-sidebar-bg'}`}>
+                  <input type="radio" name="bankRegion" value={region} checked={bankRegion === region} onChange={() => setBankRegion(region)} className="hidden" />
+                  {region === 'DOMESTIC' ? 'India (Domestic)' : region === 'US' ? 'United States' : region === 'UK' ? 'United Kingdom' : region === 'EUROPE' ? 'Europe / SEPA' : 'Other International'}
+                </label>
+              ))}
+            </div>
+          </div>
           <div>
             <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Bank Name *</label>
-            <input type="text" name="bankName" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="HDFC / Razorpay Moneysaver" />
+            <input type="text" name="bankName" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder={bankRegion === 'US' ? "e.g. Mercury, Razorpay US" : "e.g. HDFC Bank"} />
           </div>
           <div>
             <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Account Number *</label>
-            <input type="text" name="accountNumber" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="50100..." />
+            <input type="text" name="accountNumber" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="A/C Number" />
           </div>
-          <div>
-            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">IFSC Code</label>
-            <input type="text" name="ifsc" className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="Required for Domestic" />
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">SWIFT Code</label>
-            <input type="text" name="swiftCode" className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="Optional" />
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Routing Number</label>
-            <input type="text" name="routingNumber" className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="Optional (US ACH)" />
-          </div>
-          <div>
-            <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">IBAN</label>
-            <input type="text" name="iban" className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="Optional (Europe/UK)" />
-          </div>
+          
+          {(bankRegion === 'DOMESTIC' || bankRegion === 'OTHER') && (
+            <div>
+              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">IFSC Code {bankRegion === 'DOMESTIC' && '*'}</label>
+              <input type="text" name="ifsc" required={bankRegion === 'DOMESTIC'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="HDFC000123" />
+            </div>
+          )}
+          
+          {(bankRegion === 'US' || bankRegion === 'OTHER') && (
+            <div>
+              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">ABA Routing Number {bankRegion === 'US' && '*'}</label>
+              <input type="text" name="routingNumber" required={bankRegion === 'US'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="9-digit Routing No." />
+            </div>
+          )}
+          
+          {(bankRegion === 'UK' || bankRegion === 'OTHER') && (
+            <div>
+              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Sort Code {bankRegion === 'UK' && '*'}</label>
+              <input type="text" name="routingNumber" required={bankRegion === 'UK'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="XX-XX-XX or XXXXXX" />
+            </div>
+          )}
+          
+          {(bankRegion === 'EUROPE' || bankRegion === 'OTHER') && (
+            <>
+              <div>
+                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">IBAN {bankRegion === 'EUROPE' && '*'}</label>
+                <input type="text" name="iban" required={bankRegion === 'EUROPE'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="DE..." />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">SWIFT / BIC Code {bankRegion === 'EUROPE' && '*'}</label>
+                <input type="text" name="swiftCode" required={bankRegion === 'EUROPE'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="SWIFT Code" />
+              </div>
+            </>
+          )}
         </div>
         <div className="flex justify-end pt-2">
           <button 

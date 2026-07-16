@@ -110,12 +110,35 @@ export default async function InvoicePrintView({ params }: { params: Promise<{ i
               </div>
             ) : (
               <>
-                {invoice.paymentMethod === 'BANK' && invoice.bank && (
                   <div>
-                    <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-3">Bank Details</h3>
-                    <p className="text-zinc-900 font-medium">Bank: <span className="font-normal">{invoice.bank.bankName}</span></p>
-                    <p className="text-zinc-900 font-medium">A/C No: <span className="font-normal">{invoice.bank.accountNumber}</span></p>
-                    <p className="text-zinc-900 font-medium">IFSC: <span className="font-normal">{invoice.bank.ifsc}</span></p>
+                    <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-3">Convenient, Localized Payment</h3>
+                    <p className="text-zinc-500 text-xs mb-3 font-medium">To ensure a smooth and fee-free transaction, please remit payment using our localized banking details below.</p>
+                    <p className="text-zinc-900 font-medium text-sm mb-1">Bank Name: <span className="font-normal">{invoice.bank.bankName}</span></p>
+                    
+                    {invoice.currency === 'USD' ? (
+                      <>
+                        <p className="text-zinc-900 font-medium text-sm mb-1">Account Number: <span className="font-normal">{invoice.bank.accountNumber}</span></p>
+                        {invoice.bank.routingNumber && <p className="text-zinc-900 font-medium text-sm mb-1">ABA Routing Number: <span className="font-normal">{invoice.bank.routingNumber}</span></p>}
+                        <p className="text-zinc-500 text-xs italic mt-2 border-t border-zinc-100 pt-2">Accepts local ACH and Wire transfers.</p>
+                      </>
+                    ) : invoice.currency === 'GBP' ? (
+                      <>
+                        <p className="text-zinc-900 font-medium text-sm mb-1">Account Number: <span className="font-normal">{invoice.bank.accountNumber}</span></p>
+                        {invoice.bank.routingNumber && <p className="text-zinc-900 font-medium text-sm mb-1">Sort Code: <span className="font-normal">{invoice.bank.routingNumber.length === 6 ? invoice.bank.routingNumber.match(/.{1,2}/g)?.join('-') : invoice.bank.routingNumber}</span></p>}
+                        <p className="text-zinc-500 text-xs italic mt-2 border-t border-zinc-100 pt-2">Accepts local UK Faster Payments (FPS) and BACS.</p>
+                      </>
+                    ) : invoice.currency === 'EUR' ? (
+                      <>
+                        {invoice.bank.iban && <p className="text-zinc-900 font-medium text-sm mb-1">IBAN: <span className="font-normal">{invoice.bank.iban}</span></p>}
+                        {invoice.bank.swiftCode && <p className="text-zinc-900 font-medium text-sm mb-1">SWIFT / BIC Code: <span className="font-normal">{invoice.bank.swiftCode}</span></p>}
+                        <p className="text-zinc-500 text-xs italic mt-2 border-t border-zinc-100 pt-2">Accepts SEPA Credit Transfers and International SWIFT.</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-zinc-900 font-medium text-sm mb-1">A/C No: <span className="font-normal">{invoice.bank.accountNumber}</span></p>
+                        {invoice.bank.ifsc && <p className="text-zinc-900 font-medium text-sm mb-1">IFSC: <span className="font-normal">{invoice.bank.ifsc}</span></p>}
+                      </>
+                    )}
                   </div>
                 )}
                 {invoice.paymentMethod === 'UPI' && settings?.upiId && (

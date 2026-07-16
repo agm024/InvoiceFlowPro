@@ -97,12 +97,38 @@ export default function PayClientPage({ invoice, upiUrl, upiId, settings }: { in
         {/* BANK Section */}
         {!isPaid && invoice.paymentMethod === 'BANK' && invoice.bank && (
           <div className="p-8 flex flex-col items-center">
-            <h3 className="text-lg font-medium text-foreground mb-4">Bank Transfer</h3>
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-medium text-foreground">Convenient, Localized Payment</h3>
+              <p className="text-zinc-500 text-sm mt-1">To ensure a smooth and fee-free transaction, please remit payment using our localized banking details below.</p>
+            </div>
             
             <div className="bg-sidebar-bg w-full rounded-lg p-4 flex flex-col gap-3 border border-sidebar-border mb-6">
               <div className="flex justify-between"><span className="text-zinc-500 text-sm">Bank Name</span><span className="font-medium text-foreground">{invoice.bank.bankName}</span></div>
-              <div className="flex justify-between"><span className="text-zinc-500 text-sm">A/C Number</span><span className="font-medium text-foreground">{invoice.bank.accountNumber}</span></div>
-              <div className="flex justify-between"><span className="text-zinc-500 text-sm">IFSC Code</span><span className="font-medium text-foreground">{invoice.bank.ifsc}</span></div>
+              
+              {invoice.currency === 'USD' ? (
+                <>
+                  <div className="flex justify-between"><span className="text-zinc-500 text-sm">Account Number</span><span className="font-medium text-foreground">{invoice.bank.accountNumber}</span></div>
+                  {invoice.bank.routingNumber && <div className="flex justify-between"><span className="text-zinc-500 text-sm">ABA Routing Number</span><span className="font-medium text-foreground">{invoice.bank.routingNumber}</span></div>}
+                  <div className="text-xs text-zinc-500 mt-2 italic text-center border-t border-sidebar-border pt-2">Accepts local ACH and Wire transfers.</div>
+                </>
+              ) : invoice.currency === 'GBP' ? (
+                <>
+                  <div className="flex justify-between"><span className="text-zinc-500 text-sm">Account Number</span><span className="font-medium text-foreground">{invoice.bank.accountNumber}</span></div>
+                  {invoice.bank.routingNumber && <div className="flex justify-between"><span className="text-zinc-500 text-sm">Sort Code</span><span className="font-medium text-foreground">{invoice.bank.routingNumber.length === 6 ? invoice.bank.routingNumber.match(/.{1,2}/g)?.join('-') : invoice.bank.routingNumber}</span></div>}
+                  <div className="text-xs text-zinc-500 mt-2 italic text-center border-t border-sidebar-border pt-2">Accepts local UK Faster Payments (FPS) and BACS.</div>
+                </>
+              ) : invoice.currency === 'EUR' ? (
+                <>
+                  {invoice.bank.iban && <div className="flex justify-between"><span className="text-zinc-500 text-sm">IBAN</span><span className="font-medium text-foreground">{invoice.bank.iban}</span></div>}
+                  {invoice.bank.swiftCode && <div className="flex justify-between"><span className="text-zinc-500 text-sm">SWIFT / BIC Code</span><span className="font-medium text-foreground">{invoice.bank.swiftCode}</span></div>}
+                  <div className="text-xs text-zinc-500 mt-2 italic text-center border-t border-sidebar-border pt-2">Accepts SEPA Credit Transfers and International SWIFT.</div>
+                </>
+              ) : (
+                <>
+                  <div className="flex justify-between"><span className="text-zinc-500 text-sm">A/C Number</span><span className="font-medium text-foreground">{invoice.bank.accountNumber}</span></div>
+                  {invoice.bank.ifsc && <div className="flex justify-between"><span className="text-zinc-500 text-sm">IFSC Code</span><span className="font-medium text-foreground">{invoice.bank.ifsc}</span></div>}
+                </>
+              )}
             </div>
           </div>
         )}
