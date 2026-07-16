@@ -12,56 +12,56 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
-  role      String   @default("admin") // simple role system for the 3 users
+  role      String   @default("admin")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Client {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
   gstin     String?
-  panNo     String?
-  stateCode String?
-  stateName String?
   address   String?
   email     String?
   phone     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  panNo     String?
+  stateCode String?
+  stateName String?
   invoices  Invoice[]
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  price       Float
-  hsn         String?
-  gstRate     Float    @default(0) // percentage
-  discount    Float    @default(0) // fixed discount amount
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String        @id @default(cuid())
+  name         String
+  description  String?
+  price        Float
+  hsn          String?
+  gstRate      Float         @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  discount     Float         @default(0)
   invoiceItems InvoiceItem[]
 }
 
 model CompanySettings {
-  id          String   @id @default("default")
-  brandName   String?
-  companyName String   @default("Your Company Name")
-  phone       String?
-  email       String?
-  address     String?
-  gstin       String?
+  id           String   @id @default("default")
+  companyName  String   @default("Your Company Name")
+  address      String?
+  gstin        String?
+  logoUrl      String?
+  upiId        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  lutNo        String?
+  altPhone     String?
+  brandName    String?
   businessType String?
-  altPhone    String?
-  website     String?
-  panNo       String?
-  logoUrl     String?
-  upiId       String?
-  lutNo       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  email        String?
+  panNo        String?
+  phone        String?
+  website      String?
 }
 
 model ExchangeRate {
@@ -73,55 +73,49 @@ model ExchangeRate {
 }
 
 model Bank {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   bankName      String
   accountNumber String
   ifsc          String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   invoices      Invoice[]
 }
 
 model Invoice {
-  id            String   @id @default(cuid())
-  invoiceNumber String   @unique
-  date          DateTime @default(now())
+  id            String        @id @default(cuid())
+  invoiceNumber String        @unique
+  date          DateTime      @default(now())
   dueDate       DateTime?
-  reference     String?
-  status        String   @default("draft") // draft, sent, paid, overdue
-  subTotal      Float    @default(0)
-  taxTotal      Float    @default(0)
-  discountType  String?  // 'FLAT' or 'PERCENTAGE'
-  discountValue Float    @default(0)
-  roundOff      Float    @default(0)
-  total         Float    @default(0)
+  status        String        @default("draft")
+  subTotal      Float         @default(0)
+  taxTotal      Float         @default(0)
+  total         Float         @default(0)
   notes         String?
-  currency      String   @default("INR")
-  exchangeRate  Float    @default(1.0)
-  invoiceType   String   @default("REGULAR") // 'REGULAR' or 'EXPORT'
-  paymentMethod String   @default("UPI") // 'UPI', 'BANK', 'NONE'
-  
   clientId      String
-  client        Client   @relation(fields: [clientId], references: [id])
-  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   bankId        String?
-  bank          Bank?    @relation(fields: [bankId], references: [id])
-  
+  currency      String        @default("INR")
+  discountType  String?
+  discountValue Float         @default(0)
+  invoiceType   String        @default("REGULAR")
+  roundOff      Float         @default(0)
+  exchangeRate  Float         @default(1.0)
+  paymentMethod String        @default("UPI")
+  reference     String?
+  bank          Bank?         @relation(fields: [bankId], references: [id])
+  client        Client        @relation(fields: [clientId], references: [id])
   items         InvoiceItem[]
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
 }
 
 model InvoiceItem {
-  id        String   @id @default(cuid())
-  quantity  Int      @default(1)
-  price     Float    // price at the time of invoice
-  tax       Float    // tax amount for this item
-  
+  id        String  @id @default(cuid())
+  quantity  Int     @default(1)
+  price     Float
+  tax       Float
   invoiceId String
-  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  
   productId String
-  product   Product  @relation(fields: [productId], references: [id])
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
 }
