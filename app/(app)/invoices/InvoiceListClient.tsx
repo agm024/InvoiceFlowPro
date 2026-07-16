@@ -336,7 +336,13 @@ export default function InvoiceListClient({ initialInvoices, settings }: { initi
                       <button className="p-1.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-sidebar-bg dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-lg transition-colors">
                         <MoreHorizontal size={16} />
                       </button>
-                      <div className="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-card-bg rounded-lg shadow-lg border border-zinc-200 dark:border-card-border opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all z-10">
+                      <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-card-bg rounded-lg shadow-lg border border-zinc-200 dark:border-card-border opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all z-10">
+                        {invoice.status !== 'paid' && (
+                          <button onClick={async () => {
+                            const { markInvoiceAsPaid } = await import('./actions')
+                            await markInvoiceAsPaid(invoice.id)
+                          }} className="block px-4 py-2 text-sm text-green-600 hover:bg-green-50 text-left w-full border-b border-zinc-100 dark:border-card-border">Mark as Paid</button>
+                        )}
                         <Link href={`/invoices/${invoice.id}/edit`} className="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 text-left w-full">Edit</Link>
                         <button onClick={() => handleDelete(invoice.id)} className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left w-full">Delete</button>
                       </div>

@@ -83,9 +83,20 @@ export default function InvoiceForm({
   const filteredClients = clients.filter(c => c.name.toLowerCase().includes(clientSearch.toLowerCase()))
   const filteredProducts = products.filter(p => p.name.toLowerCase().includes(productSearch.toLowerCase()))
 
-  const handleCreateClient = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateClient = async (e: any) => {
     e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+    const container = e.currentTarget.closest('.quick-client-container')
+    const inputs = container.querySelectorAll('input')
+    const formData = new FormData()
+    let isValid = true
+    inputs.forEach((input: any) => {
+      if (input.required && !input.value) isValid = false
+      formData.append(input.name, input.value)
+    })
+    if (!isValid) {
+      alert('Please fill in required fields (Customer Name).')
+      return
+    }
     const res = await createClient(formData)
     if (res.success && res.client) {
       setClients([...clients, res.client])
@@ -93,6 +104,8 @@ export default function InvoiceForm({
       setClientSearch(res.client.name)
       setIsAddingClient(false)
       setShowClientDropdown(false)
+    } else {
+      alert('Failed to create customer.')
     }
   }
 
@@ -186,6 +199,7 @@ export default function InvoiceForm({
     const payload = {
       clientId,
       invoiceNumber,
+      date: new Date(date).toISOString(),
       dueDate,
       reference,
       notes,
@@ -337,7 +351,7 @@ export default function InvoiceForm({
             
             {/* Quick Add Client Inline Modal */}
             {isAddingClient && (
-              <div className="absolute z-30 w-full mt-1 bg-card-bg border border-card-border rounded-xl shadow-xl p-4">
+              <div className="quick-client-container absolute z-30 w-full mt-1 bg-card-bg border border-card-border rounded-xl shadow-xl p-4">
                 <div className="flex justify-between items-center mb-4">
                   <h4 className="font-semibold text-foreground">Create New Customer</h4>
                   <button type="button" onClick={() => setIsAddingClient(false)} className="text-zinc-400 hover:text-foreground"><X size={16} /></button>
@@ -350,7 +364,7 @@ export default function InvoiceForm({
                 </div>
                 <div className="mt-4 flex justify-end">
                   <button type="button" onClick={() => setIsAddingClient(false)} className="px-4 py-2 text-zinc-500 mr-2">Cancel</button>
-                  <button type="button" onClick={(e) => handleCreateClient(e as any)} className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium text-sm">Save</button>
+                  <button type="button" onClick={handleCreateClient} className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium text-sm">Save</button>
                 </div>
               </div>
             )}
@@ -590,10 +604,14 @@ export default function InvoiceForm({
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Product Name *</label>
                   <input type="text" name="name" defaultValue={editingProduct.name} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors" />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                   <div>
                     <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Base Price (INR) *</label>
                     <input type="number" step="0.01" name="price" defaultValue={editingProduct.price} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">HSN Code</label>
+                    <input type="text" name="hsn" defaultValue={editingProduct.hsn || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors" />
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">GST Rate (%)</label>

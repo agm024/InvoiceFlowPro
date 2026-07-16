@@ -63,12 +63,14 @@ export async function createInvoice(data: {
   taxTotal: number
   total: number
   status?: string
+  date?: string
 }) {
   try {
     const newInvoice = await prisma.invoice.create({
       data: {
         clientId: data.clientId,
         invoiceNumber: data.invoiceNumber,
+        date: data.date ? new Date(data.date) : undefined,
         dueDate: data.dueDate ? new Date(data.dueDate) : null,
         reference: data.reference,
         notes: data.notes,
@@ -132,6 +134,7 @@ export async function updateInvoice(id: string, data: {
   taxTotal: number
   total: number
   status?: string
+  date?: string
 }) {
   try {
     // We use a transaction to delete existing items and insert new ones
@@ -147,6 +150,7 @@ export async function updateInvoice(id: string, data: {
         data: {
           clientId: data.clientId,
           invoiceNumber: data.invoiceNumber,
+          date: data.date ? new Date(data.date) : undefined,
           dueDate: data.dueDate ? new Date(data.dueDate) : null,
           reference: data.reference,
           notes: data.notes,
@@ -181,6 +185,22 @@ export async function updateInvoice(id: string, data: {
   } catch (error) {
     console.error('Failed to update invoice:', error)
     return { error: 'Failed to update invoice' }
+  }
+}
+
+export async function markInvoiceAsPaid(id: string) {
+  try {
+    await prisma.invoice.update({
+      where: { id },
+      data: { status: 'paid' }
+    })
+    revalidatePath('/invoices')
+    revalidatePath(`/invoices/${id}`)
+    revalidatePath('/')
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to mark invoice as paid:', error)
+    return { error: 'Failed to mark invoice as paid' }
   }
 }
 

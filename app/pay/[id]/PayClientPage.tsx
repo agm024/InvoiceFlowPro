@@ -198,6 +198,7 @@ export default function PayClientPage({ invoice, upiUrl, upiId, settings }: { in
                 <thead className="bg-zinc-50 text-zinc-500 border-b-2 border-zinc-200 uppercase text-xs">
                   <tr>
                     <th className="px-4 py-3 font-bold">Description</th>
+                    <th className="px-4 py-3 font-bold text-right">HSN</th>
                     <th className="px-4 py-3 font-bold text-right">Qty</th>
                     <th className="px-4 py-3 font-bold text-right">Price</th>
                     <th className="px-4 py-3 font-bold text-right">Amount</th>
@@ -207,6 +208,7 @@ export default function PayClientPage({ invoice, upiUrl, upiId, settings }: { in
                   {invoice.items.map((item: any) => (
                     <tr key={item.id} className="text-zinc-800">
                       <td className="px-4 py-4 font-medium">{item.product.name}</td>
+                      <td className="px-4 py-4 text-right text-zinc-500">{item.product.hsn || '-'}</td>
                       <td className="px-4 py-4 text-right">{item.quantity}</td>
                       <td className="px-4 py-4 text-right">{invoice.currency === 'INR' ? '₹' : invoice.currency + ' '}{item.price.toFixed(2)}</td>
                       <td className="px-4 py-4 text-right font-medium">{invoice.currency === 'INR' ? '₹' : invoice.currency + ' '}{((item.price * item.quantity) + item.tax).toFixed(2)}</td>
