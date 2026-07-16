@@ -1,10 +1,6 @@
 import Link from 'next/link'
-import { createClient } from '@/utils/supabase/server'
 
-export default async function Sidebar() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
+export default function Sidebar() {
   const navItems = [
     { name: 'Dashboard', href: '/' },
     { name: 'Clients', href: '/clients' },
@@ -31,20 +27,6 @@ export default async function Sidebar() {
               {item.name}
             </Link>
           ))}
-        </div>
-      </div>
-
-      <div className="p-4 border-t border-sidebar-border">
-        <div className="flex items-center gap-3 px-3 py-2 text-sm text-zinc-500">
-          <div className="w-8 h-8 rounded-full bg-zinc-300 dark:bg-zinc-700 flex items-center justify-center text-foreground font-semibold">
-            {user?.email?.charAt(0).toUpperCase() || 'U'}
-          </div>
-          <div className="truncate">
-            <p className="font-medium text-foreground truncate">{user?.email}</p>
-            <form action="/auth/signout" method="post">
-              <button className="text-xs text-zinc-500 hover:text-foreground">Sign out</button>
-            </form>
-          </div>
         </div>
       </div>
     </div>
