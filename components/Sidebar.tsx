@@ -6,6 +6,7 @@ export default function Sidebar() {
     { name: 'Clients', href: '/clients' },
     { name: 'Products', href: '/products' },
     { name: 'Invoices', href: '/invoices' },
+    { name: 'Expenses', href: '/expenses' },
     { name: 'Export', href: '/export' },
     { name: 'Settings', href: '/settings' },
   ]

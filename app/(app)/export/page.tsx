@@ -7,15 +7,23 @@ export default async function ExportPage() {
   const invoices = await prisma.invoice.findMany({
     where: { status: 'paid' },
     orderBy: { invoiceNumber: 'asc' },
-    include: { client: true }
+    include: { 
+      client: true,
+      items: {
+        include: { product: true }
+      }
+    }
   })
+
+  const settings = await prisma.companySettings.findUnique({ where: { id: 'default' } })
+  const expenses = await prisma.expense.findMany()
 
   return (
     <div className="p-8 max-w-6xl mx-auto w-full text-foreground">
       <h1 className="text-3xl font-bold tracking-tight mb-4">GST Offline Export</h1>
       <p className="text-zinc-500 mb-8">Generate a strictly formatted, multi-sheet Excel file (.xlsx) configured exactly for the GST Portal Offline Tool.</p>
       
-      <ExportClient invoices={invoices} />
+      <ExportClient invoices={invoices} settings={settings} expenses={expenses} />
 
       <div className="bg-sidebar-bg border border-sidebar-border p-6 rounded-xl shadow-sm mt-8">
         <h3 className="text-sm font-semibold mb-4 uppercase tracking-wider text-zinc-500">Sheet Breakdowns</h3>

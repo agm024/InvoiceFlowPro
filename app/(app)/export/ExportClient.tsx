@@ -3,7 +3,7 @@
 import * as XLSX from 'xlsx'
 import { format } from 'date-fns'
 
-export default function ExportClient({ invoices, settings }: { invoices: any[], settings?: any }) {
+export default function ExportClient({ invoices, settings, expenses = [] }: { invoices: any[], settings?: any, expenses?: any[] }) {
   
   const handleDownloadJSON = () => {
     const b2bInvoices = invoices.filter(inv => inv.client.gstin && inv.invoiceType !== 'EXPORT')
@@ -49,7 +49,7 @@ export default function ExportClient({ invoices, settings }: { invoices: any[], 
     // B2CS processing
     const b2cStateMap: Record<string, { txval: number, iamt: number, camt: number, samt: number }> = {}
     b2cInvoices.forEach(inv => {
-      const pos = inv.client.stateCode || 'Unknown'
+      const pos = inv.client.stateCode || homeStateCode // Fallback to home state if unknown
       const isInterState = pos !== homeStateCode
       const txval = (inv.total - inv.taxTotal) * inv.exchangeRate
       const taxAmt = inv.taxTotal * inv.exchangeRate
@@ -91,24 +91,94 @@ export default function ExportClient({ invoices, settings }: { invoices: any[], 
       }
     })
 
-    const gross_receipts = totalDomesticTxval + totalIamt + totalCamt + totalSamt + totalExpTxval
+    // HSN Summary (hsn_sc)
+    const hsnMap: Record<string, { txval: number, iamt: number, camt: number, samt: number }> = {}
+    invoices.forEach(inv => {
+      const isInterState = (inv.client.stateCode || homeStateCode) !== homeStateCode
+      inv.items?.forEach((item: any) => {
+        const hsn = item.product?.hsn || '998314'
+        const txval = item.price * item.quantity * inv.exchangeRate
+        const tax = item.tax * inv.exchangeRate
+        let iamt = 0, camt = 0, samt = 0
+        if (isInterState) { iamt = tax } else { camt = tax / 2; samt = tax / 2 }
+
+        if (!hsnMap[hsn]) hsnMap[hsn] = { txval: 0, iamt: 0, camt: 0, samt: 0 }
+        hsnMap[hsn].txval += txval
+        hsnMap[hsn].iamt += iamt
+        hsnMap[hsn].camt += camt
+        hsnMap[hsn].samt += samt
+      })
+    })
+
+    const hsn_sc = {
+      det: Object.entries(hsnMap).map(([hsn, data]) => ({
+        hsn_sc: hsn,
+        desc: 'Services',
+        uqc: 'OTH',
+        qty: 0,
+        txval: data.txval,
+        rt: 18,
+        iamt: data.iamt,
+        camt: data.camt,
+        samt: data.samt
+      }))
+    }
+
+    // Document Sequencing (doc_issue)
+    const sortedInvoices = [...invoices].sort((a, b) => a.invoiceNumber.localeCompare(b.invoiceNumber))
+    const doc_issue = {
+      doc_det: [{
+        doc_num: 1,
+        docs: [{
+          num: 1,
+          from: sortedInvoices.length > 0 ? sortedInvoices[0].invoiceNumber : '',
+          to: sortedInvoices.length > 0 ? sortedInvoices[sortedInvoices.length - 1].invoiceNumber : '',
+          totnum: sortedInvoices.length,
+          cancel: 0,
+          net_issue: sortedInvoices.length
+        }]
+      }]
+    }
+
+    // Expenses / ITC / RCM
+    let itcIamt = 0, itcCamt = 0, itcSamt = 0
+    let tracked_expenses = 0
+    expenses.forEach((e: any) => {
+      tracked_expenses += e.totalAmount
+      if (e.itcEligible) {
+        // Assume Inter-state (iamt) for SaaS unless it's local vendor. Simple approximation.
+        // If it's RCM, it's typically import (IGST).
+        if (e.isRcm) {
+          itcIamt += e.taxAmount
+        } else {
+          // Put in IGST for simplicity if we don't have vendor state code
+          itcIamt += e.taxAmount
+        }
+      }
+    })
+
+    // Gross Receipts (Taxable Value Only)
+    const gross_receipts = totalDomesticTxval + totalExpTxval
     const min_profit = gross_receipts * 0.5
 
     const jsonData = {
       gstr1_offline_tool_tables: {
         b2b,
         exp,
-        b2cs
+        b2cs,
+        hsn: hsn_sc,
+        doc_issue
       },
       gstr3b_government_portal_boxes: {
         box_3_1_a_outward_taxable: { txval: totalDomesticTxval, iamt: totalIamt, camt: totalCamt, samt: totalSamt },
         box_3_1_b_exports: { txval: totalExpTxval },
-        box_4_a_5_eligible_itc: { iamt: 0.00, camt: 0.00, samt: 0.00 }
+        box_3_1_d_inward_liable_to_rcm: { txval: expenses.filter(e => e.isRcm).reduce((sum, e) => sum + e.totalAmount, 0), iamt: expenses.filter(e => e.isRcm).reduce((sum, e) => sum + e.taxAmount, 0) },
+        box_4_a_5_eligible_itc: { iamt: itcIamt, camt: itcCamt, samt: itcSamt }
       },
       itr_44ada_summary: {
         gross_receipts,
         minimum_presumptive_profit_50_percent: min_profit,
-        actual_tracked_expenses: 0.00,
+        actual_tracked_expenses: tracked_expenses,
         ca_notes: "Eligible for Section 44ADA. Presumptive taxation is highly optimized for this profile."
       }
     }

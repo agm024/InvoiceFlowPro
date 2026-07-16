@@ -21,9 +21,16 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     try {
       const res = await updateCompanySettings(formData)
       if (res.success) {
-        alert('Settings saved successfully!')
+        // Use toast if available, otherwise alert fallback (but we added toast to layout)
+        if (typeof window !== 'undefined') {
+          const toast = (await import('react-hot-toast')).default
+          toast.success('Settings saved successfully!')
+        }
       } else {
-        alert('Failed to save settings')
+        if (typeof window !== 'undefined') {
+          const toast = (await import('react-hot-toast')).default
+          toast.error('Failed to save settings')
+        }
       }
     } catch (error) {
       console.error(error)
@@ -143,6 +150,17 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <input 
             type="text" name="lutNo" defaultValue={initialSettings?.lutNo || ''} placeholder="e.g. AD2703230..."
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+          />
+        </div>
+
+        {/* GST State Code */}
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+            <span className="text-red-500">*</span>Home State Code :
+          </label>
+          <input 
+            type="number" name="stateCode" defaultValue={initialSettings?.stateCode || '27'} required placeholder="e.g. 27 for MH"
             className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
           />
         </div>
