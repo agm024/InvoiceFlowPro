@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { getInvoices, deleteInvoice } from './actions'
 import { getCompanySettings } from '../settings/actions'
 import InvoiceListClient from './InvoiceListClient'
@@ -19,3 +21,4 @@ export default async function InvoicesPage() {
     </div>
   )
 }
+

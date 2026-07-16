@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { getInvoiceFormData } from '../actions'
 import InvoiceForm from './InvoiceForm'
 import Link from 'next/link'
@@ -26,3 +27,4 @@ export default async function NewInvoicePage() {
     </div>
   )
 }
+

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { getProducts, deleteProduct } from './actions'
 import Link from 'next/link'
 
@@ -81,3 +82,4 @@ export default async function ProductsPage() {
     </div>
   )
 }
+

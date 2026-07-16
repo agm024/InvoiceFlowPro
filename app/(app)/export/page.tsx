@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import prisma from '@/utils/prisma'
 import ExportClient from './ExportClient'
 

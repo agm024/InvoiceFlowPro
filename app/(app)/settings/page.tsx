@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { getCompanySettings, getBanks, getExchangeRates } from './actions'
 import SettingsForm from './SettingsForm'
 import BankAccountsList from './BankAccountsList'
@@ -44,3 +45,4 @@ export default async function SettingsPage() {
     </div>
   )
 }
+

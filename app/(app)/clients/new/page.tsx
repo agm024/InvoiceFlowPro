@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { createClient } from '../actions'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -56,3 +57,4 @@ export default function NewClientPage() {
     </div>
   )
 }
+

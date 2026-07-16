@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { getClients, deleteClient } from './actions'
 import Link from 'next/link'
 
@@ -65,3 +67,4 @@ export default async function ClientsPage() {
     </div>
   )
 }
+

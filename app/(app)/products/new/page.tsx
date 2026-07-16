@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { createProduct } from '../actions'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -63,3 +64,4 @@ export default function NewProductPage() {
     </div>
   )
 }
+
