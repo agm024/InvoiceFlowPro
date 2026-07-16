@@ -199,7 +199,7 @@ export async function updateInvoice(id: string, data: {
     revalidatePath('/invoices')
     revalidatePath(`/invoices/${id}`)
     revalidatePath('/')
-    return { success: true, invoice: { id } }
+    return { success: true, invoice: { id, invoiceNumber: data.invoiceNumber } }
   } catch (error) {
     console.error('Failed to update invoice:', error)
     return { error: 'Failed to update invoice' }

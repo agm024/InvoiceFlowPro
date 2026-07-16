@@ -162,7 +162,7 @@ export default function InvoiceForm({
   const calculatedItems = useMemo(() => {
     return items.map(item => {
       const product = products.find(p => p.id === item.productId)
-      if (!product) return { ...item, price: item.price || 0, taxAmount: 0, totalWithTax: 0, gstRate: 0, isTaxInclusive: false }
+      if (!product) return { ...item, price: item.price || 0, taxAmount: 0, totalWithTax: 0, totalWithoutTax: 0, gstRate: 0, isTaxInclusive: false }
       
       const itemPrice = typeof item.price === 'number' ? item.price : 0
       const effectiveGstRate = invoiceType === 'EXPORT' ? 0 : product.gstRate
