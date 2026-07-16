@@ -10,7 +10,7 @@ import toast from 'react-hot-toast'
 
 type Client = { id: string, name: string, email?: string | null, phone?: string | null, gstin?: string | null, panNo?: string | null }
 type Product = { id: string, name: string, price: number, gstRate: number, hsn?: string | null }
-type Bank = { id: string, bankName: string, accountNumber: string, ifsc: string }
+type Bank = { id: string, bankName: string, accountNumber: string, ifsc?: string | null, swiftCode?: string | null, routingNumber?: string | null, iban?: string | null }
 type ExchangeRate = { id: string, currency: string, rate: number }
 
 export default function InvoiceForm({ 
