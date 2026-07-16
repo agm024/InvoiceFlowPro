@@ -9,7 +9,11 @@ export default async function EditInvoicePage({ params }: { params: Promise<{ id
   const { id } = await params
   const invoice = await prisma.invoice.findUnique({
     where: { id },
-    include: { items: true }
+    include: { 
+      items: {
+        include: { product: true }
+      } 
+    }
   })
   
   if (!invoice) notFound()
