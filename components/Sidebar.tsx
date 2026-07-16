@@ -5,6 +5,7 @@ export default function Sidebar() {
     { name: 'Dashboard', href: '/' },
     { name: 'Clients', href: '/clients' },
     { name: 'Products', href: '/products' },
+    { name: 'Quotations', href: '/quotations' },
     { name: 'Invoices', href: '/invoices' },
     { name: 'Expenses', href: '/expenses' },
     { name: 'Export', href: '/export' },

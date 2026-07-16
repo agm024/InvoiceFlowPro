@@ -10,12 +10,18 @@ import { deleteInvoice } from './actions'
 type Invoice = any // using any for simplicity, usually from prisma type
 type TabType = 'All' | 'Pending' | 'Paid' | 'Cancelled' | 'Drafts'
 
-export default function InvoiceListClient({ initialInvoices, settings }: { initialInvoices: Invoice[], settings: any }) {
+export default function InvoiceListClient({ initialInvoices, settings, type = 'invoice' }: { initialInvoices: Invoice[], settings: any, type?: 'invoice' | 'quotation' }) {
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices)
   const [activeTab, setActiveTab] = useState<TabType>('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedId, setCopiedId] = useState<string | null>(null)
   
+  // Payment Modal State
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false)
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
+  const [paymentAmount, setPaymentAmount] = useState('')
+  const [isSubmittingPayment, setIsSubmittingPayment] = useState(false)
+
   const [dateRange, setDateRange] = useState('This Year')
   const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false)
 
@@ -29,22 +35,62 @@ export default function InvoiceListClient({ initialInvoices, settings }: { initi
 
   // Handlers
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this invoice?')) {
+    if (confirm('Are you sure you want to delete this document?')) {
       const res = await deleteInvoice(id)
       if (res.success) {
         setInvoices(invoices.filter(i => i.id !== id))
-        toast.success('Invoice deleted')
+        toast.success('Document deleted')
       } else {
-        toast.error('Failed to delete invoice')
+        toast.error('Failed to delete document')
       }
     }
   }
 
   const handleCopyLink = (invoice: Invoice) => {
-    const url = `${window.location.origin}/pay/${invoice.id}`
+    const url = `${window.location.origin}/pay/${encodeURIComponent(invoice.invoiceNumber)}`
     navigator.clipboard.writeText(url)
     setCopiedId(invoice.id)
     setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  const handlePaymentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedInvoice) return
+
+    setIsSubmittingPayment(true)
+    const amount = parseFloat(paymentAmount)
+    
+    if (isNaN(amount) || amount <= 0) {
+      toast.error('Please enter a valid amount')
+      setIsSubmittingPayment(false)
+      return
+    }
+
+    try {
+      const { recordPayment } = await import('./actions')
+      const res = await recordPayment(selectedInvoice.id, amount)
+      
+      if (res.error) {
+        toast.error(res.error)
+      } else {
+        setInvoices(invoices.map(i => {
+          if (i.id === selectedInvoice.id) {
+            return {
+              ...i,
+              amountPaid: i.amountPaid + amount,
+              status: res.isFullyPaid ? 'paid' : 'partially_paid'
+            }
+          }
+          return i
+        }))
+        toast.success(res.isFullyPaid ? 'Invoice marked as fully paid!' : 'Partial payment recorded!')
+        setPaymentModalOpen(false)
+      }
+    } catch (err) {
+      toast.error('Failed to record payment')
+    } finally {
+      setIsSubmittingPayment(false)
+    }
   }
 
   // Filter Logic
@@ -135,7 +181,7 @@ export default function InvoiceListClient({ initialInvoices, settings }: { initi
     return { total, paid, pending }
   }, [filteredInvoices])
 
-  const tabs: TabType[] = ['All', 'Pending', 'Paid', 'Cancelled', 'Drafts']
+  const tabs: TabType[] = type === 'quotation' ? ['All', 'Drafts', 'Pending'] : ['All', 'Pending', 'Paid', 'Cancelled', 'Drafts']
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-card-bg rounded-2xl shadow-sm border border-zinc-200 dark:border-card-border overflow-hidden">
@@ -143,7 +189,7 @@ export default function InvoiceListClient({ initialInvoices, settings }: { initi
       {/* Top Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 border-b border-zinc-100 dark:border-sidebar-border gap-4">
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Sales</h1>
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">{type === 'quotation' ? 'Quotations' : 'Sales'}</h1>
           <PlayCircle className="text-pink-500 fill-pink-50" size={24} />
         </div>
         
@@ -152,10 +198,10 @@ export default function InvoiceListClient({ initialInvoices, settings }: { initi
             <Settings size={16} /> Document Settings
           </Link>
           <Link 
-            href="/invoices/new" 
+            href={type === 'quotation' ? '/quotations/new' : '/invoices/new'} 
             className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20"
           >
-            <Plus size={18} /> Create Invoice
+            <Plus size={18} /> Create {type === 'quotation' ? 'Quotation' : 'Invoice'}
           </Link>
         </div>
       </div>
@@ -341,17 +387,12 @@ export default function InvoiceListClient({ initialInvoices, settings }: { initi
                         <MoreHorizontal size={16} />
                       </button>
                       <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-card-bg rounded-lg shadow-lg border border-zinc-200 dark:border-card-border opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all z-10">
-                        {invoice.status !== 'paid' && (
-                          <button onClick={async () => {
-                            const { markInvoiceAsPaid } = await import('./actions')
-                            const res = await markInvoiceAsPaid(invoice.id)
-                            if (res.success) {
-                              setInvoices(invoices.map(i => i.id === invoice.id ? { ...i, status: 'paid' } : i))
-                              toast.success('Invoice marked as paid!')
-                            } else {
-                              toast.error('Failed to update status')
-                            }
-                          }} className="block px-4 py-2 text-sm text-green-600 hover:bg-green-50 text-left w-full border-b border-zinc-100 dark:border-card-border">Mark as Paid</button>
+                        {invoice.status !== 'paid' && type !== 'quotation' && (
+                          <button onClick={() => {
+                            setSelectedInvoice(invoice)
+                            setPaymentAmount((invoice.total - (invoice.amountPaid || 0)).toString())
+                            setPaymentModalOpen(true)
+                          }} className="block px-4 py-2 text-sm text-green-600 hover:bg-green-50 text-left w-full border-b border-zinc-100 dark:border-card-border">Record Payment</button>
                         )}
                         <Link href={`/invoices/${invoice.id}/edit`} className="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 text-left w-full">Edit</Link>
                         <button onClick={() => handleDelete(invoice.id)} className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left w-full">Delete</button>
@@ -372,6 +413,61 @@ export default function InvoiceListClient({ initialInvoices, settings }: { initi
           </tbody>
         </table>
       </div>
+
+      {paymentModalOpen && selectedInvoice && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !isSubmittingPayment && setPaymentModalOpen(false)} />
+          <div className="bg-card-bg border border-card-border rounded-xl shadow-xl w-full max-w-sm relative z-10 p-6 animate-in fade-in zoom-in-95 duration-200">
+            <h2 className="text-lg font-bold text-foreground mb-4">Record Payment</h2>
+            <div className="mb-4">
+              <div className="flex justify-between text-sm text-zinc-500 mb-1">
+                <span>Total Amount:</span>
+                <span className="font-medium text-foreground">{selectedInvoice.total.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-zinc-500 mb-4">
+                <span>Remaining Balance:</span>
+                <span className="font-medium text-foreground">{(selectedInvoice.total - (selectedInvoice.amountPaid || 0)).toFixed(2)}</span>
+              </div>
+            </div>
+            <form onSubmit={handlePaymentSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-foreground mb-1">Amount Received</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">₹</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    max={(selectedInvoice.total - (selectedInvoice.amountPaid || 0)).toFixed(2)}
+                    value={paymentAmount}
+                    onChange={(e) => setPaymentAmount(e.target.value)}
+                    disabled={isSubmittingPayment}
+                    className="w-full pl-8 pr-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 justify-end">
+                <button
+                  type="button"
+                  onClick={() => setPaymentModalOpen(false)}
+                  disabled={isSubmittingPayment}
+                  className="px-4 py-2 text-sm font-medium text-zinc-500 hover:text-foreground transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingPayment}
+                  className="px-4 py-2 text-sm font-medium bg-foreground text-background rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {isSubmittingPayment ? 'Saving...' : 'Save Payment'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Summary Footer */}
       <div className="bg-zinc-50 dark:bg-sidebar-bg p-4 border-t border-zinc-100 dark:border-sidebar-border flex flex-col md:flex-row justify-between items-center gap-4">

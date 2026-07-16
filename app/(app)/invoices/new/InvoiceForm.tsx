@@ -19,6 +19,7 @@ export default function InvoiceForm({
   banks,
   exchangeRates = [],
   defaultInvoiceNumber,
+  defaultInvoiceType,
   existingInvoice
 }: { 
   clients: Client[], 
@@ -26,6 +27,7 @@ export default function InvoiceForm({
   banks: Bank[],
   exchangeRates?: ExchangeRate[],
   defaultInvoiceNumber: string,
+  defaultInvoiceType?: string,
   existingInvoice?: any
 }) {
   const router = useRouter()
@@ -42,7 +44,7 @@ export default function InvoiceForm({
   const [reference, setReference] = useState(existingInvoice?.reference || '')
   
   const [notes, setNotes] = useState(existingInvoice?.notes || '')
-  const [invoiceType, setInvoiceType] = useState(existingInvoice?.invoiceType || 'REGULAR') // REGULAR or EXPORT
+  const [invoiceType, setInvoiceType] = useState(existingInvoice?.invoiceType || defaultInvoiceType || 'REGULAR') // REGULAR, EXPORT, QUOTATION
   const [currency, setCurrency] = useState(existingInvoice?.currency || 'INR')
   const [exchangeRate, setExchangeRate] = useState(existingInvoice?.exchangeRate || 1.0)
   const [paymentMethod, setPaymentMethod] = useState(existingInvoice?.paymentMethod || 'UPI')
@@ -118,7 +120,7 @@ export default function InvoiceForm({
     if (editingProduct?.id) {
       // If we are editing, we assume there's an updateProduct action (which doesn't exist yet, but let's mock the UI update)
       // We will just create a new product for now since updateProduct action might not be fully featured in actions.ts yet
-      alert('Product editing requires updateProduct action to be fully implemented in actions.ts. We will add it as new for now.');
+      toast.error('Product editing requires updateProduct action to be fully implemented in actions.ts. We will add it as new for now.');
       formData.append('gstRate', '18')
       const res = await createProduct(formData)
       if (res.success && res.product) {
@@ -160,26 +162,37 @@ export default function InvoiceForm({
   const calculatedItems = useMemo(() => {
     return items.map(item => {
       const product = products.find(p => p.id === item.productId)
-      if (!product) return { ...item, price: item.price || 0, taxAmount: 0, totalWithTax: 0, gstRate: 0 }
+      if (!product) return { ...item, price: item.price || 0, taxAmount: 0, totalWithTax: 0, gstRate: 0, isTaxInclusive: false }
       
       const itemPrice = typeof item.price === 'number' ? item.price : 0
-      const totalWithoutTax = itemPrice * item.quantity
-      
       const effectiveGstRate = invoiceType === 'EXPORT' ? 0 : product.gstRate
-      const taxAmount = totalWithoutTax * (effectiveGstRate / 100)
-      const totalWithTax = totalWithoutTax + taxAmount
+      
+      let totalWithoutTax = itemPrice * item.quantity;
+      let taxAmount = 0;
+      let totalWithTax = 0;
+      
+      if (product.taxInclusive && invoiceType !== 'EXPORT') {
+        totalWithTax = itemPrice * item.quantity;
+        totalWithoutTax = totalWithTax / (1 + effectiveGstRate / 100);
+        taxAmount = totalWithTax - totalWithoutTax;
+      } else {
+        taxAmount = totalWithoutTax * (effectiveGstRate / 100);
+        totalWithTax = totalWithoutTax + taxAmount;
+      }
 
       return {
         ...item,
         price: itemPrice,
         taxAmount,
         totalWithTax,
-        gstRate: effectiveGstRate
+        totalWithoutTax,
+        gstRate: effectiveGstRate,
+        isTaxInclusive: product.taxInclusive || false
       }
     })
   }, [items, products, invoiceType])
 
-  const subTotal = calculatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const subTotal = calculatedItems.reduce((sum, item) => sum + (item.totalWithoutTax || 0), 0)
   const taxTotal = calculatedItems.reduce((sum, item) => sum + item.taxAmount, 0)
   
   let discountAmount = 0
@@ -195,8 +208,8 @@ export default function InvoiceForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!clientId) { alert('Please select a client'); return }
-    if (items.length === 0 || !items[0].productId) { alert('Please add at least one product'); return }
+    if (!clientId) { toast.error('Please select a client'); return }
+    if (items.length === 0 || !items[0].productId) { toast.error('Please add at least one product'); return }
 
     const payload = {
       clientId,
@@ -220,7 +233,7 @@ export default function InvoiceForm({
       items: calculatedItems.map(item => ({
         productId: item.productId,
         quantity: item.quantity,
-        price: item.price,
+        price: item.isTaxInclusive && invoiceType !== 'EXPORT' ? Number(((item.totalWithoutTax || 0) / item.quantity).toFixed(2)) : item.price,
         tax: item.taxAmount
       }))
     }
@@ -234,19 +247,20 @@ export default function InvoiceForm({
     }
 
     if (res.success) {
+      const redirectPath = invoiceType === 'QUOTATION' ? '/quotations' : '/invoices'
       if (submitAction === 'sent_and_print') {
-        const id = existingInvoice ? existingInvoice.id : res.invoice?.id;
-        if (id) {
-          router.push(`/pay/${id}/print`);
+        const num = existingInvoice ? existingInvoice.invoiceNumber : (res.invoice?.invoiceNumber || invoiceNumber);
+        if (num) {
+          router.push(`/pay/${encodeURIComponent(num)}/print`);
         } else {
-          router.push('/invoices');
+          router.push(redirectPath);
         }
       } else {
-        router.push('/invoices');
+        router.push(redirectPath);
       }
-      toast.success(existingInvoice ? 'Invoice updated!' : 'Invoice created successfully!')
+      toast.success(existingInvoice ? `${invoiceType === 'QUOTATION' ? 'Quotation' : 'Invoice'} updated!` : `${invoiceType === 'QUOTATION' ? 'Quotation' : 'Invoice'} created successfully!`)
     } else {
-      toast.error('Error saving invoice')
+      toast.error('Error saving document')
     }
   }
 
@@ -265,6 +279,7 @@ export default function InvoiceForm({
             >
               <option value="REGULAR">Regular</option>
               <option value="EXPORT">Export</option>
+              <option value="QUOTATION">Quotation</option>
             </select>
           </div>
           

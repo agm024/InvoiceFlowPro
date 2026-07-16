@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 import { createExchangeRate, deleteExchangeRate } from './actions'
 import { Plus, Trash2, Loader2, DollarSign } from 'lucide-react'
 
@@ -15,9 +16,10 @@ export default function ExchangeRatesList({ initialRates }: { initialRates: any[
     const res = await createExchangeRate(formData)
     
     if (res.success) {
+      toast.success('Exchange rate saved successfully!')
       window.location.reload()
     } else {
-      alert('Failed to save exchange rate')
+      toast.error('Failed to save exchange rate')
       setIsAdding(false)
     }
   }

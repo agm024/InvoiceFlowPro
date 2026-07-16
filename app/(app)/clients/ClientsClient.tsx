@@ -72,7 +72,7 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
                 {clients.map((client) => (
                   <tr key={client.id} className="hover:bg-sidebar-bg/50 transition-colors text-foreground">
                     <td className="px-6 py-4 font-medium">
-                      <Link href={`/clients/${client.id}`} className="hover:underline text-blue-600 dark:text-blue-400 font-semibold">
+                      <Link href={`/clients/${client.slug}`} className="hover:underline text-blue-600 dark:text-blue-400 font-semibold">
                         {client.name}
                       </Link>
                     </td>
@@ -143,8 +143,12 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
                     <input type="text" name="gstin" defaultValue={editingClient.gstin || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 uppercase" />
                   </div>
                   <div>
+                    <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">PAN Number</label>
+                    <input type="text" name="panNo" defaultValue={editingClient.panNo || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 uppercase" />
+                  </div>
+                  <div>
                     <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">State Code (e.g. 27)</label>
-                    <input type="number" name="stateCode" defaultValue={editingClient.stateCode || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500" />
+                    <input type="text" name="stateCode" defaultValue={editingClient.stateCode || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500" />
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 mt-4 pt-6 border-t border-card-border">

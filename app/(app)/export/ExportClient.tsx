@@ -2,6 +2,7 @@
 
 import * as XLSX from 'xlsx'
 import { format } from 'date-fns'
+import { getStateNameByCode } from '@/utils/stateCodes'
 
 export default function ExportClient({ invoices, settings, expenses = [] }: { invoices: any[], settings?: any, expenses?: any[] }) {
   
@@ -203,7 +204,7 @@ export default function ExportClient({ invoices, settings, expenses = [] }: { in
       'Invoice Number': inv.invoiceNumber,
       'Invoice Date': format(new Date(inv.date), 'dd-MMM-yyyy'),
       'Invoice Value': inv.total * inv.exchangeRate,
-      'Place of Supply': inv.client.stateCode ? `${inv.client.stateCode}-${inv.client.stateName}` : '',
+      'Place of Supply': inv.client.stateCode ? `${inv.client.stateCode}-${inv.client.stateName || getStateNameByCode(inv.client.stateCode)}` : '',
       'Reverse Charge': 'N',
       'Applicable % of Tax Rate': '',
       'Invoice Type': 'Regular',

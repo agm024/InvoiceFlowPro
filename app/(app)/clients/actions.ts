@@ -2,11 +2,26 @@
 
 import prisma from '@/utils/prisma'
 import { revalidatePath } from 'next/cache'
+import { getStateNameByCode } from '@/utils/stateCodes'
+import { slugify } from '@/utils/slugify'
 
 export async function getClients() {
   return await prisma.client.findMany({
     orderBy: { createdAt: 'desc' }
   })
+}
+
+async function generateUniqueSlug(name: string, model: any, existingId?: string) {
+  const baseSlug = slugify(name) || 'client'
+  let slug = baseSlug
+  let count = 1
+  while (true) {
+    const existing = await model.findUnique({ where: { slug } })
+    if (!existing || existing.id === existingId) break
+    slug = `${baseSlug}-${count}`
+    count++
+  }
+  return slug
 }
 
 export async function createClient(formData: FormData) {
@@ -17,11 +32,14 @@ export async function createClient(formData: FormData) {
   const gstin = formData.get('gstin') as string
   const panNo = formData.get('panNo') as string
   const stateCode = formData.get('stateCode') as string
-  const stateName = formData.get('stateName') as string
+  const providedStateName = formData.get('stateName') as string
+  
+  const stateName = providedStateName || (stateCode ? getStateNameByCode(stateCode) : '')
+  const slug = await generateUniqueSlug(name, prisma.client)
 
   try {
     const client = await prisma.client.create({
-      data: { name, email, phone, address, gstin, panNo, stateCode, stateName }
+      data: { name, slug, email, phone, address, gstin, panNo, stateCode, stateName }
     })
     revalidatePath('/clients')
     return { success: true, client }
@@ -50,12 +68,15 @@ export async function updateClient(id: string, formData: FormData) {
   const gstin = formData.get('gstin') as string
   const panNo = formData.get('panNo') as string
   const stateCode = formData.get('stateCode') as string
-  const stateName = formData.get('stateName') as string
+  const providedStateName = formData.get('stateName') as string
+
+  const stateName = providedStateName || (stateCode ? getStateNameByCode(stateCode) : '')
+  const slug = await generateUniqueSlug(name, prisma.client, id)
 
   try {
     const client = await prisma.client.update({
       where: { id },
-      data: { name, email, phone, address, gstin, panNo, stateCode, stateName }
+      data: { name, slug, email, phone, address, gstin, panNo, stateCode, stateName }
     })
     revalidatePath('/clients')
     return { success: true, client }

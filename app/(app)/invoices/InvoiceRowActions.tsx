@@ -11,7 +11,7 @@ export default function InvoiceRowActions({ invoice, settings, onDelete }: { inv
   const isPaid = invoice.status === 'paid'
 
   const copyLink = () => {
-    const url = `${window.location.origin}/pay/${invoice.id}`
+    const url = `${window.location.origin}/pay/${encodeURIComponent(invoice.invoiceNumber)}`
     navigator.clipboard.writeText(url)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -141,7 +141,7 @@ export default function InvoiceRowActions({ invoice, settings, onDelete }: { inv
           
           <div className="p-6 border-t border-card-border bg-sidebar-bg flex justify-end gap-4">
             <a 
-              href={`/pay/${invoice.id}/print`}
+              href={`/pay/${encodeURIComponent(invoice.invoiceNumber)}/print`}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-foreground text-background px-4 py-2 rounded-md font-medium text-sm hover:opacity-90 transition-opacity"

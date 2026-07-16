@@ -40,6 +40,14 @@ export default function NewClientPage() {
               <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Phone Number</label>
               <input type="tel" name="phone" className="rounded-md px-3 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-foreground" />
             </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">PAN Number</label>
+              <input name="panNo" className="rounded-md px-3 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-foreground uppercase" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">State Code (e.g. 27)</label>
+              <input name="stateCode" className="rounded-md px-3 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-foreground" />
+            </div>
           </div>
           
           <div className="flex flex-col gap-2">

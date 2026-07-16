@@ -38,7 +38,14 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
           <Link href={`/invoices/${invoice.id}/edit`} className="text-sm bg-sidebar-bg border border-sidebar-border px-4 py-2 rounded-md font-medium text-foreground hover:bg-sidebar-border transition-colors">
             Edit Invoice
           </Link>
-          <InvoiceActionsDropdown invoiceId={invoice.id} />
+          <InvoiceActionsDropdown 
+            invoiceId={invoice.id} 
+            invoiceNumber={invoice.invoiceNumber}
+            invoiceType={invoice.invoiceType} 
+            total={invoice.total}
+            amountPaid={invoice.amountPaid}
+            status={invoice.status}
+          />
         </div>
       </div>
 

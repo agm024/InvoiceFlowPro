@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 import { getProducts, deleteProduct } from './actions'
 import Link from 'next/link'
+import DeleteProductButton from './DeleteProductButton'
 
 export default async function ProductsPage() {
   const products = await getProducts()
@@ -43,7 +44,9 @@ export default async function ProductsPage() {
                     <tr key={product.id} className="hover:bg-sidebar-bg/50 transition-colors text-foreground group">
                       <td className="px-6 py-4 font-medium min-w-[300px]">
                         <div className="flex flex-col">
-                          <span>{product.name}</span>
+                          <Link href={`/products/${product.slug}`} className="hover:text-blue-600 transition-colors">
+                            <span>{product.name}</span>
+                          </Link>
                           {product.description && <span className="text-zinc-500 text-xs mt-1">{product.description}</span>}
                           {uniqueClients.length > 0 && (
                             <details className="mt-2 text-xs text-zinc-500">
@@ -64,12 +67,7 @@ export default async function ProductsPage() {
                       <td className="px-6 py-4 text-zinc-500">{product.discount > 0 ? `₹${product.discount.toFixed(2)}` : '-'}</td>
                       <td className="px-6 py-4 text-zinc-500">{product.gstRate}%</td>
                       <td className="px-6 py-4 text-right align-top">
-                        <form action={async () => {
-                          'use server'
-                          await deleteProduct(product.id)
-                        }}>
-                          <button className="text-red-500 hover:text-red-600 text-xs font-medium bg-red-500/10 px-2 py-1 rounded">Delete</button>
-                        </form>
+                        <DeleteProductButton id={product.id} />
                       </td>
                     </tr>
                   )

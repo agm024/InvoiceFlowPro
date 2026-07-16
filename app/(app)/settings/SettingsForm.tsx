@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { updateCompanySettings } from './actions'
 import { Upload, Loader2, Save } from 'lucide-react'
+import { toast } from 'react-hot-toast'
 
 export default function SettingsForm({ initialSettings }: { initialSettings: any }) {
   const [isSaving, setIsSaving] = useState(false)
@@ -13,7 +14,6 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     setIsSaving(true)
     
     const formData = new FormData(e.currentTarget)
-    // Add logoUrl to formData if we have it in state (mocked image upload for now)
     if (logoPreview) {
       formData.set('logoUrl', logoPreview)
     }
@@ -21,20 +21,13 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     try {
       const res = await updateCompanySettings(formData)
       if (res.success) {
-        // Use toast if available, otherwise alert fallback (but we added toast to layout)
-        if (typeof window !== 'undefined') {
-          const toast = (await import('react-hot-toast')).default
-          toast.success('Settings saved successfully!')
-        }
+        toast.success('Settings saved successfully!')
       } else {
-        if (typeof window !== 'undefined') {
-          const toast = (await import('react-hot-toast')).default
-          toast.error('Failed to save settings')
-        }
+        toast.error('Failed to save settings')
       }
     } catch (error) {
       console.error(error)
-      alert('An error occurred')
+      toast.error('An error occurred while saving')
     } finally {
       setIsSaving(false)
     }
@@ -55,25 +48,48 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <div className="flex-1">
             <div className="flex items-center gap-6">
-              <div className="w-24 h-24 bg-sidebar-bg border border-sidebar-border rounded-xl flex items-center justify-center overflow-hidden relative group">
+              <label className="w-24 h-24 bg-sidebar-bg border border-sidebar-border rounded-xl flex items-center justify-center overflow-hidden relative group cursor-pointer">
                 {logoPreview ? (
-                  <img src={logoPreview} alt="Logo" className="w-full h-full object-cover" />
+                  <img src={logoPreview} alt="Logo" className="w-full h-full object-contain bg-white" />
                 ) : (
                   <span className="text-zinc-400 font-medium text-xs">No Logo</span>
                 )}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                   <Upload className="text-white" size={20} />
                 </div>
-              </div>
+                <input 
+                  type="file" 
+                  accept="image/png, image/jpeg, image/jpg, image/svg+xml"
+                  className="hidden" 
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      const reader = new FileReader()
+                      reader.onloadend = () => {
+                        setLogoPreview(reader.result as string)
+                      }
+                      reader.readAsDataURL(file)
+                    }
+                  }} 
+                />
+              </label>
               <div className="text-sm text-zinc-500">
                 <p>Recommended size: 200x200px</p>
-                <button type="button" onClick={() => {
-                  const url = prompt('Enter logo URL (temporary mock for upload):', logoPreview)
-                  if (url !== null) setLogoPreview(url)
-                }} className="text-blue-500 hover:underline mt-1 font-medium">Upload new logo</button>
+                <p className="mt-1 text-xs">Click the square to upload an image</p>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Brand Name */}
+        <div className="flex flex-col md:flex-row gap-2 md:gap-12">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0 mt-2">
+            Company Address :
+          </label>
+          <textarea 
+            name="address" defaultValue={initialSettings?.address || ''} placeholder="123 Business Rd, Suite 100..." rows={3}
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+          />
         </div>
 
         {/* Brand Name */}

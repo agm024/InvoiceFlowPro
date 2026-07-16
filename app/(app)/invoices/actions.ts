@@ -23,6 +23,7 @@ export async function getInvoiceFormData() {
   
   // Generate a sequential invoice number
   const lastInvoice = await prisma.invoice.findFirst({
+    where: { invoiceType: 'REGULAR' },
     orderBy: { createdAt: 'desc' }
   })
   
@@ -32,16 +33,33 @@ export async function getInvoiceFormData() {
     const lastNumStr = parts[parts.length - 1]
     const num = parseInt(lastNumStr, 10)
     if (!isNaN(num)) {
-      // Keep the prefix, just increment the last number part
       const prefix = parts.slice(0, -1).join('-')
       nextInvoiceNumber = `${prefix}-${String(num + 1).padStart(lastNumStr.length > 2 ? lastNumStr.length : 3, '0')}`
     }
   } else if (lastInvoice) {
-    // Fallback if they used a weird custom format that didn't start with INV-
     nextInvoiceNumber = `INV-${Math.floor(1000 + Math.random() * 9000)}`
   }
+
+  // Generate a sequential quotation number
+  const lastQuotation = await prisma.invoice.findFirst({
+    where: { invoiceType: 'QUOTATION' },
+    orderBy: { createdAt: 'desc' }
+  })
   
-  return { clients, products, banks, exchangeRates, nextInvoiceNumber }
+  let nextQuotationNumber = `QT-001`
+  if (lastQuotation && lastQuotation.invoiceNumber.startsWith('QT-')) {
+    const parts = lastQuotation.invoiceNumber.split('-')
+    const lastNumStr = parts[parts.length - 1]
+    const num = parseInt(lastNumStr, 10)
+    if (!isNaN(num)) {
+      const prefix = parts.slice(0, -1).join('-')
+      nextQuotationNumber = `${prefix}-${String(num + 1).padStart(lastNumStr.length > 2 ? lastNumStr.length : 3, '0')}`
+    }
+  } else if (lastQuotation) {
+    nextQuotationNumber = `QT-${Math.floor(1000 + Math.random() * 9000)}`
+  }
+  
+  return { clients, products, banks, exchangeRates, nextInvoiceNumber, nextQuotationNumber }
 }
 
 export async function createInvoice(data: {
@@ -201,6 +219,33 @@ export async function markInvoiceAsPaid(id: string) {
   } catch (error) {
     console.error('Failed to mark invoice as paid:', error)
     return { error: 'Failed to mark invoice as paid' }
+  }
+}
+
+export async function recordPayment(id: string, amountReceived: number) {
+  try {
+    const invoice = await prisma.invoice.findUnique({ where: { id } })
+    if (!invoice) return { error: 'Invoice not found' }
+
+    const newAmountPaid = invoice.amountPaid + amountReceived
+    // Use an epsilon to avoid floating point precision issues
+    const isFullyPaid = newAmountPaid >= invoice.total - 0.01
+
+    await prisma.invoice.update({
+      where: { id },
+      data: {
+        amountPaid: newAmountPaid,
+        status: isFullyPaid ? 'paid' : 'partially_paid'
+      }
+    })
+    
+    revalidatePath(`/invoices/${id}`)
+    revalidatePath('/invoices')
+    revalidatePath('/')
+    return { success: true, isFullyPaid }
+  } catch (error) {
+    console.error('Failed to record payment:', error)
+    return { error: 'Failed to record payment' }
   }
 }
 

@@ -9,7 +9,8 @@ export const metadata = {
 }
 
 export default async function InvoicesPage() {
-  const invoices = await getInvoices()
+  const allInvoices = await getInvoices()
+  const invoices = allInvoices.filter(inv => inv.invoiceType !== 'QUOTATION')
   const settings = await getCompanySettings()
 
   return (

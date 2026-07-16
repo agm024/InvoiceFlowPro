@@ -2,13 +2,14 @@ import prisma from '@/utils/prisma'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import { getStateNameByCode } from '@/utils/stateCodes'
 import StatusBadge from '../../invoices/[id]/StatusBadge'
 
-export default async function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export default async function ClientDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   
   const client = await prisma.client.findUnique({
-    where: { id },
+    where: { slug },
     include: {
       invoices: {
         orderBy: { date: 'desc' }
@@ -18,14 +19,17 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
   
   if (!client) notFound()
 
-  // Calculate Money Got (Paid invoices) and Remaining (Draft/Sent invoices) in INR
-  const totalPaid = client.invoices
-    .filter(inv => inv.status === 'paid')
-    .reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0)
+  // Calculate Money Got and Remaining in INR, factoring in partial payments
+  const totalPaid = client.invoices.reduce((sum, inv) => {
+    const paidAmount = inv.amountPaid > 0 ? inv.amountPaid : (inv.status === 'paid' ? inv.total : 0)
+    return sum + (paidAmount * inv.exchangeRate)
+  }, 0)
     
-  const totalRemaining = client.invoices
-    .filter(inv => ['draft', 'sent', 'overdue'].includes(inv.status))
-    .reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0)
+  const totalRemaining = client.invoices.reduce((sum, inv) => {
+    if (inv.status === 'cancelled') return sum // skip cancelled
+    const paidAmount = inv.amountPaid > 0 ? inv.amountPaid : (inv.status === 'paid' ? inv.total : 0)
+    return sum + ((inv.total - paidAmount) * inv.exchangeRate)
+  }, 0)
 
   return (
     <div className="p-8 max-w-6xl mx-auto w-full">
@@ -56,7 +60,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
           <div className="space-y-3 text-sm">
             <div><span className="text-zinc-500 block">GSTIN</span> <span className="font-medium">{client.gstin || 'N/A'}</span></div>
             <div><span className="text-zinc-500 block">PAN No</span> <span className="font-medium">{client.panNo || 'N/A'}</span></div>
-            <div><span className="text-zinc-500 block">Place of Supply</span> <span className="font-medium">{client.stateCode ? `${client.stateCode}-${client.stateName}` : 'N/A'}</span></div>
+            <div><span className="text-zinc-500 block">Place of Supply</span> <span className="font-medium">{client.stateCode ? `${client.stateCode}-${client.stateName || getStateNameByCode(client.stateCode)}` : 'N/A'}</span></div>
           </div>
         </div>
         

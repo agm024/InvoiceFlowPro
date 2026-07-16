@@ -4,10 +4,11 @@ import { format } from 'date-fns'
 import { QRCodeSVG } from 'qrcode.react'
 import Script from 'next/script'
 
-export default async function InvoicePrintView({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export default async function InvoicePrintView({ params }: { params: Promise<{ invoiceNumber: string }> }) {
+  const { invoiceNumber } = await params
+  
   const invoice = await prisma.invoice.findUnique({
-    where: { id },
+    where: { invoiceNumber: decodeURIComponent(invoiceNumber) },
     include: {
       client: true,
       bank: true,
@@ -38,6 +39,9 @@ export default async function InvoicePrintView({ params }: { params: Promise<{ i
         {/* Top Header */}
         <div className="flex justify-between items-start mb-16">
           <div>
+            {settings?.logoUrl && (
+              <img src={settings.logoUrl} alt="Company Logo" className="h-16 mb-4 object-contain" />
+            )}
             <h1 className="text-5xl font-bold tracking-tight text-zinc-900 mb-2">INVOICE</h1>
             <p className="text-xl text-zinc-500 font-medium">{invoice.invoiceNumber}</p>
           </div>

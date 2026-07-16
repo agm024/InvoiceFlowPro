@@ -5,7 +5,10 @@ import ExportClient from './ExportClient'
 
 export default async function ExportPage() {
   const invoices = await prisma.invoice.findMany({
-    where: { status: 'paid' },
+    where: { 
+      status: 'paid',
+      invoiceType: { not: 'QUOTATION' } 
+    },
     orderBy: { invoiceNumber: 'asc' },
     include: { 
       client: true,

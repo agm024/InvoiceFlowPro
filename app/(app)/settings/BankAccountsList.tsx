@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 import { createBank, deleteBank } from './actions'
 import { Plus, Trash2, Loader2, Building2 } from 'lucide-react'
 
@@ -16,11 +17,11 @@ export default function BankAccountsList({ initialBanks }: { initialBanks: any[]
     const res = await createBank(formData)
     
     if (res.success) {
-      alert('Bank added successfully!')
+      toast.success('Bank added successfully!')
       // In a real app we'd fetch the new list or use optimistic UI
       window.location.reload()
     } else {
-      alert('Failed to add bank')
+      toast.error('Failed to add bank')
       setIsAdding(false)
     }
   }
