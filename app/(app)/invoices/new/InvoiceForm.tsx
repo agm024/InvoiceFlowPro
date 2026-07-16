@@ -6,6 +6,7 @@ import { createInvoice } from '../actions'
 import { createClient } from '../../clients/actions'
 import { createProduct } from '../../products/actions'
 import { Search, Plus, X, Trash2, Edit2, FileText, Banknote } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 type Client = { id: string, name: string, email?: string | null, phone?: string | null, gstin?: string | null, panNo?: string | null }
 type Product = { id: string, name: string, price: number, gstRate: number, hsn?: string | null }
@@ -94,7 +95,7 @@ export default function InvoiceForm({
       formData.append(input.name, input.value)
     })
     if (!isValid) {
-      alert('Please fill in required fields (Customer Name).')
+      toast.error('Please fill in required fields (Customer Name).')
       return
     }
     const res = await createClient(formData)
@@ -104,8 +105,9 @@ export default function InvoiceForm({
       setClientSearch(res.client.name)
       setIsAddingClient(false)
       setShowClientDropdown(false)
+      toast.success('Customer created successfully!')
     } else {
-      alert('Failed to create customer.')
+      toast.error('Failed to create customer.')
     }
   }
 
@@ -242,8 +244,9 @@ export default function InvoiceForm({
       } else {
         router.push('/invoices');
       }
+      toast.success(existingInvoice ? 'Invoice updated!' : 'Invoice created successfully!')
     } else {
-      alert('Error saving invoice')
+      toast.error('Error saving invoice')
     }
   }
 
@@ -361,6 +364,7 @@ export default function InvoiceForm({
                   <input type="email" name="email" placeholder="Email Address" className="rounded-md px-3 py-2 text-sm bg-sidebar-bg border border-sidebar-border" />
                   <input type="text" name="phone" placeholder="Phone Number" className="rounded-md px-3 py-2 text-sm bg-sidebar-bg border border-sidebar-border" />
                   <input type="text" name="gstin" placeholder="GSTIN (Optional)" className="rounded-md px-3 py-2 text-sm bg-sidebar-bg border border-sidebar-border uppercase" />
+                  <input type="number" name="stateCode" placeholder="GST State Code (e.g. 27)" className="col-span-2 rounded-md px-3 py-2 text-sm bg-sidebar-bg border border-sidebar-border" />
                 </div>
                 <div className="mt-4 flex justify-end">
                   <button type="button" onClick={() => setIsAddingClient(false)} className="px-4 py-2 text-zinc-500 mr-2">Cancel</button>

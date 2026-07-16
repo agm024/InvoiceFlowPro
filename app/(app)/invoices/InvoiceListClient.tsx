@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { format, isToday, isYesterday, isThisWeek, isThisMonth, isThisYear, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subWeeks, subMonths, subYears, startOfYear, endOfYear, startOfQuarter, subQuarters, isWithinInterval, parseISO } from 'date-fns'
 import { Search, Plus, PlayCircle, Settings, SlidersHorizontal, ChevronDown, Eye, Send, MoreHorizontal, Copy, Check, X } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { deleteInvoice } from './actions'
 
 type Invoice = any // using any for simplicity, usually from prisma type
@@ -32,6 +33,9 @@ export default function InvoiceListClient({ initialInvoices, settings }: { initi
       const res = await deleteInvoice(id)
       if (res.success) {
         setInvoices(invoices.filter(i => i.id !== id))
+        toast.success('Invoice deleted')
+      } else {
+        toast.error('Failed to delete invoice')
       }
     }
   }
@@ -343,6 +347,9 @@ export default function InvoiceListClient({ initialInvoices, settings }: { initi
                             const res = await markInvoiceAsPaid(invoice.id)
                             if (res.success) {
                               setInvoices(invoices.map(i => i.id === invoice.id ? { ...i, status: 'paid' } : i))
+                              toast.success('Invoice marked as paid!')
+                            } else {
+                              toast.error('Failed to update status')
                             }
                           }} className="block px-4 py-2 text-sm text-green-600 hover:bg-green-50 text-left w-full border-b border-zinc-100 dark:border-card-border">Mark as Paid</button>
                         )}
