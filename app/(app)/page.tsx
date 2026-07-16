@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import prisma from '@/utils/prisma'
 
 export default async function DashboardPage() {
