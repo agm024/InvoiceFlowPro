@@ -340,7 +340,10 @@ export default function InvoiceListClient({ initialInvoices, settings }: { initi
                         {invoice.status !== 'paid' && (
                           <button onClick={async () => {
                             const { markInvoiceAsPaid } = await import('./actions')
-                            await markInvoiceAsPaid(invoice.id)
+                            const res = await markInvoiceAsPaid(invoice.id)
+                            if (res.success) {
+                              setInvoices(invoices.map(i => i.id === invoice.id ? { ...i, status: 'paid' } : i))
+                            }
                           }} className="block px-4 py-2 text-sm text-green-600 hover:bg-green-50 text-left w-full border-b border-zinc-100 dark:border-card-border">Mark as Paid</button>
                         )}
                         <Link href={`/invoices/${invoice.id}/edit`} className="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 text-left w-full">Edit</Link>
