@@ -31,6 +31,7 @@ model Client {
   stateCode String?
   stateName String?
   invoices  Invoice[]
+  projects  Project[]
 }
 
 model Product {
@@ -47,6 +48,7 @@ model Product {
   purchasePrice Float        @default(0)
   unit         String?
   taxInclusive Boolean       @default(false)
+  isHidden     Boolean       @default(false)
   invoiceItems InvoiceItem[]
 }
 
@@ -89,6 +91,8 @@ model Bank {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   invoices      Invoice[]
+  transfersOut  InternalTransfer[] @relation("TransferFrom")
+  transfersIn   InternalTransfer[] @relation("TransferTo")
 }
 
 model Invoice {
@@ -117,6 +121,7 @@ model Invoice {
   bank          Bank?         @relation(fields: [bankId], references: [id])
   client        Client        @relation(fields: [clientId], references: [id])
   items         InvoiceItem[]
+  milestone     Milestone?
 }
 
 model InvoiceItem {
@@ -134,7 +139,7 @@ model Expense {
   id          String   @id @default(cuid())
   date        DateTime @default(now())
   vendorName  String
-  category    String   @default("SOFTWARE") // SOFTWARE, HARDWARE, RENT, OTHER
+  category    String   @default("SOFTWARE") // SOFTWARE, HARDWARE, RENT, GST_PAYMENT, OTHER
   description String?
   totalAmount Float
   taxAmount   Float    @default(0)
@@ -142,4 +147,46 @@ model Expense {
   itcEligible Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Project {
+  id           String      @id @default(cuid())
+  name         String
+  totalValue   Float
+  currency     String      @default("INR")
+  status       String      @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
+  clientId     String
+  client       Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  milestones   Milestone[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Milestone {
+  id           String      @id @default(cuid())
+  name         String
+  percentage   Float?
+  amount       Float
+  status       String      @default("UNBILLED") // UNBILLED, BILLED, PAID
+  projectId    String
+  project      Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  invoiceId    String?     @unique
+  invoice      Invoice?    @relation(fields: [invoiceId], references: [id])
+  orderIndex   Int         @default(0)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model InternalTransfer {
+  id            String   @id @default(cuid())
+  date          DateTime @default(now())
+  amount        Float
+  fromBankId    String
+  toBankId      String
+  reference     String?
+  notes         String?
+  fromBank      Bank     @relation("TransferFrom", fields: [fromBankId], references: [id])
+  toBank        Bank     @relation("TransferTo", fields: [toBankId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

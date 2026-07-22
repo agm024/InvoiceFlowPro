@@ -4,10 +4,12 @@ export default function Sidebar() {
   const navItems = [
     { name: 'Dashboard', href: '/' },
     { name: 'Clients', href: '/clients' },
+    { name: 'Projects', href: '/projects' },
     { name: 'Products', href: '/products' },
     { name: 'Quotations', href: '/quotations' },
     { name: 'Invoices', href: '/invoices' },
     { name: 'Expenses', href: '/expenses' },
+    { name: 'Transfers', href: '/transfers' },
     { name: 'Export', href: '/export' },
     { name: 'Settings', href: '/settings' },
   ]

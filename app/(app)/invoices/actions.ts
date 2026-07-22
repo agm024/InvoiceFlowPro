@@ -17,7 +17,7 @@ export async function getInvoices() {
 
 export async function getInvoiceFormData() {
   const clients = await prisma.client.findMany({ orderBy: { name: 'asc' } })
-  const products = await prisma.product.findMany({ orderBy: { name: 'asc' } })
+  const products = await prisma.product.findMany({ where: { isHidden: false }, orderBy: { name: 'asc' } })
   const banks = await prisma.bank.findMany({ orderBy: { bankName: 'asc' } })
   const exchangeRates = await prisma.exchangeRate.findMany()
   
@@ -82,6 +82,7 @@ export async function createInvoice(data: {
   total: number
   status?: string
   date?: string
+  milestoneId?: string
 }) {
   try {
     const newInvoice = await prisma.invoice.create({
@@ -103,7 +104,8 @@ export async function createInvoice(data: {
         subTotal: data.subTotal,
         taxTotal: data.taxTotal,
         total: data.total,
-        status: data.status || 'draft',
+        status: data.status === 'paid' ? 'paid' : (data.status || 'draft'),
+        amountPaid: data.status === 'paid' ? data.total : 0,
         items: {
           create: data.items.map(item => ({
             productId: item.productId,
@@ -114,6 +116,18 @@ export async function createInvoice(data: {
         }
       }
     })
+
+    if (data.milestoneId) {
+      await prisma.milestone.update({
+        where: { id: data.milestoneId },
+        data: {
+          invoiceId: newInvoice.id,
+          status: data.status === 'sent' ? 'SENT' : 'UNBILLED'
+        }
+      })
+      revalidatePath('/clients')
+    }
+
     revalidatePath('/invoices')
     return { success: true, invoice: newInvoice }
   } catch (error) {
@@ -183,7 +197,10 @@ export async function updateInvoice(id: string, data: {
           subTotal: data.subTotal,
           taxTotal: data.taxTotal,
           total: data.total,
-          ...(data.status ? { status: data.status } : {}),
+          ...(data.status ? { 
+            status: data.status,
+            ...(data.status === 'paid' ? { amountPaid: data.total } : {}) 
+          } : {}),
           items: {
             create: data.items.map(item => ({
               productId: item.productId,
@@ -208,10 +225,20 @@ export async function updateInvoice(id: string, data: {
 
 export async function markInvoiceAsPaid(id: string) {
   try {
-    await prisma.invoice.update({
+    const invoice = await prisma.invoice.update({
       where: { id },
-      data: { status: 'paid' }
+      data: { status: 'paid' },
+      include: { milestone: true }
     })
+    
+    if (invoice.milestone) {
+      await prisma.milestone.update({
+        where: { id: invoice.milestone.id },
+        data: { status: 'PAID' }
+      })
+      revalidatePath('/clients')
+    }
+    
     revalidatePath('/invoices')
     revalidatePath(`/invoices/${id}`)
     revalidatePath('/')
@@ -224,7 +251,10 @@ export async function markInvoiceAsPaid(id: string) {
 
 export async function recordPayment(id: string, amountReceived: number) {
   try {
-    const invoice = await prisma.invoice.findUnique({ where: { id } })
+    const invoice = await prisma.invoice.findUnique({ 
+      where: { id },
+      include: { milestone: true }
+    })
     if (!invoice) return { error: 'Invoice not found' }
 
     const newAmountPaid = invoice.amountPaid + amountReceived
@@ -238,6 +268,14 @@ export async function recordPayment(id: string, amountReceived: number) {
         status: isFullyPaid ? 'paid' : 'partially_paid'
       }
     })
+    
+    if (isFullyPaid && invoice.milestone) {
+      await prisma.milestone.update({
+        where: { id: invoice.milestone.id },
+        data: { status: 'PAID' }
+      })
+      revalidatePath('/clients')
+    }
     
     revalidatePath(`/invoices/${id}`)
     revalidatePath('/invoices')

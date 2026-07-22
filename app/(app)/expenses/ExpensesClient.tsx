@@ -10,7 +10,7 @@ type Expense = any
 
 export default function ExpensesClient({ initialExpenses }: { initialExpenses: Expense[] }) {
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses)
-  const [showForm, setShowForm] = useState(false)
+  const [activeForm, setActiveForm] = useState<'NONE' | 'EXPENSE' | 'GST'>('NONE')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -20,22 +20,21 @@ export default function ExpensesClient({ initialExpenses }: { initialExpenses: E
     
     const res = await createExpense(formData)
     if (res.success) {
-      toast.success('Expense logged successfully!')
-      setShowForm(false)
-      // Optimistic update would be better, but for simplicity we reload
+      toast.success('Record saved successfully!')
+      setActiveForm('NONE')
       window.location.reload()
     } else {
-      toast.error('Failed to log expense')
+      toast.error('Failed to log record')
     }
     setIsSubmitting(false)
   }
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this expense?')) {
+    if (confirm('Are you sure you want to delete this record?')) {
       const res = await deleteExpense(id)
       if (res.success) {
         setExpenses(expenses.filter(e => e.id !== id))
-        toast.success('Expense deleted')
+        toast.success('Record deleted')
       }
     }
   }
@@ -45,17 +44,25 @@ export default function ExpensesClient({ initialExpenses }: { initialExpenses: E
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight mb-2">Expenses & Purchases</h1>
-          <p className="text-zinc-500">Track vendor bills, input tax credit (ITC), and Reverse Charge Mechanism (RCM).</p>
+          <p className="text-zinc-500">Track vendor bills, input tax credit (ITC), and GST payments.</p>
         </div>
-        <button 
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20"
-        >
-          <Plus size={18} /> {showForm ? 'Cancel' : 'Add Expense'}
-        </button>
+        <div className="flex gap-3">
+          <button 
+            onClick={() => setActiveForm(activeForm === 'GST' ? 'NONE' : 'GST')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm ${activeForm === 'GST' ? 'bg-zinc-200 text-zinc-800' : 'bg-green-600 text-white hover:bg-green-700 shadow-green-500/20'}`}
+          >
+            <Plus size={18} /> {activeForm === 'GST' ? 'Cancel' : 'Log GST Payment'}
+          </button>
+          <button 
+            onClick={() => setActiveForm(activeForm === 'EXPENSE' ? 'NONE' : 'EXPENSE')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm ${activeForm === 'EXPENSE' ? 'bg-zinc-200 text-zinc-800' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/20'}`}
+          >
+            <Plus size={18} /> {activeForm === 'EXPENSE' ? 'Cancel' : 'Add Expense'}
+          </button>
+        </div>
       </div>
 
-      {showForm && (
+      {activeForm === 'EXPENSE' && (
         <div className="bg-card-bg border border-card-border p-6 rounded-xl shadow-sm mb-8">
           <h2 className="text-lg font-bold mb-4">Log New Expense</h2>
           <form onSubmit={handleAdd} className="flex flex-col gap-4">
@@ -107,7 +114,7 @@ export default function ExpensesClient({ initialExpenses }: { initialExpenses: E
             </div>
 
             <div className="flex justify-end mt-4">
-              <button disabled={isSubmitting} type="submit" className="bg-emerald-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-50">
+              <button disabled={isSubmitting} type="submit" className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50">
                 {isSubmitting ? 'Saving...' : 'Save Expense'}
               </button>
             </div>
@@ -115,20 +122,58 @@ export default function ExpensesClient({ initialExpenses }: { initialExpenses: E
         </div>
       )}
 
-      <div className="bg-card-bg border border-card-border rounded-xl shadow-sm overflow-hidden">
+      {activeForm === 'GST' && (
+        <div className="bg-green-50/30 border border-green-200 p-6 rounded-xl shadow-sm mb-8">
+          <h2 className="text-lg font-bold mb-4 text-green-800">Log GST Payment to Government</h2>
+          <form onSubmit={handleAdd} className="flex flex-col gap-4">
+            <input type="hidden" name="category" value="GST_PAYMENT" />
+            <input type="hidden" name="taxAmount" value="0" />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1 text-green-900">Payment Date</label>
+                <input type="date" name="date" required defaultValue={format(new Date(), 'yyyy-MM-dd')} className="w-full rounded-md px-4 py-2 bg-white border border-green-200 focus:border-green-500 focus:ring-green-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-green-900">Challan / Reference Number (CPIN)</label>
+                <input type="text" name="vendorName" placeholder="e.g. CPIN12345678" required className="w-full rounded-md px-4 py-2 bg-white border border-green-200 focus:border-green-500 focus:ring-green-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-green-900">Total Amount Paid</label>
+                <input type="number" step="0.01" name="totalAmount" required className="w-full rounded-md px-4 py-2 bg-white border border-green-200 focus:border-green-500 focus:ring-green-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-green-900">Notes (Optional)</label>
+                <input type="text" name="description" placeholder="e.g. GST for July 2026" className="w-full rounded-md px-4 py-2 bg-white border border-green-200 focus:border-green-500 focus:ring-green-500" />
+              </div>
+            </div>
+
+            <div className="flex justify-end mt-4">
+              <button disabled={isSubmitting} type="submit" className="bg-green-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors shadow-sm disabled:opacity-50">
+                {isSubmitting ? 'Saving...' : 'Save GST Payment'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      <div className="bg-card-bg border border-card-border rounded-xl shadow-sm overflow-hidden mb-8">
+        <div className="px-6 py-4 border-b border-card-border bg-zinc-50 dark:bg-sidebar-bg">
+          <h2 className="text-sm font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">Business Expenses</h2>
+        </div>
         <table className="w-full text-left border-collapse">
           <thead className="bg-zinc-50 dark:bg-sidebar-bg text-zinc-500 text-xs font-semibold tracking-wider">
             <tr>
-              <th className="px-6 py-4">Date</th>
-              <th className="px-6 py-4">Vendor</th>
-              <th className="px-6 py-4">Amount</th>
-              <th className="px-6 py-4">Tax</th>
-              <th className="px-6 py-4">Flags</th>
-              <th className="px-6 py-4 text-right"></th>
+              <th className="px-6 py-4 border-y border-card-border">Date</th>
+              <th className="px-6 py-4 border-y border-card-border">Vendor</th>
+              <th className="px-6 py-4 border-y border-card-border">Amount</th>
+              <th className="px-6 py-4 border-y border-card-border">Tax</th>
+              <th className="px-6 py-4 border-y border-card-border">Flags</th>
+              <th className="px-6 py-4 border-y border-card-border text-right"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-100 dark:divide-sidebar-border text-sm">
-            {expenses.map(exp => (
+            {expenses.filter(e => e.category !== 'GST_PAYMENT').map(exp => (
               <tr key={exp.id} className="hover:bg-zinc-50/50 dark:hover:bg-sidebar-bg/50">
                 <td className="px-6 py-4 whitespace-nowrap">{format(new Date(exp.date), 'dd MMM yyyy')}</td>
                 <td className="px-6 py-4 whitespace-nowrap font-medium">{exp.vendorName}</td>
@@ -145,10 +190,46 @@ export default function ExpensesClient({ initialExpenses }: { initialExpenses: E
                 </td>
               </tr>
             ))}
-            {expenses.length === 0 && (
+            {expenses.filter(e => e.category !== 'GST_PAYMENT').length === 0 && (
               <tr>
                 <td colSpan={6} className="px-6 py-12 text-center text-zinc-500">
-                  No expenses logged yet.
+                  No standard expenses logged yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* GST Payments Section */}
+      <div className="bg-card-bg border border-green-200 dark:border-green-900/30 rounded-xl shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-green-200 dark:border-green-900/30 bg-green-50 dark:bg-green-900/10">
+          <h2 className="text-sm font-bold text-green-700 dark:text-green-400 uppercase tracking-wider">GST Paid to Government</h2>
+        </div>
+        <table className="w-full text-left border-collapse">
+          <thead className="bg-green-50/50 dark:bg-green-900/5 text-green-700/70 dark:text-green-400/70 text-xs font-semibold tracking-wider">
+            <tr>
+              <th className="px-6 py-4 border-y border-green-100 dark:border-green-900/20">Date</th>
+              <th className="px-6 py-4 border-y border-green-100 dark:border-green-900/20">Challan / Ref</th>
+              <th className="px-6 py-4 border-y border-green-100 dark:border-green-900/20">Amount Paid</th>
+              <th className="px-6 py-4 border-y border-green-100 dark:border-green-900/20 text-right"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-green-50 dark:divide-green-900/10 text-sm">
+            {expenses.filter(e => e.category === 'GST_PAYMENT').map(exp => (
+              <tr key={exp.id} className="hover:bg-green-50 dark:hover:bg-green-900/10">
+                <td className="px-6 py-4 whitespace-nowrap">{format(new Date(exp.date), 'dd MMM yyyy')}</td>
+                <td className="px-6 py-4 whitespace-nowrap font-medium text-green-700 dark:text-green-300">{exp.vendorName}</td>
+                <td className="px-6 py-4 whitespace-nowrap font-bold text-green-600 dark:text-green-400">₹{exp.totalAmount.toFixed(2)}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-right">
+                  <button onClick={() => handleDelete(exp.id)} className="text-red-500 hover:text-red-700"><Trash2 size={16} /></button>
+                </td>
+              </tr>
+            ))}
+            {expenses.filter(e => e.category === 'GST_PAYMENT').length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-6 py-12 text-center text-zinc-500">
+                  No GST payments logged yet. Log an expense and select "GST Paid to Govt" category.
                 </td>
               </tr>
             )}

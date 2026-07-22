@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import { getStateNameByCode } from '@/utils/stateCodes'
 import StatusBadge from '../../invoices/[id]/StatusBadge'
+import DeleteProjectButton from '../../projects/DeleteProjectButton'
 
 export default async function ClientDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -12,12 +13,34 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
     where: { slug },
     include: {
       invoices: {
-        orderBy: { date: 'desc' }
+        orderBy: { date: 'desc' },
+        include: { milestone: true }
       }
     }
   })
   
   if (!client) notFound()
+
+  const projects = await prisma.project.findMany({
+    where: { clientId: client.id },
+    include: {
+      milestones: {
+        include: { invoice: true },
+        orderBy: { orderIndex: 'asc' }
+      }
+    },
+    orderBy: { createdAt: 'desc' }
+  })
+
+  const unlinkedInvoices = client.invoices
+    .filter(inv => !inv.milestone && inv.status !== 'cancelled')
+    .map(inv => ({
+      id: inv.id,
+      invoiceNumber: inv.invoiceNumber,
+      total: inv.total,
+      status: inv.status,
+      date: inv.date
+    }))
 
   // Calculate Money Got and Remaining in INR, factoring in partial payments
   const totalPaid = client.invoices.reduce((sum, inv) => {
@@ -70,43 +93,138 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
         </div>
       </div>
 
-      <h2 className="text-xl font-bold tracking-tight text-foreground mb-4">Transaction History</h2>
-      <div className="bg-card-bg border border-card-border rounded-xl shadow-sm overflow-hidden">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-sidebar-bg text-zinc-500 border-b border-sidebar-border uppercase text-xs">
-            <tr>
-              <th className="px-6 py-4 font-medium">Invoice No</th>
-              <th className="px-6 py-4 font-medium">Date</th>
-              <th className="px-6 py-4 font-medium">Status</th>
-              <th className="px-6 py-4 font-medium text-right">Amount</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-sidebar-border">
-            {client.invoices.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-zinc-500">No invoices found for this client.</td>
-              </tr>
-            ) : (
-              client.invoices.map((inv) => (
-                <tr key={inv.id} className="hover:bg-sidebar-bg/50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-foreground">
-                    <Link href={`/invoices/${inv.id}`} className="hover:underline">{inv.invoiceNumber}</Link>
-                  </td>
-                  <td className="px-6 py-4 text-zinc-600 dark:text-zinc-400">
-                    {format(new Date(inv.date), 'MMM dd, yyyy')}
-                  </td>
-                  <td className="px-6 py-4">
-                    <StatusBadge status={inv.status} invoiceId={inv.id} />
-                  </td>
-                  <td className="px-6 py-4 text-right font-medium text-foreground">
-                    {inv.currency} {inv.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold tracking-tight text-foreground">Chronological Project Roadmap</h2>
+        <Link href="/projects/new" className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-colors">
+          + New Project
+        </Link>
       </div>
+
+      <div className="space-y-8">
+        {projects.length === 0 ? (
+          <div className="bg-card-bg border border-card-border rounded-xl p-12 text-center text-zinc-500 shadow-sm">
+            No active projects for this client. Create a project to build a milestone roadmap.
+          </div>
+        ) : (
+          projects.map(project => {
+            const billedSum = project.milestones.filter(m => m.status !== 'UNBILLED').reduce((sum, m) => sum + m.amount, 0)
+            const progressPct = project.totalValue > 0 ? (billedSum / project.totalValue) * 100 : 0
+            
+            return (
+              <div key={project.id} className="bg-card-bg border border-card-border rounded-xl shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-sidebar-border bg-sidebar-bg/30">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-foreground">{project.name}</h3>
+                      <p className="text-sm text-zinc-500">Total Ceiling: ₹ {project.totalValue.toLocaleString()}</p>
+                    </div>
+                    <div className="flex items-center gap-4 text-right">
+                      <span className="text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 px-3 py-1 rounded-full">
+                        {project.status}
+                      </span>
+                      <DeleteProjectButton projectId={project.id} projectName={project.name} />
+                    </div>
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="w-full bg-sidebar-border rounded-full h-2 overflow-hidden">
+                    <div className="bg-emerald-500 h-full rounded-full transition-all" style={{ width: `${progressPct}%` }}></div>
+                  </div>
+                  <div className="flex justify-between text-xs font-medium text-zinc-500 mt-2">
+                    <span>₹ {billedSum.toLocaleString()} Billed</span>
+                    <span>₹ {(project.totalValue - billedSum).toLocaleString()} Unbilled Scope Equity</span>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-sidebar-border before:to-transparent">
+                    
+                    {project.milestones.map((milestone, idx) => {
+                      const isUnbilled = milestone.status === 'UNBILLED'
+                      const isPaid = milestone.status === 'PAID'
+                      const isSent = milestone.status === 'SENT'
+
+                      // Define dynamic styling based on milestone status
+                      const dotColor = isPaid ? 'bg-emerald-500 border-emerald-500' : isSent ? 'bg-blue-500 border-blue-500' : 'bg-zinc-700 border-zinc-600'
+                      const boxStyle = isUnbilled ? 'opacity-60 border-dashed border-zinc-600' : 'border-card-border shadow-sm'
+                      const textColor = isUnbilled ? 'text-zinc-400' : 'text-foreground'
+                      
+                      return (
+                        <div key={milestone.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                          <div className={`flex items-center justify-center w-3 h-3 rounded-full border-2 ${dotColor} shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2`}></div>
+                          
+                          <div className={`w-[calc(100%-2rem)] md:w-[calc(50%-2.5rem)] bg-card-bg p-4 rounded-xl border ${boxStyle} transition-all`}>
+                            <div className="flex justify-between items-start mb-2">
+                              <h4 className={`font-bold ${textColor}`}>Phase {idx + 1}: {milestone.name}</h4>
+                              <div className="text-right ml-4">
+                                <span className={`text-xs font-bold tabular-nums ${isUnbilled ? 'text-zinc-500' : 'text-foreground'}`}>
+                                  ₹ {milestone.amount.toLocaleString()}
+                                </span>
+                                {milestone.percentage && (
+                                  <span className="block text-[10px] text-zinc-500 mt-0.5">({milestone.percentage}%)</span>
+                                )}
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center justify-between mt-4">
+                              <div className="flex items-center gap-2">
+                                {isPaid && (
+                                  <span className="flex items-center gap-1 text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                    PAID {milestone.invoice?.invoiceNumber && `- #${milestone.invoice.invoiceNumber}`}
+                                  </span>
+                                )}
+                                {isSent && (
+                                  <span className="flex items-center gap-1 text-xs font-bold text-blue-500 bg-blue-500/10 px-2 py-1 rounded">
+                                    <span className="relative flex h-2 w-2 mr-1">
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                      <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                    </span>
+                                    SENT - Awaiting Payment
+                                  </span>
+                                )}
+                                {isUnbilled && (
+                                  <span className="flex items-center gap-1 text-xs font-bold text-zinc-500 bg-sidebar-bg px-2 py-1 rounded">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                    UNBILLED
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex gap-2">
+                                {isUnbilled && (
+                                  <Link 
+                                    href={`/invoices/new?milestoneId=${milestone.id}`} 
+                                    className="flex items-center gap-1 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold px-3 py-1.5 rounded transition-colors shadow-sm"
+                                  >
+                                    <span>🚀 Activate</span>
+                                  </Link>
+                                )}
+                                {isSent && (
+                                  <a 
+                                    href={`https://wa.me/?text=Hi%2C%20the%20milestone%20invoice%20for%20%5B${encodeURIComponent(milestone.name)}%5D%20is%20ready%20for%20review.%20You%20can%20check%20the%20complete%20project%20ledger%20and%20download%20the%20details%20here%3A%20http%3A%2F%2Flocalhost%3A3000%2Fpay%2F${milestone.invoice?.invoiceNumber}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1 bg-green-600/20 text-green-500 hover:bg-green-600 hover:text-white border border-green-600/30 text-xs font-bold px-3 py-1.5 rounded transition-colors"
+                                  >
+                                    💬 Share Link
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+
+                  </div>
+                </div>
+              </div>
+            )
+          })
+        )}
+      </div>
+
     </div>
   )
 }

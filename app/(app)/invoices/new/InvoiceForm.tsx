@@ -20,7 +20,9 @@ export default function InvoiceForm({
   exchangeRates = [],
   defaultInvoiceNumber,
   defaultInvoiceType,
-  existingInvoice
+  existingInvoice,
+  milestoneId,
+  adHocMilestoneDetails
 }: { 
   clients: Client[], 
   products: Product[],
@@ -28,7 +30,9 @@ export default function InvoiceForm({
   exchangeRates?: ExchangeRate[],
   defaultInvoiceNumber: string,
   defaultInvoiceType?: string,
-  existingInvoice?: any
+  existingInvoice?: any,
+  milestoneId?: string,
+  adHocMilestoneDetails?: any
 }) {
   const router = useRouter()
   
@@ -37,7 +41,7 @@ export default function InvoiceForm({
   const [products, setProducts] = useState(initialProducts)
 
   // Invoice Fields
-  const [clientId, setClientId] = useState(existingInvoice?.clientId || '')
+  const [clientId, setClientId] = useState(existingInvoice?.clientId || adHocMilestoneDetails?.clientId || '')
   const [invoiceNumber, setInvoiceNumber] = useState(existingInvoice?.invoiceNumber || defaultInvoiceNumber)
   const [date, setDate] = useState(existingInvoice?.date ? new Date(existingInvoice.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0])
   const [dueDate, setDueDate] = useState(existingInvoice?.dueDate ? new Date(existingInvoice.dueDate).toISOString().split('T')[0] : '')
@@ -45,7 +49,7 @@ export default function InvoiceForm({
   
   const [notes, setNotes] = useState(existingInvoice?.notes || '')
   const [invoiceType, setInvoiceType] = useState(existingInvoice?.invoiceType || defaultInvoiceType || 'REGULAR') // REGULAR, EXPORT, QUOTATION
-  const [currency, setCurrency] = useState(existingInvoice?.currency || 'INR')
+  const [currency, setCurrency] = useState(existingInvoice?.currency || adHocMilestoneDetails?.currency || 'INR')
   const [exchangeRate, setExchangeRate] = useState(existingInvoice?.exchangeRate || 1.0)
   const [paymentMethod, setPaymentMethod] = useState(existingInvoice?.paymentMethod || 'UPI')
   const [bankId, setBankId] = useState(existingInvoice?.bankId || '')
@@ -59,7 +63,12 @@ export default function InvoiceForm({
       quantity: item.quantity,
       price: item.price,
       name: item.product.name
-    })) || []
+    })) || adHocMilestoneDetails ? [{
+      productId: adHocMilestoneDetails.productId,
+      quantity: 1,
+      price: adHocMilestoneDetails.price,
+      name: adHocMilestoneDetails.name
+    }] : []
   )
 
   // UI States
@@ -73,7 +82,7 @@ export default function InvoiceForm({
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null)
   
   // Submit Action State
-  const [submitAction, setSubmitAction] = useState<'sent' | 'draft' | 'sent_and_print'>('draft')
+  const [submitAction, setSubmitAction] = useState<'sent' | 'draft' | 'sent_and_print' | 'paid'>('draft')
 
   // Auto-fill client search if we have a clientId
   useEffect(() => {
@@ -161,7 +170,20 @@ export default function InvoiceForm({
 
   const calculatedItems = useMemo(() => {
     return items.map(item => {
-      const product = products.find(p => p.id === item.productId)
+      let product = products.find(p => p.id === item.productId)
+      
+      // Support ad-hoc hidden products injected via milestones
+      if (!product && adHocMilestoneDetails && adHocMilestoneDetails.productId === item.productId) {
+        product = {
+          id: adHocMilestoneDetails.productId,
+          name: adHocMilestoneDetails.name,
+          hsn: adHocMilestoneDetails.hsn,
+          gstRate: adHocMilestoneDetails.gstRate,
+          taxInclusive: false,
+          price: adHocMilestoneDetails.price
+        } as any
+      }
+
       if (!product) return { ...item, price: item.price || 0, taxAmount: 0, totalWithTax: 0, totalWithoutTax: 0, gstRate: 0, isTaxInclusive: false }
       
       const itemPrice = typeof item.price === 'number' ? item.price : 0
@@ -230,6 +252,7 @@ export default function InvoiceForm({
       taxTotal,
       total: finalTotal,
       status: submitAction === 'sent_and_print' ? 'sent' : submitAction,
+      milestoneId,
       items: calculatedItems.map(item => ({
         productId: item.productId,
         quantity: item.quantity,
@@ -596,6 +619,10 @@ export default function InvoiceForm({
           
           <button type="submit" onClick={() => setSubmitAction('sent')} className="bg-blue-100 text-blue-700 shadow-sm px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-blue-200 transition-colors w-full sm:w-auto border border-blue-200">
             Save
+          </button>
+
+          <button type="submit" onClick={() => setSubmitAction('paid')} className="bg-emerald-100 text-emerald-700 shadow-sm px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-emerald-200 transition-colors w-full sm:w-auto border border-emerald-200">
+            Save & Mark as Paid
           </button>
           
           <button type="submit" onClick={() => setSubmitAction('sent_and_print')} className="bg-blue-600 text-white shadow-md shadow-blue-500/20 px-8 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors w-full sm:w-auto">

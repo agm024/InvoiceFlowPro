@@ -17,7 +17,17 @@ export default async function DashboardPage() {
     include: { client: true },
     orderBy: { date: 'desc' }
   })
-  const pendingAmountINR = pendingInvoicesData.reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0)
+  
+  // MILESTONE DATA FETCHING
+  const allMilestones = await prisma.milestone.findMany()
+  const paidMilestones = allMilestones.filter(m => m.status === 'PAID')
+  const totalMilestoneCollections = paidMilestones.reduce((sum, m) => sum + m.amount, 0)
+  
+  const sentMilestones = allMilestones.filter(m => m.status === 'SENT')
+  const activeOutstanding = sentMilestones.reduce((sum, m) => sum + m.amount, 0)
+
+  const unbilledMilestones = allMilestones.filter(m => m.status === 'UNBILLED')
+  const unbilledScopeEquity = unbilledMilestones.reduce((sum, m) => sum + m.amount, 0)
 
   const foreignPaid = paidInvoices.filter(inv => inv.currency !== 'INR')
   const foreignTotalINR = foreignPaid.reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0)
@@ -82,24 +92,31 @@ export default async function DashboardPage() {
       {/* Top 4 Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-card-bg border border-card-border p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          <p className="text-sm font-medium text-zinc-500 mb-2">Total Revenue</p>
-          <div className="flex items-baseline gap-2">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground">₹{totalRevenueINR.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
+          <p className="text-sm font-medium text-zinc-500 mb-2">Total Milestone Collections</p>
+          <div className="flex flex-col gap-1">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground tabular-nums">₹{totalMilestoneCollections.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</h2>
+            <p className="text-[10px] text-emerald-500 font-semibold bg-emerald-500/10 inline-block px-2 py-0.5 rounded-sm w-fit mt-1">Based on {paidMilestones.length} completed project phases</p>
           </div>
         </div>
         
         <div className="bg-card-bg border border-card-border p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          <p className="text-sm font-medium text-zinc-500 mb-2">Pending Payments</p>
-          <div className="flex items-baseline gap-2">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground">₹{pendingAmountINR.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
-            <span className="text-xs font-medium text-amber-500 bg-amber-500/10 px-2 py-1 rounded-full">{pendingInvoicesData.length} inv</span>
+          <p className="text-sm font-medium text-zinc-500 mb-2">Locked & Awaiting Sign-offs</p>
+          <div className="flex flex-col gap-2 mt-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-zinc-500 font-medium">Active Outstanding (Sent)</span>
+              <span className="text-sm font-bold text-foreground tabular-nums">₹{activeOutstanding.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-zinc-500 font-medium">Unbilled Scope Equity</span>
+              <span className="text-sm font-bold text-foreground tabular-nums">₹{unbilledScopeEquity.toLocaleString()}</span>
+            </div>
           </div>
         </div>
 
         <div className="bg-card-bg border border-card-border p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
           <p className="text-sm font-medium text-zinc-500 mb-2">Total Clients</p>
           <div className="flex items-baseline gap-2">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground">{totalClients}</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground tabular-nums">{totalClients}</h2>
           </div>
         </div>
 
@@ -201,46 +218,46 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Weekly Revenue Column */}
+        {/* Monthly Phase Milestone Runway */}
         <div className="bg-card-bg border border-card-border rounded-xl shadow-sm overflow-hidden flex flex-col">
           <div className="p-6 border-b border-sidebar-border">
-            <h2 className="font-semibold text-foreground text-lg">Weekly Revenue (Past 7 Days)</h2>
+            <h2 className="font-semibold text-foreground text-lg">Phase Milestone Runway</h2>
           </div>
           
           <div className="p-6 flex-1 flex flex-col">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground mb-2">₹ {weeklyRevenueTotal.toLocaleString(undefined, { minimumFractionDigits: 0 })}</h2>
-            <p className="text-xs text-zinc-500 font-medium mb-12">Sales between {weekAgoStr} to {todayStr}</p>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground mb-2 tabular-nums">
+              ₹ {allMilestones.reduce((sum, m) => sum + m.amount, 0).toLocaleString()}
+            </h2>
+            <p className="text-xs text-zinc-500 font-medium mb-12">Total Pipeline Value</p>
 
             <div className="flex-1 flex items-end justify-between gap-2 px-2 mt-auto min-h-[150px]">
-              {/* Fake visual bar chart for demonstration, matching Image 3 */}
-              <div className="flex flex-col items-center gap-2 w-full">
-                <div className="w-full bg-emerald-400 rounded-t-sm" style={{ height: weeklyRevenueTotal > 0 ? '120px' : '4px' }}></div>
-                <span className="text-[10px] text-zinc-400 font-medium">Fr</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 w-full">
-                <div className="w-full bg-emerald-400 rounded-t-sm" style={{ height: '4px' }}></div>
-                <span className="text-[10px] text-zinc-400 font-medium">Sa</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 w-full">
-                <div className="w-full bg-emerald-400 rounded-t-sm" style={{ height: '4px' }}></div>
-                <span className="text-[10px] text-zinc-400 font-medium">Su</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 w-full">
-                <div className="w-full bg-emerald-400 rounded-t-sm" style={{ height: '4px' }}></div>
-                <span className="text-[10px] text-zinc-400 font-medium">Mo</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 w-full">
-                <div className="w-full bg-emerald-400 rounded-t-sm" style={{ height: '4px' }}></div>
-                <span className="text-[10px] text-zinc-400 font-medium">Tu</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 w-full">
-                <div className="w-full bg-emerald-400 rounded-t-sm" style={{ height: '4px' }}></div>
-                <span className="text-[10px] text-zinc-400 font-medium">We</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 w-full">
-                <div className="w-full bg-emerald-400 rounded-t-sm" style={{ height: '4px' }}></div>
-                <span className="text-[10px] text-zinc-400 font-medium">Th</span>
-              </div>
+              {[...Array(6)].map((_, i) => {
+                const d = new Date()
+                d.setMonth(d.getMonth() - (5 - i))
+                const monthStr = d.toLocaleString('en-US', { month: 'short' })
+                
+                // Aggregate milestones for this month
+                const mTotal = allMilestones
+                  .filter(m => new Date(m.createdAt).getMonth() === d.getMonth())
+                  .reduce((sum, m) => sum + m.amount, 0)
+                
+                const height = mTotal > 0 ? Math.max(10, (mTotal / 500000) * 120) : 4 // fake scale
+
+                return (
+                  <div key={i} className="flex flex-col items-center gap-2 w-full group relative">
+                    <div 
+                      className={`w-full rounded-t-sm transition-all ${mTotal > 0 ? 'bg-emerald-500 group-hover:bg-emerald-400' : 'bg-sidebar-border'}`} 
+                      style={{ height: `${height}px` }}
+                    ></div>
+                    <span className="text-[10px] text-zinc-400 font-medium">{monthStr}</span>
+                    
+                    {/* Tooltip */}
+                    <div className="absolute -top-8 bg-zinc-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-10">
+                      ₹ {mTotal.toLocaleString()}
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>

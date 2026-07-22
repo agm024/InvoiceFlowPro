@@ -85,6 +85,17 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
         }))
         toast.success(res.isFullyPaid ? 'Invoice marked as fully paid!' : 'Partial payment recorded!')
         setPaymentModalOpen(false)
+        
+        // Optimistic UX Feedback: Confetti
+        if (res.isFullyPaid) {
+          import('canvas-confetti').then((confetti) => {
+            confetti.default({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 }
+            })
+          })
+        }
       }
     } catch (err) {
       toast.error('Failed to record payment')
@@ -311,124 +322,142 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
                   </div>
                 </td>
 
-                {/* Status Badge */}
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {invoice.status === 'paid' ? (
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
-                      PAID
-                    </span>
-                  ) : invoice.status === 'sent' ? (
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
-                      PENDING
-                    </span>
-                  ) : invoice.status === 'draft' ? (
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-zinc-100 text-zinc-700 border border-zinc-200">
-                      DRAFT
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-700 border border-red-200 uppercase">
-                      {invoice.status}
-                    </span>
-                  )}
-                </td>
+                  {/* Status Badge & Automatic Aging */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {invoice.status === 'paid' ? (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+                        PAID
+                      </span>
+                    ) : (
+                      // Intelligent Automatic Aging Check
+                      (() => {
+                        if (invoice.status === 'sent' && invoice.dueDate && new Date(invoice.dueDate) < new Date()) {
+                          const daysLate = Math.floor((new Date().getTime() - new Date(invoice.dueDate).getTime()) / (1000 * 3600 * 24))
+                          return (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-red-100 text-red-700 border border-red-200 shadow-sm animate-pulse">
+                              OVERDUE - {daysLate} DAYS LATE
+                            </span>
+                          )
+                        }
+                        
+                        return invoice.status === 'sent' ? (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
+                            PENDING
+                          </span>
+                        ) : invoice.status === 'draft' ? (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-zinc-100 text-zinc-700 border border-zinc-200">
+                            DRAFT
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-700 border border-red-200 uppercase">
+                            {invoice.status}
+                          </span>
+                        )
+                      })()
+                    )}
+                  </td>
 
-                {/* Mode Badge */}
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {invoice.paymentMethod === 'UPI' ? (
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200 uppercase">
-                      UPI
-                    </span>
-                  ) : invoice.paymentMethod === 'BANK' ? (
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100 uppercase">
-                      BANK
-                    </span>
-                  ) : (
-                    <span className="text-zinc-400 text-xs">-</span>
-                  )}
-                </td>
+                  {/* Mode Badge */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {invoice.paymentMethod === 'UPI' ? (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200 uppercase">
+                        UPI
+                      </span>
+                    ) : invoice.paymentMethod === 'BANK' ? (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100 uppercase">
+                        BANK
+                      </span>
+                    ) : (
+                      <span className="text-zinc-400 text-xs">-</span>
+                    )}
+                  </td>
 
-                {/* Bill # */}
-                <td className="px-6 py-4 whitespace-nowrap font-medium text-zinc-900 dark:text-zinc-200">
-                  {invoice.invoiceNumber}
-                </td>
+                  {/* Bill # */}
+                  <td className="px-6 py-4 whitespace-nowrap font-medium text-zinc-900 dark:text-zinc-200">
+                    {invoice.invoiceNumber}
+                  </td>
 
-                {/* Customer */}
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="font-semibold text-zinc-900 dark:text-white">{invoice.client.name}</div>
-                  <div className="text-xs text-zinc-500 mt-0.5">{invoice.client.phone || invoice.client.email || 'No contact details'}</div>
-                </td>
+                  {/* Customer */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-semibold text-zinc-900 dark:text-white">{invoice.client.name}</div>
+                    <div className="text-xs text-zinc-500 mt-0.5">{invoice.client.phone || invoice.client.email || 'No contact details'}</div>
+                  </td>
 
-                {/* Date */}
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="font-medium text-zinc-900 dark:text-white">{format(new Date(invoice.date), 'dd MMM yyyy')}</div>
-                  <div className="text-xs text-zinc-500 mt-0.5">{format(new Date(invoice.createdAt), 'dd MMM yy, hh:mm a')}</div>
-                </td>
+                  {/* Date */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-medium text-zinc-900 dark:text-white">{format(new Date(invoice.date), 'dd MMM yyyy')}</div>
+                    <div className="text-xs text-zinc-500 mt-0.5">{format(new Date(invoice.createdAt), 'dd MMM yy, hh:mm a')}</div>
+                  </td>
 
-                {/* Actions */}
-                <td className="px-6 py-4 whitespace-nowrap text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <Link 
-                      href={`/invoices/${invoice.id}`}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-sidebar-bg dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-lg text-xs font-medium transition-colors"
-                    >
-                      <Eye size={14} /> View
-                    </Link>
-                    <button 
-                      onClick={() => handleCopyLink(invoice)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 rounded-lg text-xs font-medium transition-colors"
-                    >
-                      {copiedId === invoice.id ? <Check size={14} /> : <Send size={14} />} 
-                      {copiedId === invoice.id ? 'Copied' : 'Send'}
-                    </button>
-                    
-                    {/* Simplified More Options for this UI */}
-                    <div className="relative group/dropdown">
-                      <button className="p-1.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-sidebar-bg dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-lg transition-colors">
-                        <MoreHorizontal size={16} />
-                      </button>
-                      <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-card-bg rounded-lg shadow-lg border border-zinc-200 dark:border-card-border opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all z-10">
-                        {invoice.status !== 'paid' && type !== 'quotation' && (
-                          <button onClick={() => {
-                            setSelectedInvoice(invoice)
-                            setPaymentAmount((invoice.total - (invoice.amountPaid || 0)).toString())
-                            setPaymentModalOpen(true)
-                          }} className="block px-4 py-2 text-sm text-green-600 hover:bg-green-50 text-left w-full border-b border-zinc-100 dark:border-card-border">Record Payment</button>
-                        )}
-                        <Link href={`/invoices/${invoice.id}/edit`} className="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 text-left w-full">Edit</Link>
-                        <button onClick={() => handleDelete(invoice.id)} className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left w-full">Delete</button>
+                  {/* Actions */}
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Link 
+                        href={`/invoices/${invoice.id}`}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-sidebar-bg dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-lg text-xs font-medium transition-colors"
+                      >
+                        <Eye size={14} /> View
+                      </Link>
+                      
+                      {/* WhatsApp Share Macro */}
+                      <a 
+                        href={`https://wa.me/?text=Hi%20${encodeURIComponent(invoice.client.name.split(' ')[0])}%2C%20the%20invoice%20for%20your%20project%20is%20ready%20for%20review.%20You%20can%20check%20the%20complete%20ledger%20and%20download%20the%20details%20here%3A%20${encodeURIComponent(window.location.origin + '/pay/' + invoice.invoiceNumber)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 rounded-lg text-xs font-medium transition-colors"
+                      >
+                        <Send size={14} /> WhatsApp
+                      </a>
+                      
+                      {/* Simplified More Options for this UI */}
+                      <div className="relative group/dropdown">
+                        <button className="p-1.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-sidebar-bg dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-lg transition-colors">
+                          <MoreHorizontal size={16} />
+                        </button>
+                        <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-card-bg rounded-lg shadow-lg border border-zinc-200 dark:border-card-border opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all z-10">
+                          {invoice.status !== 'paid' && type !== 'quotation' && (
+                            <button onClick={() => {
+                              setSelectedInvoice(invoice)
+                              setPaymentAmount((invoice.total - (invoice.amountPaid || 0)).toString())
+                              setPaymentModalOpen(true)
+                            }} className="block px-4 py-2 text-sm text-green-600 hover:bg-green-50 text-left w-full border-b border-zinc-100 dark:border-card-border">Record Payment</button>
+                          )}
+                          <Link href={`/invoices/${invoice.id}/edit`} className="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 text-left w-full border-b border-zinc-100 dark:border-card-border">Edit</Link>
+                          <button onClick={() => handleCopyLink(invoice)} className="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 text-left w-full border-b border-zinc-100 dark:border-card-border">Copy Link</button>
+                          <button onClick={() => handleDelete(invoice.id)} className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left w-full">Delete</button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
 
-              </tr>
-            ))}
-            {filteredInvoices.length === 0 && (
-              <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-zinc-500">
-                  No invoices found matching your criteria.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                </tr>
+              ))}
+              {filteredInvoices.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center text-zinc-500">
+                    No invoices found matching your criteria.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
 
-      {paymentModalOpen && selectedInvoice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !isSubmittingPayment && setPaymentModalOpen(false)} />
-          <div className="bg-card-bg border border-card-border rounded-xl shadow-xl w-full max-w-sm relative z-10 p-6 animate-in fade-in zoom-in-95 duration-200">
-            <h2 className="text-lg font-bold text-foreground mb-4">Record Payment</h2>
-            <div className="mb-4">
-              <div className="flex justify-between text-sm text-zinc-500 mb-1">
-                <span>Total Amount:</span>
-                <span className="font-medium text-foreground">{selectedInvoice.total.toFixed(2)}</span>
+        {paymentModalOpen && selectedInvoice && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !isSubmittingPayment && setPaymentModalOpen(false)} />
+            <div className="bg-card-bg border border-card-border rounded-xl shadow-xl w-full max-w-sm relative z-10 p-6 animate-in fade-in zoom-in-95 duration-200">
+              <h2 className="text-lg font-bold text-foreground mb-4">Record Payment</h2>
+              <div className="mb-4">
+                <div className="flex justify-between text-sm text-zinc-500 mb-1">
+                  <span>Total Amount:</span>
+                  <span className="font-medium text-foreground">{selectedInvoice.total.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm text-zinc-500 mb-4">
+                  <span>Remaining Balance:</span>
+                  <span className="font-medium text-foreground">{(selectedInvoice.total - (selectedInvoice.amountPaid || 0)).toFixed(2)}</span>
+                </div>
               </div>
-              <div className="flex justify-between text-sm text-zinc-500 mb-4">
-                <span>Remaining Balance:</span>
-                <span className="font-medium text-foreground">{(selectedInvoice.total - (selectedInvoice.amountPaid || 0)).toFixed(2)}</span>
-              </div>
-            </div>
             <form onSubmit={handlePaymentSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-foreground mb-1">Amount Received</label>

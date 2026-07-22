@@ -6,6 +6,7 @@ import { slugify } from '@/utils/slugify'
 
 export async function getProducts() {
   return await prisma.product.findMany({
+    where: { isHidden: false },
     orderBy: { createdAt: 'desc' },
     include: {
       invoiceItems: {
