@@ -6,11 +6,13 @@ export default function Sidebar() {
     { name: 'Clients', href: '/clients' },
     { name: 'Projects', href: '/projects' },
     { name: 'Products', href: '/products' },
+    { name: 'Quotations', href: '/quotations' },
     { name: 'Estimates', href: '/estimates' },
     { name: 'Invoices', href: '/invoices' },
     { name: 'Expenses', href: '/expenses' },
     { name: 'Transfers', href: '/transfers' },
     { name: 'Reports', href: '/reports' },
+    { name: 'Export', href: '/export' },
     { name: 'Settings', href: '/settings' },
   ]
 
