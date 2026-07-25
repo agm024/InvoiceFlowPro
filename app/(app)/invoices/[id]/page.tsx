@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import InvoiceActionsDropdown from './InvoiceActionsDropdown'
-import StatusBadge from './StatusBadge'
+import StatusBadge from '@/components/StatusBadge'
 
 export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -29,7 +29,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
           </Link>
           <div className="flex items-center gap-4">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">{invoice.invoiceNumber}</h1>
-            <StatusBadge status={invoice.status} invoiceId={invoice.id} />
+            <StatusBadge status={invoice.status} />
           </div>
         </div>
         

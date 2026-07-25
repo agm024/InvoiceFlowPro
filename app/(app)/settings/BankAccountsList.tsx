@@ -2,12 +2,15 @@
 
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { createBank, deleteBank } from './actions'
-import { Plus, Trash2, Loader2, Building2 } from 'lucide-react'
+import { createBank, deleteBank, createInternalTransfer, deleteInternalTransfer } from './actions'
+import { Plus, Trash2, Loader2, Building2, ArrowRightLeft } from 'lucide-react'
+import { format } from 'date-fns'
 
-export default function BankAccountsList({ initialBanks }: { initialBanks: any[] }) {
+export default function BankAccountsList({ initialBanks, initialTransfers = [] }: { initialBanks: any[], initialTransfers?: any[] }) {
   const [isAdding, setIsAdding] = useState(false)
+  const [isTransferring, setIsTransferring] = useState(false)
   const [banks, setBanks] = useState(initialBanks)
+  const [transfers, setTransfers] = useState(initialTransfers)
   const [bankRegion, setBankRegion] = useState('DOMESTIC')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,6 +60,9 @@ export default function BankAccountsList({ initialBanks }: { initialBanks: any[]
                     {bank.routingNumber && <span> Routing: {bank.routingNumber}</span>}
                     {bank.iban && <span> IBAN: {bank.iban}</span>}
                   </p>
+                  <div className="mt-3 inline-block px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-sm font-semibold rounded-md border border-green-200 dark:border-green-800/50">
+                    Balance: ₹{(bank.currentBalance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
                 </div>
               </div>
               <button 
@@ -143,6 +149,102 @@ export default function BankAccountsList({ initialBanks }: { initialBanks: any[]
           </button>
         </div>
       </form>
+
+      {/* Internal Transfers Section */}
+      <div className="mt-12">
+        <h2 className="text-xl font-semibold text-foreground mb-1">Internal Fund Transfers</h2>
+        <p className="text-sm text-zinc-500 mb-6">Record keeping for moving funds between your accounts (not taxable).</p>
+        
+        <form 
+          onSubmit={async (e) => {
+            e.preventDefault()
+            setIsTransferring(true)
+            const res = await createInternalTransfer(new FormData(e.currentTarget))
+            if (res.success) {
+              toast.success('Transfer logged successfully')
+              window.location.reload()
+            } else {
+              toast.error(res.error || 'Transfer failed')
+              setIsTransferring(false)
+            }
+          }}
+          className="p-6 bg-sidebar-bg border border-card-border rounded-xl space-y-4 mb-8"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+            <div>
+              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">From Bank</label>
+              <select name="fromBankId" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border">
+                <option value="">Select source...</option>
+                {banks.map(b => <option key={b.id} value={b.id}>{b.bankName}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">To Bank</label>
+              <select name="toBankId" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border">
+                <option value="">Select destination...</option>
+                {banks.map(b => <option key={b.id} value={b.id}>{b.bankName}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Amount</label>
+              <input type="number" step="0.01" name="amount" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border" placeholder="0.00" />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Date</label>
+              <input type="date" name="date" required defaultValue={format(new Date(), 'yyyy-MM-dd')} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border" />
+            </div>
+            <div>
+              <button disabled={isTransferring} type="submit" className="w-full bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2">
+                <ArrowRightLeft size={16} /> Transfer
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div className="bg-card-bg border border-card-border rounded-xl shadow-sm overflow-hidden">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-zinc-50 dark:bg-sidebar-bg text-zinc-500 text-xs font-semibold tracking-wider">
+              <tr>
+                <th className="px-6 py-4 border-y border-card-border">Date</th>
+                <th className="px-6 py-4 border-y border-card-border">From</th>
+                <th className="px-6 py-4 border-y border-card-border">To</th>
+                <th className="px-6 py-4 border-y border-card-border">Amount</th>
+                <th className="px-6 py-4 border-y border-card-border text-right"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-100 dark:divide-sidebar-border text-sm">
+              {transfers.map(tr => (
+                <tr key={tr.id} className="hover:bg-zinc-50/50 dark:hover:bg-sidebar-bg/50">
+                  <td className="px-6 py-4 whitespace-nowrap">{format(new Date(tr.date), 'dd MMM yyyy')}</td>
+                  <td className="px-6 py-4 whitespace-nowrap font-medium text-red-600 dark:text-red-400">{tr.fromBank.bankName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap font-medium text-emerald-600 dark:text-emerald-400">{tr.toBank.bankName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap font-bold">₹{tr.amount.toFixed(2)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <button 
+                      onClick={async () => {
+                        if(confirm('Delete this transfer record?')) {
+                          const res = await deleteInternalTransfer(tr.id)
+                          if (res.success) setTransfers(transfers.filter(t => t.id !== tr.id))
+                        }
+                      }} 
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {transfers.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-zinc-500">
+                    No internal transfers recorded.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   )
 }

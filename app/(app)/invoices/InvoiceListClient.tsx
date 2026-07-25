@@ -6,6 +6,7 @@ import { format, isToday, isYesterday, isThisWeek, isThisMonth, isThisYear, subD
 import { Search, Plus, PlayCircle, Settings, SlidersHorizontal, ChevronDown, Eye, Send, MoreHorizontal, Copy, Check, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { deleteInvoice } from './actions'
+import StatusBadge from '@/components/StatusBadge'
 
 type Invoice = any // using any for simplicity, usually from prisma type
 type TabType = 'All' | 'Pending' | 'Paid' | 'Cancelled' | 'Drafts'
@@ -47,9 +48,10 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
   }
 
   const handleCopyLink = (invoice: Invoice) => {
-    const url = `${window.location.origin}/pay/${encodeURIComponent(invoice.invoiceNumber)}`
+    const url = `${window.location.origin}/pay/${invoice.id}`
     navigator.clipboard.writeText(url)
     setCopiedId(invoice.id)
+    toast.success('Payment link copied!')
     setTimeout(() => setCopiedId(null), 2000)
   }
 
@@ -324,36 +326,10 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
 
                   {/* Status Badge & Automatic Aging */}
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {invoice.status === 'paid' ? (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
-                        PAID
-                      </span>
+                    {invoice.status === 'sent' && invoice.dueDate && new Date(invoice.dueDate) < new Date() ? (
+                      <StatusBadge status="overdue" />
                     ) : (
-                      // Intelligent Automatic Aging Check
-                      (() => {
-                        if (invoice.status === 'sent' && invoice.dueDate && new Date(invoice.dueDate) < new Date()) {
-                          const daysLate = Math.floor((new Date().getTime() - new Date(invoice.dueDate).getTime()) / (1000 * 3600 * 24))
-                          return (
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-red-100 text-red-700 border border-red-200 shadow-sm animate-pulse">
-                              OVERDUE - {daysLate} DAYS LATE
-                            </span>
-                          )
-                        }
-                        
-                        return invoice.status === 'sent' ? (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
-                            PENDING
-                          </span>
-                        ) : invoice.status === 'draft' ? (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-zinc-100 text-zinc-700 border border-zinc-200">
-                            DRAFT
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-700 border border-red-200 uppercase">
-                            {invoice.status}
-                          </span>
-                        )
-                      })()
+                      <StatusBadge status={invoice.status} />
                     )}
                   </td>
 
@@ -400,14 +376,15 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
                       </Link>
                       
                       {/* WhatsApp Share Macro */}
-                      <a 
-                        href={`https://wa.me/?text=Hi%20${encodeURIComponent(invoice.client.name.split(' ')[0])}%2C%20the%20invoice%20for%20your%20project%20is%20ready%20for%20review.%20You%20can%20check%20the%20complete%20ledger%20and%20download%20the%20details%20here%3A%20${encodeURIComponent(window.location.origin + '/pay/' + invoice.invoiceNumber)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button 
+                        onClick={() => {
+                          const url = `https://wa.me/?text=Hi%20${encodeURIComponent(invoice.client.name.split(' ')[0])}%2C%20the%20invoice%20for%20your%20project%20is%20ready%20for%20review.%20You%20can%20check%20the%20complete%20ledger%20and%20download%20the%20details%20here%3A%20${encodeURIComponent((typeof window !== 'undefined' ? window.location.origin : '') + '/pay/' + invoice.id)}`
+                          window.open(url, '_blank', 'noopener,noreferrer')
+                        }}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 rounded-lg text-xs font-medium transition-colors"
                       >
                         <Send size={14} /> WhatsApp
-                      </a>
+                      </button>
                       
                       {/* Simplified More Options for this UI */}
                       <div className="relative group/dropdown">

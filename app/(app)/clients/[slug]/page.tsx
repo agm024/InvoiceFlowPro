@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { getStateNameByCode } from '@/utils/stateCodes'
-import StatusBadge from '../../invoices/[id]/StatusBadge'
+import StatusBadge from '@/components/StatusBadge'
 import DeleteProjectButton from '../../projects/DeleteProjectButton'
 
 export default async function ClientDetailPage({ params }: { params: Promise<{ slug: string }> }) {

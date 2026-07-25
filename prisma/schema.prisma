@@ -30,8 +30,10 @@ model Client {
   panNo     String?
   stateCode String?
   stateName String?
+  portalToken String?   @unique
   invoices  Invoice[]
   projects  Project[]
+  estimates Estimate[]
 }
 
 model Product {
@@ -50,6 +52,7 @@ model Product {
   taxInclusive Boolean       @default(false)
   isHidden     Boolean       @default(false)
   invoiceItems InvoiceItem[]
+  estimateItems EstimateItem[]
 }
 
 model CompanySettings {
@@ -93,6 +96,7 @@ model Bank {
   invoices      Invoice[]
   transfersOut  InternalTransfer[] @relation("TransferFrom")
   transfersIn   InternalTransfer[] @relation("TransferTo")
+  expenses      Expense[]
 }
 
 model Invoice {
@@ -118,6 +122,8 @@ model Invoice {
   paymentMethod String        @default("UPI")
   reference     String?
   amountPaid    Float         @default(0)
+  razorpayOrderId String?
+  paymentId     String?
   bank          Bank?         @relation(fields: [bankId], references: [id])
   client        Client        @relation(fields: [clientId], references: [id])
   items         InvoiceItem[]
@@ -142,11 +148,15 @@ model Expense {
   category    String   @default("SOFTWARE") // SOFTWARE, HARDWARE, RENT, GST_PAYMENT, OTHER
   description String?
   totalAmount Float
+  subTotal    Float    @default(0)
+  taxRate     Float    @default(0)
   taxAmount   Float    @default(0)
   isRcm       Boolean  @default(false)       // Reverse Charge Mechanism
   itcEligible Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  bankId      String?
+  bank        Bank?    @relation(fields: [bankId], references: [id])
 }
 
 model Project {
@@ -155,26 +165,42 @@ model Project {
   totalValue   Float
   currency     String      @default("INR")
   status       String      @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
+  stage        String      @default("PLANNING") // PLANNING, DESIGN, DEVELOPMENT, TESTING, REVIEW, CLOSED
   clientId     String
   client       Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
   milestones   Milestone[]
+  tasks        ProjectTask[]
+  contractApprovedAt DateTime?
+  projectClosedAt    DateTime?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 }
 
 model Milestone {
-  id           String      @id @default(cuid())
-  name         String
-  percentage   Float?
-  amount       Float
-  status       String      @default("UNBILLED") // UNBILLED, BILLED, PAID
-  projectId    String
-  project      Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  invoiceId    String?     @unique
-  invoice      Invoice?    @relation(fields: [invoiceId], references: [id])
-  orderIndex   Int         @default(0)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id               String      @id @default(cuid())
+  name             String
+  percentage       Float?
+  amount           Float
+  status           String      @default("UNBILLED") // UNBILLED, BILLED, PAID
+  clientApprovedAt DateTime?
+  projectId        String
+  project          Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  invoiceId        String?     @unique
+  invoice          Invoice?    @relation(fields: [invoiceId], references: [id])
+  orderIndex       Int         @default(0)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model ProjectTask {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  status      String      @default("TODO") // TODO, IN_PROGRESS, DONE
+  projectId   String
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model InternalTransfer {
@@ -189,4 +215,38 @@ model InternalTransfer {
   toBank        Bank     @relation("TransferTo", fields: [toBankId], references: [id])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model Estimate {
+  id            String        @id @default(cuid())
+  estimateNumber String       @unique
+  date          DateTime      @default(now())
+  expiryDate    DateTime?
+  status        String        @default("draft") // draft, sent, accepted, rejected, invoiced
+  subTotal      Float         @default(0)
+  taxTotal      Float         @default(0)
+  total         Float         @default(0)
+  notes         String?
+  clientId      String
+  client        Client        @relation(fields: [clientId], references: [id])
+  currency      String        @default("INR")
+  discountType  String?
+  discountValue Float         @default(0)
+  estimateType  String        @default("REGULAR")
+  roundOff      Float         @default(0)
+  exchangeRate  Float         @default(1.0)
+  items         EstimateItem[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model EstimateItem {
+  id         String   @id @default(cuid())
+  quantity   Int      @default(1)
+  price      Float
+  tax        Float
+  estimateId String
+  productId  String
+  estimate   Estimate @relation(fields: [estimateId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id])
 }

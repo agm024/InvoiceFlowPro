@@ -57,8 +57,29 @@ export async function updateCompanySettings(formData: FormData) {
 }
 
 export async function getBanks() {
-  return await prisma.bank.findMany({
-    orderBy: { createdAt: 'asc' }
+  const banks = await prisma.bank.findMany({
+    orderBy: { createdAt: 'asc' },
+    include: {
+      invoices: true,
+      expenses: true,
+      transfersOut: true,
+      transfersIn: true
+    }
+  })
+
+  return banks.map(bank => {
+    const totalIn = bank.invoices
+      .filter(i => i.status === 'paid')
+      .reduce((sum, i) => sum + (i.total * (i.exchangeRate || 1)), 0) 
+      + bank.transfersIn.reduce((sum, t) => sum + t.amount, 0)
+    
+    const totalOut = bank.expenses.reduce((sum, e) => sum + e.totalAmount, 0) 
+      + bank.transfersOut.reduce((sum, t) => sum + t.amount, 0)
+    
+    return {
+      ...bank,
+      currentBalance: totalIn - totalOut
+    }
   })
 }
 
@@ -132,5 +153,87 @@ export async function deleteExchangeRate(id: string) {
   } catch (error) {
     console.error('Failed to delete exchange rate:', error)
     return { error: 'Failed to delete exchange rate' }
+  }
+}
+
+export async function fetchLiveExchangeRate(currency: string) {
+  try {
+    const response = await fetch(`https://api.frankfurter.dev/v1/latest?base=${currency.toUpperCase()}&symbols=INR`, { cache: 'no-store' })
+    if (!response.ok) throw new Error('Failed to fetch from Frankfurter')
+    const data = await response.json()
+    if (data.rates && data.rates.INR) {
+      return { success: true, rate: data.rates.INR }
+    }
+    return { error: 'Rate not found' }
+  } catch (error) {
+    console.error('Fetch live rate error:', error)
+    return { error: 'Failed to fetch live rate' }
+  }
+}
+
+export async function syncAllExchangeRates() {
+  try {
+    const rates = await prisma.exchangeRate.findMany()
+    let updatedCount = 0
+    for (const r of rates) {
+      const res = await fetchLiveExchangeRate(r.currency)
+      if (res.success && res.rate && res.rate !== r.rate) {
+        await prisma.exchangeRate.update({ where: { id: r.id }, data: { rate: res.rate } })
+        updatedCount++
+      }
+    }
+    if (updatedCount > 0) revalidatePath('/settings')
+    return { success: true, updatedCount }
+  } catch (error) {
+    console.error('Failed to sync all rates:', error)
+    return { error: 'Failed to sync all rates' }
+  }
+}
+
+export async function getInternalTransfers() {
+  return await prisma.internalTransfer.findMany({
+    orderBy: { date: 'desc' },
+    include: { fromBank: true, toBank: true }
+  })
+}
+
+export async function createInternalTransfer(formData: FormData) {
+  const fromBankId = formData.get('fromBankId') as string
+  const toBankId = formData.get('toBankId') as string
+  const amount = parseFloat(formData.get('amount') as string)
+  const reference = formData.get('reference') as string
+  const notes = formData.get('notes') as string
+  const dateStr = formData.get('date') as string
+
+  if (!fromBankId || !toBankId || isNaN(amount) || amount <= 0) return { error: 'Invalid data' }
+  if (fromBankId === toBankId) return { error: 'Cannot transfer to the same bank' }
+
+  try {
+    await prisma.internalTransfer.create({
+      data: {
+        fromBankId,
+        toBankId,
+        amount,
+        reference,
+        notes,
+        date: dateStr ? new Date(dateStr) : new Date()
+      }
+    })
+    revalidatePath('/settings')
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to create transfer:', error)
+    return { error: 'Failed to create transfer' }
+  }
+}
+
+export async function deleteInternalTransfer(id: string) {
+  try {
+    await prisma.internalTransfer.delete({ where: { id } })
+    revalidatePath('/settings')
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to delete transfer:', error)
+    return { error: 'Failed to delete transfer' }
   }
 }

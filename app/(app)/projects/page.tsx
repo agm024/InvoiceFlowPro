@@ -48,7 +48,7 @@ export default async function ProjectsPage() {
                   <tr key={project.id} className="hover:bg-sidebar-bg/50 transition-colors group cursor-pointer">
                     <td className="px-6 py-4">
                       <div className="font-bold text-foreground">
-                        <Link href={`/clients/${project.client.slug}`} className="hover:underline">{project.name}</Link>
+                        <Link href={`/projects/${project.id}`} className="hover:underline text-blue-600">{project.name}</Link>
                       </div>
                       <div className="text-xs text-zinc-500 mt-1">{project.milestones.length} Phases</div>
                     </td>

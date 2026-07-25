@@ -59,7 +59,9 @@ export async function getInvoiceFormData() {
     nextQuotationNumber = `QT-${Math.floor(1000 + Math.random() * 9000)}`
   }
   
-  return { clients, products, banks, exchangeRates, nextInvoiceNumber, nextQuotationNumber }
+  const companySettings = await prisma.companySettings.findFirst()
+
+  return { clients, products, banks, exchangeRates, nextInvoiceNumber, nextQuotationNumber, companySettings }
 }
 
 export async function createInvoice(data: {

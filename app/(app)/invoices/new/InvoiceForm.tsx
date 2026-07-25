@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation'
 import { createInvoice } from '../actions'
 import { createClient } from '../../clients/actions'
 import { createProduct } from '../../products/actions'
-import { Search, Plus, X, Trash2, Edit2, FileText, Banknote } from 'lucide-react'
+import { Search, Plus, X, Trash2, Edit2, FileText, Banknote, Eye } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { format } from 'date-fns'
 
-type Client = { id: string, name: string, email?: string | null, phone?: string | null, gstin?: string | null, panNo?: string | null }
+type Client = { id: string, name: string, email?: string | null, phone?: string | null, gstin?: string | null, panNo?: string | null, address?: string | null }
 type Product = { id: string, name: string, price: number, gstRate: number, hsn?: string | null, taxInclusive?: boolean }
 type Bank = { id: string, bankName: string, accountNumber: string, ifsc?: string | null, swiftCode?: string | null, routingNumber?: string | null, iban?: string | null }
 type ExchangeRate = { id: string, currency: string, rate: number }
@@ -22,7 +23,8 @@ export default function InvoiceForm({
   defaultInvoiceType,
   existingInvoice,
   milestoneId,
-  adHocMilestoneDetails
+  adHocMilestoneDetails,
+  companySettings
 }: { 
   clients: Client[], 
   products: Product[],
@@ -32,7 +34,8 @@ export default function InvoiceForm({
   defaultInvoiceType?: string,
   existingInvoice?: any,
   milestoneId?: string,
-  adHocMilestoneDetails?: any
+  adHocMilestoneDetails?: any,
+  companySettings?: any
 }) {
   const router = useRouter()
   
@@ -47,23 +50,57 @@ export default function InvoiceForm({
   const [dueDate, setDueDate] = useState(existingInvoice?.dueDate ? new Date(existingInvoice.dueDate).toISOString().split('T')[0] : '')
   const [reference, setReference] = useState(existingInvoice?.reference || '')
   
+  const [showPreviewModal, setShowPreviewModal] = useState(false)
+  const [showDesktopPreview, setShowDesktopPreview] = useState(true)
+  
   const [notes, setNotes] = useState(existingInvoice?.notes || '')
   const [invoiceType, setInvoiceType] = useState(existingInvoice?.invoiceType || defaultInvoiceType || 'REGULAR') // REGULAR, EXPORT, QUOTATION
   const [currency, setCurrency] = useState(existingInvoice?.currency || adHocMilestoneDetails?.currency || 'INR')
   const [exchangeRate, setExchangeRate] = useState(existingInvoice?.exchangeRate || 1.0)
+  const [isFetchingRate, setIsFetchingRate] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState(existingInvoice?.paymentMethod || 'UPI')
   const [bankId, setBankId] = useState(existingInvoice?.bankId || '')
+
+  useEffect(() => {
+    async function fetchRate() {
+      if (invoiceType === 'EXPORT' && currency !== 'INR') {
+        setIsFetchingRate(true)
+        try {
+          const res = await fetch(`https://api.frankfurter.dev/v1/latest?base=${currency}&symbols=INR`)
+          if (res.ok) {
+            const data = await res.json()
+            if (data.rates && data.rates.INR) {
+              setExchangeRate(data.rates.INR)
+              toast.success(`Exchange rate updated: 1 ${currency} = ₹${data.rates.INR}`)
+            }
+          }
+        } catch (error) {
+          console.error("Failed to fetch exchange rate:", error)
+          toast.error("Failed to fetch live exchange rate")
+        } finally {
+          setIsFetchingRate(false)
+        }
+      } else {
+        setExchangeRate(1.0)
+      }
+    }
+    
+    // Only fetch if it's a new invoice (no existing exchange rate) or currency changed
+    if (!existingInvoice) {
+      fetchRate()
+    }
+  }, [currency, invoiceType, existingInvoice])
   
   const [discountType, setDiscountType] = useState(existingInvoice?.discountType || 'FLAT')
   const [discountValue, setDiscountValue] = useState(existingInvoice?.discountValue || 0)
   
   const [items, setItems] = useState<Array<{ productId: string, quantity: number, price: number | '', name: string }>>(
-    existingInvoice?.items?.map((item: any) => ({
+    existingInvoice?.items ? existingInvoice.items.map((item: any) => ({
       productId: item.productId,
       quantity: item.quantity,
       price: item.price,
       name: item.product.name
-    })) || adHocMilestoneDetails ? [{
+    })) : adHocMilestoneDetails ? [{
       productId: adHocMilestoneDetails.productId,
       quantity: 1,
       price: adHocMilestoneDetails.price,
@@ -127,8 +164,6 @@ export default function InvoiceForm({
     const formData = new FormData(e.currentTarget)
 
     if (editingProduct?.id) {
-      // If we are editing, we assume there's an updateProduct action (which doesn't exist yet, but let's mock the UI update)
-      // We will just create a new product for now since updateProduct action might not be fully featured in actions.ts yet
       toast.error('Product editing requires updateProduct action to be fully implemented in actions.ts. We will add it as new for now.');
       formData.append('gstRate', '18')
       const res = await createProduct(formData)
@@ -148,7 +183,6 @@ export default function InvoiceForm({
 
   const handleSelectProduct = (product: Product) => {
     let finalPrice = product.price;
-    // Export pricing logic: Divide INR base price by exchange rate
     if (invoiceType === 'EXPORT' && currency !== 'INR' && exchangeRate > 0) {
       finalPrice = Number((product.price / exchangeRate).toFixed(2));
     }
@@ -172,7 +206,6 @@ export default function InvoiceForm({
     return items.map(item => {
       let product = products.find(p => p.id === item.productId)
       
-      // Support ad-hoc hidden products injected via milestones
       if (!product && adHocMilestoneDetails && adHocMilestoneDetails.productId === item.productId) {
         product = {
           id: adHocMilestoneDetails.productId,
@@ -287,11 +320,13 @@ export default function InvoiceForm({
     }
   }
 
+  const selectedClientData = clients.find(c => c.id === clientId)
+
   return (
-    <div className="relative font-sans text-sm">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 text-foreground">
+    <div className="relative font-sans text-sm flex flex-col 2xl:flex-row gap-8 items-start w-full">
+      
+      <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-6 text-foreground w-full 2xl:max-w-4xl pb-12">
         
-        {/* Top Bar: Type, Currency */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-card-bg p-4 rounded-xl border border-card-border shadow-sm gap-4">
           <div className="flex items-center gap-4 w-full md:w-auto">
             <span className="font-medium text-zinc-500 uppercase tracking-wider text-xs w-20 md:w-auto">Type</span>
@@ -330,22 +365,29 @@ export default function InvoiceForm({
                 <option value="AUD">AUD</option>
               </select>
               {currency !== 'INR' && (
-                <div className="flex items-center gap-2 bg-sidebar-bg px-2 rounded-md border border-sidebar-border">
-                  <span className="text-zinc-500 text-xs">Rate:</span>
+                <div className="flex items-center gap-2 border border-card-border bg-sidebar-bg rounded-md px-3 relative">
+                  <span className="text-zinc-500 text-xs">1 {currency} = ₹</span>
                   <input 
-                    type="number" step="0.01" value={exchangeRate}
+                    type="number" 
+                    step="0.01"
+                    value={exchangeRate} 
                     onChange={e => setExchangeRate(parseFloat(e.target.value) || 1)}
-                    className="w-16 bg-transparent focus:outline-none text-right text-xs py-1.5"
+                    className="w-16 bg-transparent focus:outline-none text-right text-xs py-1.5 font-medium"
+                    disabled={isFetchingRate}
                   />
+                  {isFetchingRate && (
+                    <div className="absolute right-2 flex items-center justify-center">
+                      <div className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Customer & Dates Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 bg-card-bg p-6 rounded-xl border border-card-border shadow-sm">
-          <div className="lg:col-span-5 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 gap-4 bg-card-bg p-6 rounded-xl border border-card-border shadow-sm">
+          <div className="sm:col-span-2 xl:col-span-4 relative">
             <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Select Customer</label>
             <div className="relative">
               <Search className="absolute left-3 top-2.5 text-zinc-400" size={16} />
@@ -359,11 +401,11 @@ export default function InvoiceForm({
                   if (!e.target.value) setClientId('')
                 }}
                 onFocus={() => setShowClientDropdown(true)}
-                className="w-full rounded-md pl-9 pr-24 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 font-medium text-foreground"
+                className={`w-full rounded-md pl-9 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 font-medium text-foreground truncate ${!clientId ? 'pr-32' : 'pr-4'}`}
               />
               {!clientId && (
-                <button type="button" onClick={() => setIsAddingClient(true)} className="absolute right-2 top-1.5 text-blue-500 hover:bg-blue-50 px-2 py-1 rounded text-xs font-medium transition-colors">
-                  + Create Customer
+                <button type="button" onClick={() => setIsAddingClient(true)} className="absolute right-2 top-1.5 text-blue-500 hover:bg-blue-50 px-2 py-1 rounded text-xs font-medium transition-colors whitespace-nowrap">
+                  + Customer
                 </button>
               )}
             </div>
@@ -385,12 +427,11 @@ export default function InvoiceForm({
                   </div>
                 ))}
                 {filteredClients.length === 0 && (
-                  <div className="px-4 py-3 text-sm text-zinc-500">No customers found. Click + Create Customer.</div>
+                  <div className="px-4 py-3 text-sm text-zinc-500">No customers found. Click + Customer.</div>
                 )}
               </div>
             )}
             
-            {/* Quick Add Client Inline Modal */}
             {isAddingClient && (
               <div className="quick-client-container absolute z-30 w-full mt-1 bg-card-bg border border-card-border rounded-xl shadow-xl p-4">
                 <div className="flex justify-between items-center mb-4">
@@ -412,30 +453,29 @@ export default function InvoiceForm({
             )}
           </div>
           
-          <div className="lg:col-span-2">
+          <div className="xl:col-span-2">
             <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Invoice No.</label>
             <input 
-              value={invoiceNumber} onChange={e => setInvoiceNumber(e.target.value)} required 
-              className="w-full rounded-md px-3 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none" 
+              value={invoiceNumber || ""} onChange={e => setInvoiceNumber(e.target.value)} required 
+              className="w-full rounded-md px-3 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none truncate" 
             />
           </div>
-          <div className="lg:col-span-2">
+          <div className="xl:col-span-3">
             <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Invoice Date</label>
             <input 
               type="date" value={date} onChange={e => setDate(e.target.value)} required 
               className="w-full rounded-md px-3 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none text-zinc-700 dark:text-zinc-300" 
             />
           </div>
-          <div className="lg:col-span-3">
+          <div className="xl:col-span-3">
             <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Reference</label>
             <input 
-              value={reference} onChange={e => setReference(e.target.value)} placeholder="e.g. PO Number..."
-              className="w-full rounded-md px-3 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none" 
+              value={reference || ""} onChange={e => setReference(e.target.value)} placeholder="e.g. PO Number"
+              className="w-full rounded-md px-3 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none truncate" 
             />
           </div>
         </div>
 
-        {/* Products Section */}
         <div className="bg-card-bg rounded-xl border border-card-border shadow-sm overflow-hidden">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border-b border-card-border bg-sidebar-bg/50 gap-3">
             <h3 className="font-semibold text-foreground flex items-center gap-2"><FileText size={16} className="text-zinc-400" /> Products & Services</h3>
@@ -479,14 +519,14 @@ export default function InvoiceForm({
                       </td>
                       <td className="px-6 py-4">
                         <input 
-                          type="number" min="1" value={item.quantity} 
+                          type="number" min="1" value={item.quantity || ""} 
                           onChange={e => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
                           className="w-full bg-transparent border-b border-transparent hover:border-sidebar-border focus:border-blue-500 focus:outline-none px-1 py-1"
                         />
                       </td>
                       <td className="px-6 py-4">
                         <input 
-                          type="number" step="0.01" value={item.price} 
+                          type="number" step="0.01" value={item.price || ""} 
                           onChange={e => updateItem(index, 'price', e.target.value === '' ? '' : parseFloat(e.target.value))}
                           className="w-full bg-transparent border-b border-transparent hover:border-sidebar-border focus:border-blue-500 focus:outline-none px-1 py-1"
                         />
@@ -512,7 +552,6 @@ export default function InvoiceForm({
           )}
         </div>
 
-        {/* Bottom Section: Notes & Summary */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-2 items-start">
           
           <div className="lg:col-span-7 flex flex-col gap-6">
@@ -522,7 +561,7 @@ export default function InvoiceForm({
               </div>
               <div className="p-5">
                 <textarea 
-                  value={notes} onChange={e => setNotes(e.target.value)} rows={3} 
+                  value={notes || ""} onChange={e => setNotes(e.target.value)} rows={3} 
                   placeholder="Enter your notes, say thanks, or anything else..."
                   className="w-full bg-transparent resize-none focus:outline-none text-foreground placeholder:text-zinc-400"
                 />
@@ -555,22 +594,20 @@ export default function InvoiceForm({
           
           <div className="lg:col-span-5 bg-zinc-50 dark:bg-sidebar-bg/30 border border-card-border rounded-xl p-6 shadow-sm">
             
-            <div className="flex justify-end items-center mb-6 border-b border-card-border pb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-zinc-500 text-xs uppercase tracking-wider">Extra Discount</span>
-                <div className="flex bg-white dark:bg-card-bg border border-card-border rounded-md overflow-hidden">
-                  <select 
-                    value={discountType} onChange={e => setDiscountType(e.target.value)}
-                    className="bg-transparent border-r border-card-border px-2 py-1 focus:outline-none text-sm text-zinc-500 font-medium"
-                  >
-                    <option value="FLAT">{currency}</option>
-                    <option value="PERCENTAGE">%</option>
-                  </select>
-                  <input 
-                    type="number" step="0.01" value={discountValue} onChange={e => setDiscountValue(parseFloat(e.target.value) || 0)}
-                    className="w-20 text-right bg-transparent px-2 py-1 font-medium focus:outline-none text-sm"
-                  />
-                </div>
+            <div className="flex justify-between items-center mb-6 border-b border-card-border pb-4 gap-4">
+              <span className="text-zinc-500 text-xs uppercase tracking-wider flex-shrink-0">Extra Discount</span>
+              <div className="flex bg-white dark:bg-card-bg border border-card-border rounded-md overflow-hidden max-w-[160px]">
+                <select 
+                  value={discountType} onChange={e => setDiscountType(e.target.value)}
+                  className="bg-transparent border-r border-card-border px-2 py-1.5 focus:outline-none text-sm text-zinc-600 font-medium cursor-pointer flex-shrink-0"
+                >
+                  <option value="FLAT">{currency}</option>
+                  <option value="PERCENTAGE">%</option>
+                </select>
+                <input 
+                  type="number" step="0.01" value={discountValue} onChange={e => setDiscountValue(parseFloat(e.target.value) || 0)}
+                  className="w-full text-right bg-transparent px-3 py-1.5 font-medium focus:outline-none text-sm min-w-0"
+                />
               </div>
             </div>
 
@@ -607,13 +644,22 @@ export default function InvoiceForm({
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col-reverse sm:flex-row justify-end pt-4 gap-3 sm:gap-4 sticky bottom-0 bg-background/90 backdrop-blur py-4 border-t border-card-border z-10 -mx-4 px-4 sm:-mx-8 sm:px-8 mt-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
-          <button type="button" onClick={() => router.back()} className="text-foreground px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-sidebar-bg transition-colors w-full sm:w-auto border border-zinc-200 sm:border-none">
+        <div className="mt-8 flex flex-wrap gap-4 pt-6 border-t border-zinc-200 dark:border-card-border pb-24">
+          <button type="button" onClick={() => router.back()} className="px-6 py-3 sm:py-2.5 font-medium text-zinc-600 hover:bg-zinc-100 rounded-lg transition-colors border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-card-bg w-full sm:w-auto">
             Cancel
           </button>
           
-          <button type="submit" onClick={() => setSubmitAction('draft')} className="bg-sidebar-bg text-foreground border border-sidebar-border shadow-sm px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors w-full sm:w-auto">
+          <button type="button" onClick={() => {
+            if (window.innerWidth >= 1536) {
+              setShowDesktopPreview(true)
+            } else {
+              setShowPreviewModal(true)
+            }
+          }} className={`${showDesktopPreview ? '2xl:hidden' : ''} bg-blue-50 text-blue-700 shadow-sm px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-blue-100 transition-colors w-full sm:w-auto border border-blue-200 flex items-center justify-center gap-2`}>
+            <Eye size={18} /> Preview
+          </button>
+          
+          <button type="submit" onClick={() => setSubmitAction('draft')} className="bg-zinc-100 dark:bg-sidebar-bg text-foreground border border-zinc-200 dark:border-sidebar-border shadow-sm px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors w-full sm:w-auto">
             Save as Draft
           </button>
           
@@ -631,7 +677,140 @@ export default function InvoiceForm({
         </div>
       </form>
 
-      {/* Product Selection Modal */}
+      {(() => {
+        const previewContent = (
+          <div className="bg-white border border-zinc-200 shadow-xl rounded-lg overflow-hidden h-[750px]">
+            <div className="origin-top-left w-[800px] p-10 bg-white" style={{ transform: 'scale(0.75)' }}>
+            
+            <div className="border-b-2 border-zinc-900 pb-8 mb-8 flex justify-between items-end">
+              <div>
+                <h1 className="text-5xl font-black text-zinc-900 tracking-tight uppercase">INVOICE</h1>
+                <p className="text-zinc-500 mt-2 font-medium">#{invoiceNumber || 'INV-0000'}</p>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-zinc-900">{companySettings?.companyName || 'Your Company'}</div>
+                <div className="text-zinc-500 mt-1">{companySettings?.email || 'contact@yourcompany.com'}</div>
+              </div>
+            </div>
+
+            <div className="flex justify-between mb-12">
+              <div>
+                <p className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">Billed To</p>
+                <h3 className="text-xl font-bold text-zinc-900">{selectedClientData?.name || 'Client Name'}</h3>
+                {selectedClientData?.address && <p className="text-zinc-600 whitespace-pre-wrap mt-1 max-w-xs">{selectedClientData.address}</p>}
+                {selectedClientData?.gstin && <p className="text-zinc-600 mt-1">GSTIN: {selectedClientData.gstin}</p>}
+              </div>
+              <div className="text-right flex flex-col gap-4">
+                <div>
+                  <p className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1">Invoice Date</p>
+                  <p className="text-lg font-medium text-zinc-900">{date ? format(new Date(date), 'dd MMM yyyy') : '-'}</p>
+                </div>
+                {dueDate && (
+                  <div>
+                    <p className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1">Due Date</p>
+                    <p className="text-lg font-medium text-zinc-900">{format(new Date(dueDate), 'dd MMM yyyy')}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <table className="w-full text-left mb-8 border-collapse">
+              <thead>
+                <tr className="border-b-2 border-zinc-900 text-sm uppercase tracking-wider text-zinc-900 font-bold">
+                  <th className="py-3 pr-4">Description</th>
+                  <th className="py-3 px-4 text-center">Qty</th>
+                  <th className="py-3 px-4 text-right">Price</th>
+                  <th className="py-3 pl-4 text-right">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {calculatedItems.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-zinc-400 italic">No items added yet</td>
+                  </tr>
+                ) : (
+                  calculatedItems.map((item, idx) => (
+                    <tr key={idx} className="border-b border-zinc-200">
+                      <td className="py-4 pr-4 font-medium text-zinc-900">{item.name || '-'}</td>
+                      <td className="py-4 px-4 text-center text-zinc-600">{item.quantity}</td>
+                      <td className="py-4 px-4 text-right text-zinc-600">{currency} {item.price.toFixed(2)}</td>
+                      <td className="py-4 pl-4 text-right font-medium text-zinc-900">{currency} {item.totalWithoutTax.toFixed(2)}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+
+            <div className="flex justify-end">
+              <div className="w-1/2">
+                <div className="flex justify-between py-2 text-zinc-600 border-b border-zinc-100">
+                  <span>Subtotal</span>
+                  <span>{currency} {subTotal.toFixed(2)}</span>
+                </div>
+                {taxTotal > 0 && (
+                  <div className="flex justify-between py-2 text-zinc-600 border-b border-zinc-100">
+                    <span>Tax</span>
+                    <span>{currency} {taxTotal.toFixed(2)}</span>
+                  </div>
+                )}
+                {discountAmount > 0 && (
+                  <div className="flex justify-between py-2 text-green-600 border-b border-zinc-100">
+                    <span>Discount</span>
+                    <span>-{currency} {discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between py-4 text-2xl font-black text-zinc-900 mt-2 border-t-2 border-zinc-900">
+                  <span>Total</span>
+                  <span>{currency} {finalTotal.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            {notes && (
+              <div className="mt-12 pt-8 border-t border-zinc-200">
+                <p className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">Notes</p>
+                <p className="text-zinc-600 whitespace-pre-wrap">{notes}</p>
+              </div>
+            )}
+            </div>
+          </div>
+        )
+
+        return (
+          <>
+            {showDesktopPreview && (
+              <div className="hidden 2xl:flex w-[600px] sticky top-8 flex-shrink-0 flex-col gap-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="font-bold text-foreground">Live Preview</h3>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-zinc-400 bg-sidebar-bg px-2 py-1 rounded">Updates automatically</span>
+                    <button type="button" onClick={() => setShowDesktopPreview(false)} className="text-zinc-400 hover:text-foreground p-1 rounded transition-colors"><X size={16} /></button>
+                  </div>
+                </div>
+                {previewContent}
+              </div>
+            )}
+
+            {showPreviewModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 2xl:hidden">
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPreviewModal(false)}></div>
+                <div className="bg-card-bg border border-card-border rounded-2xl shadow-2xl w-full max-w-[650px] relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
+                  <div className="px-6 py-4 border-b border-card-border flex justify-between items-center bg-sidebar-bg/50">
+                    <h2 className="text-lg font-semibold text-foreground">Invoice Preview</h2>
+                    <button onClick={() => setShowPreviewModal(false)} className="text-zinc-400 hover:text-foreground bg-sidebar-border hover:bg-zinc-200 dark:hover:bg-zinc-700 p-1.5 rounded-md transition-colors"><X size={18} /></button>
+                  </div>
+                  <div className="p-6 overflow-y-auto bg-zinc-50 flex flex-col items-center">
+                    <div className="w-[600px]">
+                      {previewContent}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )
+      })()}
+
       {isProductModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => { setIsProductModalOpen(false); setEditingProduct(null) }}></div>

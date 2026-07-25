@@ -8,10 +8,17 @@ import { createExpense, deleteExpense } from './actions'
 
 type Expense = any
 
-export default function ExpensesClient({ initialExpenses }: { initialExpenses: Expense[] }) {
+export default function ExpensesClient({ initialExpenses, banks = [] }: { initialExpenses: Expense[], banks?: any[] }) {
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses)
   const [activeForm, setActiveForm] = useState<'NONE' | 'EXPENSE' | 'GST'>('NONE')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // Form States for Auto-Calculation
+  const [subTotal, setSubTotal] = useState<number | ''>('')
+  const [taxRate, setTaxRate] = useState<number>(18)
+
+  const taxAmount = typeof subTotal === 'number' ? (subTotal * taxRate) / 100 : 0
+  const totalAmount = typeof subTotal === 'number' ? subTotal + taxAmount : 0
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -76,12 +83,41 @@ export default function ExpensesClient({ initialExpenses }: { initialExpenses: E
                 <input type="text" name="vendorName" required className="w-full rounded-md px-4 py-2 bg-sidebar-bg border border-sidebar-border" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Total Amount (Taxable Value)</label>
-                <input type="number" step="0.01" name="totalAmount" required className="w-full rounded-md px-4 py-2 bg-sidebar-bg border border-sidebar-border" />
+                <label className="block text-sm font-medium mb-1">Base Amount (Taxable Value)</label>
+                <input 
+                  type="number" 
+                  step="0.01" 
+                  name="subTotal" 
+                  value={subTotal}
+                  onChange={(e) => setSubTotal(e.target.value === '' ? '' : parseFloat(e.target.value))}
+                  required 
+                  className="w-full rounded-md px-4 py-2 bg-sidebar-bg border border-sidebar-border" 
+                />
+              </div>
+              <div className="flex gap-3">
+                <div className="w-1/3">
+                  <label className="block text-sm font-medium mb-1">GST Rate</label>
+                  <select 
+                    name="taxRate" 
+                    value={taxRate}
+                    onChange={(e) => setTaxRate(parseFloat(e.target.value))}
+                    className="w-full rounded-md px-4 py-2 bg-sidebar-bg border border-sidebar-border"
+                  >
+                    <option value="0">0%</option>
+                    <option value="5">5%</option>
+                    <option value="12">12%</option>
+                    <option value="18">18%</option>
+                    <option value="28">28%</option>
+                  </select>
+                </div>
+                <div className="w-2/3">
+                  <label className="block text-sm font-medium mb-1">GST/Tax Amount</label>
+                  <input type="number" step="0.01" name="taxAmount" value={taxAmount.toFixed(2)} readOnly className="w-full rounded-md px-4 py-2 bg-sidebar-bg border border-sidebar-border bg-opacity-50 text-zinc-500 cursor-not-allowed" />
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">GST/Tax Amount</label>
-                <input type="number" step="0.01" name="taxAmount" required defaultValue="0" className="w-full rounded-md px-4 py-2 bg-sidebar-bg border border-sidebar-border" />
+                <label className="block text-sm font-medium mb-1">Total Expense Value</label>
+                <input type="number" step="0.01" name="totalAmount" value={totalAmount.toFixed(2)} readOnly className="w-full rounded-md px-4 py-2 bg-sidebar-bg border border-sidebar-border font-bold bg-opacity-50 text-zinc-500 cursor-not-allowed" />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Category</label>
@@ -90,6 +126,15 @@ export default function ExpensesClient({ initialExpenses }: { initialExpenses: E
                   <option value="HOSTING">Hosting / Cloud</option>
                   <option value="HARDWARE">Hardware / Electronics</option>
                   <option value="OTHER">Other Expense</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Paid From (Bank)</label>
+                <select name="bankId" className="w-full rounded-md px-4 py-2 bg-sidebar-bg border border-sidebar-border">
+                  <option value="">Select Bank (Optional)</option>
+                  {banks.map(b => (
+                    <option key={b.id} value={b.id}>{b.bankName}</option>
+                  ))}
                 </select>
               </div>
             </div>

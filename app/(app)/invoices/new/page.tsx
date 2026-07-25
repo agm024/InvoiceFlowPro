@@ -51,28 +51,27 @@ export default async function NewInvoicePage({
     }
   }
 
-  const { clients, products, banks, exchangeRates, nextInvoiceNumber } = await getInvoiceFormData()
+  const { clients, products, banks, exchangeRates, nextInvoiceNumber, companySettings } = await getInvoiceFormData()
 
   return (
-    <div className="p-8 max-w-5xl mx-auto w-full">
-      <div className="mb-8">
+    <div className="p-4 md:p-8 max-w-[1600px] mx-auto w-full">
+      <div className="mb-6">
         <Link href="/invoices" className="text-sm text-zinc-500 hover:text-foreground mb-4 inline-block">
           &larr; Back to Invoices
         </Link>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">Create Invoice</h1>
       </div>
 
-      <div className="bg-card-bg border border-card-border rounded-xl shadow-sm p-8">
-        <InvoiceForm 
-          clients={clients} 
-          products={products} 
-          banks={banks}
-          exchangeRates={exchangeRates}
-          defaultInvoiceNumber={nextInvoiceNumber} 
-          milestoneId={milestoneId}
-          adHocMilestoneDetails={adHocMilestoneDetails}
-        />
-      </div>
+      <InvoiceForm 
+        clients={clients} 
+        products={products} 
+        banks={banks}
+        exchangeRates={exchangeRates}
+        defaultInvoiceNumber={nextInvoiceNumber} 
+        milestoneId={milestoneId}
+        adHocMilestoneDetails={adHocMilestoneDetails}
+        companySettings={companySettings}
+      />
     </div>
   )
 }

@@ -21,7 +21,10 @@ export async function updateInvoiceStatus(id: string, status: string) {
 
 export async function recordPayment(id: string, amountReceived: number) {
   try {
-    const invoice = await prisma.invoice.findUnique({ where: { id } })
+    const invoice = await prisma.invoice.findUnique({ 
+      where: { id },
+      include: { milestone: { include: { project: { include: { milestones: true } } } } }
+    })
     if (!invoice) return { error: 'Invoice not found' }
 
     const newAmountPaid = invoice.amountPaid + amountReceived
@@ -35,6 +38,30 @@ export async function recordPayment(id: string, amountReceived: number) {
         status: isFullyPaid ? 'paid' : 'partially_paid'
       }
     })
+
+    // If fully paid and linked to a milestone, update milestone
+    if (isFullyPaid && invoice.milestone) {
+      const projectId = invoice.milestone.projectId
+      
+      await prisma.milestone.update({
+        where: { id: invoice.milestone.id },
+        data: { status: 'PAID' }
+      })
+
+      // Check if all milestones for this project are paid
+      const project = invoice.milestone.project
+      // Fetch latest milestones since we just updated one
+      const allMilestones = await prisma.milestone.findMany({ where: { projectId } })
+      
+      const allPaid = allMilestones.length > 0 && allMilestones.every(m => m.status === 'PAID')
+      
+      if (allPaid && project.status !== 'COMPLETED') {
+        await prisma.project.update({
+          where: { id: projectId },
+          data: { status: 'COMPLETED', stage: 'REVIEW' }
+        })
+      }
+    }
     
     revalidatePath(`/invoices/${id}`)
     revalidatePath('/invoices')
