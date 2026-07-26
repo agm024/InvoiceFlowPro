@@ -34,6 +34,7 @@ export async function sendEmail({
         {
           email_address: {
             address: to,
+            name: to.split('@')[0] || "Client",
           },
         },
       ],

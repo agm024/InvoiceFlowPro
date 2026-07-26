@@ -8,7 +8,7 @@ import { deleteClient, updateClient, generateMissingPortalTokens } from './actio
 import { useEffect } from 'react'
 import { format } from 'date-fns'
 
-type InvoiceStub = { total: number, status: string, date: Date, invoiceType?: string }
+type InvoiceStub = { total: number, status: string, date: Date, invoiceType?: string, amountPaid?: number }
 type Client = any // We'll assume it has invoices: InvoiceStub[]
 
 export default function ClientsClient({ initialClients }: { initialClients: Client[] }) {
