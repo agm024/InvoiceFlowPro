@@ -1,6 +1,6 @@
 'use client'
 
-import * as XLSX from 'xlsx'
+
 import { format } from 'date-fns'
 import { getStateNameByCode } from '@/utils/stateCodes'
 
@@ -193,28 +193,47 @@ export default function ExportClient({ invoices, settings, expenses = [] }: { in
     downloadAnchorNode.remove()
   }
   
-  const handleDownload = () => {
-    const wb = XLSX.utils.book_new()
+  const handleDownload = async () => {
+    const ExcelJS = (await import('exceljs')).default
+    const { saveAs } = await import('file-saver')
+    const wb = new ExcelJS.Workbook()
     
     // 1. B2B Sheet (Registered Businesses with GSTIN)
     const b2bInvoices = invoices.filter(inv => inv.client.gstin && inv.invoiceType !== 'EXPORT')
-    const b2bData = b2bInvoices.map(inv => ({
-      'GSTIN/UIN of Recipient': inv.client.gstin,
-      'Receiver Name': inv.client.name,
-      'Invoice Number': inv.invoiceNumber,
-      'Invoice Date': format(new Date(inv.date), 'dd-MMM-yyyy'),
-      'Invoice Value': inv.total * inv.exchangeRate,
-      'Place of Supply': inv.client.stateCode ? `${inv.client.stateCode}-${inv.client.stateName || getStateNameByCode(inv.client.stateCode)}` : '',
-      'Reverse Charge': 'N',
-      'Applicable % of Tax Rate': '',
-      'Invoice Type': 'Regular',
-      'E-Commerce GSTIN': '',
-      'Taxable Value': (inv.total - inv.taxTotal) * inv.exchangeRate,
-      'Rate': 18,
-      'Cess Amount': 0
-    }))
-    const wsB2B = XLSX.utils.json_to_sheet(b2bData)
-    XLSX.utils.book_append_sheet(wb, wsB2B, 'b2b')
+    const wsB2B = wb.addWorksheet('b2b')
+    wsB2B.columns = [
+      { header: 'GSTIN/UIN of Recipient', key: 'gstin' },
+      { header: 'Receiver Name', key: 'name' },
+      { header: 'Invoice Number', key: 'invNum' },
+      { header: 'Invoice Date', key: 'invDate' },
+      { header: 'Invoice Value', key: 'invVal' },
+      { header: 'Place of Supply', key: 'pos' },
+      { header: 'Reverse Charge', key: 'rev' },
+      { header: 'Applicable % of Tax Rate', key: 'app' },
+      { header: 'Invoice Type', key: 'type' },
+      { header: 'E-Commerce GSTIN', key: 'ecom' },
+      { header: 'Taxable Value', key: 'taxval' },
+      { header: 'Rate', key: 'rate' },
+      { header: 'Cess Amount', key: 'cess' }
+    ]
+    
+    b2bInvoices.forEach(inv => {
+      wsB2B.addRow({
+        gstin: inv.client.gstin,
+        name: inv.client.name,
+        invNum: inv.invoiceNumber,
+        invDate: format(new Date(inv.date), 'dd-MMM-yyyy'),
+        invVal: inv.total * inv.exchangeRate,
+        pos: inv.client.stateCode ? `${inv.client.stateCode}-${inv.client.stateName || getStateNameByCode(inv.client.stateCode)}` : '',
+        rev: 'N',
+        app: '',
+        type: 'Regular',
+        ecom: '',
+        taxval: (inv.total - inv.taxTotal) * inv.exchangeRate,
+        rate: 18,
+        cess: 0
+      })
+    })
 
     // 2. B2CS Sheet (Consolidated B2C sales per state)
     const b2cInvoices = invoices.filter(inv => !inv.client.gstin && inv.invoiceType !== 'EXPORT')
@@ -224,55 +243,70 @@ export default function ExportClient({ invoices, settings, expenses = [] }: { in
       const taxable = (inv.total - inv.taxTotal) * inv.exchangeRate
       b2cStateMap[pos] = (b2cStateMap[pos] || 0) + taxable
     })
-    const b2csData = Object.entries(b2cStateMap).map(([pos, taxable]) => ({
-      'Type': 'OE',
-      'Place Of Supply': pos,
-      'Applicable % of Tax Rate': '',
-      'Taxable Value': taxable,
-      'Rate': 18,
-      'Cess Amount': 0,
-      'E-Commerce GSTIN': ''
-    }))
-    const wsB2CS = XLSX.utils.json_to_sheet(b2csData)
-    XLSX.utils.book_append_sheet(wb, wsB2CS, 'b2cs')
+    
+    const wsB2CS = wb.addWorksheet('b2cs')
+    wsB2CS.columns = [
+      { header: 'Type', key: 'type' },
+      { header: 'Place Of Supply', key: 'pos' },
+      { header: 'Applicable % of Tax Rate', key: 'app' },
+      { header: 'Taxable Value', key: 'taxval' },
+      { header: 'Rate', key: 'rate' },
+      { header: 'Cess Amount', key: 'cess' },
+      { header: 'E-Commerce GSTIN', key: 'ecom' }
+    ]
+    Object.entries(b2cStateMap).forEach(([pos, taxable]) => {
+      wsB2CS.addRow({
+        type: 'OE', pos, app: '', taxval: taxable, rate: 18, cess: 0, ecom: ''
+      })
+    })
 
     // 3. EXP Sheet (Exports)
     const expInvoices = invoices.filter(inv => inv.invoiceType === 'EXPORT')
-    const expData = expInvoices.map(inv => ({
-      'Export Type': 'WOPAY',
-      'Invoice Number': inv.invoiceNumber,
-      'Invoice Date': format(new Date(inv.date), 'dd-MMM-yyyy'),
-      'Invoice Value': inv.total * inv.exchangeRate,
-      'Port Code': '',
-      'Shipping Bill No.': '',
-      'Shipping Bill Date': '',
-      'Applicable % of Tax Rate': '',
-      'Taxable Value': inv.total * inv.exchangeRate,
-      'Rate': 0
-    }))
-    const wsExp = XLSX.utils.json_to_sheet(expData)
-    XLSX.utils.book_append_sheet(wb, wsExp, 'exp')
+    const wsExp = wb.addWorksheet('exp')
+    wsExp.columns = [
+      { header: 'Export Type', key: 'type' },
+      { header: 'Invoice Number', key: 'invNum' },
+      { header: 'Invoice Date', key: 'invDate' },
+      { header: 'Invoice Value', key: 'invVal' },
+      { header: 'Port Code', key: 'port' },
+      { header: 'Shipping Bill No.', key: 'shipNo' },
+      { header: 'Shipping Bill Date', key: 'shipDate' },
+      { header: 'Applicable % of Tax Rate', key: 'app' },
+      { header: 'Taxable Value', key: 'taxval' },
+      { header: 'Rate', key: 'rate' }
+    ]
+    expInvoices.forEach(inv => {
+      wsExp.addRow({
+        type: 'WOPAY',
+        invNum: inv.invoiceNumber,
+        invDate: format(new Date(inv.date), 'dd-MMM-yyyy'),
+        invVal: inv.total * inv.exchangeRate,
+        port: '', shipNo: '', shipDate: '', app: '',
+        taxval: inv.total * inv.exchangeRate,
+        rate: 0
+      })
+    })
 
     // 4. CDNR Sheet (Credit/Debit Notes)
-    // Blank scaffold for now as requested
-    const cdnrData = [{
-      'GSTIN/UIN of Recipient': '',
-      'Receiver Name': '',
-      'Note/Refund Number': '',
-      'Note/Refund Date': '',
-      'Note Type': '',
-      'Place Of Supply': '',
-      'Note Value': '',
-      'Applicable % of Tax Rate': '',
-      'Taxable Value': '',
-      'Rate': '',
-      'Cess Amount': ''
-    }]
-    const wsCdnr = XLSX.utils.json_to_sheet(cdnrData)
-    XLSX.utils.book_append_sheet(wb, wsCdnr, 'cdnr')
+    const wsCdnr = wb.addWorksheet('cdnr')
+    wsCdnr.columns = [
+      { header: 'GSTIN/UIN of Recipient', key: '1' },
+      { header: 'Receiver Name', key: '2' },
+      { header: 'Note/Refund Number', key: '3' },
+      { header: 'Note/Refund Date', key: '4' },
+      { header: 'Note Type', key: '5' },
+      { header: 'Place Of Supply', key: '6' },
+      { header: 'Note Value', key: '7' },
+      { header: 'Applicable % of Tax Rate', key: '8' },
+      { header: 'Taxable Value', key: '9' },
+      { header: 'Rate', key: '10' },
+      { header: 'Cess Amount', key: '11' }
+    ]
+    wsCdnr.addRow({ 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '', 10: '', 11: '' })
 
     // Download file
-    XLSX.writeFile(wb, `GST_Export_${format(new Date(), 'yyyy-MM-dd')}.xlsx`)
+    const buffer = await wb.xlsx.writeBuffer()
+    saveAs(new Blob([buffer]), `GST_Export_${format(new Date(), 'yyyy-MM-dd')}.xlsx`)
   }
 
   return (
