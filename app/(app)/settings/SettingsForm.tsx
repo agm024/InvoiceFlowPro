@@ -88,7 +88,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <textarea 
             name="address" defaultValue={initialSettings?.address || ''} placeholder="123 Business Rd, Suite 100..." rows={3}
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors"
           />
         </div>
 
@@ -99,7 +99,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <input 
             type="text" name="brandName" defaultValue={initialSettings?.brandName || ''} required
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors"
           />
         </div>
 
@@ -110,7 +110,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <input 
             type="text" name="companyName" defaultValue={initialSettings?.companyName || ''} required
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors"
           />
         </div>
 
@@ -120,14 +120,14 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
             Company Phone :
           </label>
           <div className="flex-1 flex gap-3">
-            <select className="w-24 rounded-md px-3 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500">
+            <select className="w-24 rounded-md px-3 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white">
               <option value="+91">+91</option>
               <option value="+1">+1</option>
               <option value="+44">+44</option>
             </select>
             <input 
               type="text" name="phone" defaultValue={initialSettings?.phone || ''} placeholder="Company Phone Number"
-              className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+              className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors"
             />
           </div>
         </div>
@@ -139,7 +139,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <input 
             type="email" name="email" defaultValue={initialSettings?.email || ''} placeholder="support@company.com"
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors"
           />
         </div>
 
@@ -148,7 +148,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
             GSTIN :
           </label>
-          <div className="flex-1 flex overflow-hidden rounded-md border border-sidebar-border bg-sidebar-bg focus-within:border-blue-500 transition-colors">
+          <div className="flex-1 flex overflow-hidden rounded-md border border-sidebar-border bg-sidebar-bg focus-within:border-zinc-900 dark:border-white transition-colors">
             <input 
               type="text" name="gstin" defaultValue={initialSettings?.gstin || ''} placeholder="e.g. 27ABCFG1029Q1Z6"
               className="flex-1 px-4 py-2.5 bg-transparent focus:outline-none uppercase"
@@ -166,7 +166,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <input 
             type="text" name="lutNo" defaultValue={initialSettings?.lutNo || ''} placeholder="e.g. AD2703230..."
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors"
           />
         </div>
 
@@ -177,7 +177,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <input 
             type="number" name="stateCode" defaultValue={initialSettings?.stateCode || '27'} required placeholder="e.g. 27 for MH"
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors"
           />
         </div>
 
@@ -188,7 +188,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <select 
             name="businessType" defaultValue={initialSettings?.businessType || ''}
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors cursor-pointer"
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors cursor-pointer"
           >
             <option value="">Select Type</option>
             <option value="IT & Software">IT & Software</option>
@@ -206,7 +206,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <input 
             type="text" name="altPhone" defaultValue={initialSettings?.altPhone || ''} placeholder="Alternate contact numbers"
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors"
           />
         </div>
 
@@ -217,7 +217,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <input 
             type="text" name="website" defaultValue={initialSettings?.website || ''} placeholder="www.yourcompany.com"
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors"
           />
         </div>
 
@@ -228,7 +228,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <input 
             type="text" name="panNo" defaultValue={initialSettings?.panNo || ''} placeholder="e.g. ABCFG1029Q"
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors uppercase"
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors uppercase"
           />
         </div>
 
@@ -239,7 +239,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           </label>
           <input 
             type="text" name="upiId" defaultValue={initialSettings?.upiId || ''} placeholder="yourname@bank"
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors"
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors"
           />
         </div>
         
@@ -247,7 +247,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
         <div className="pt-6 border-t border-card-border flex justify-end">
           <button 
             type="submit" disabled={isSaving}
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-sm shadow-blue-500/20 disabled:opacity-50"
+            className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-8 py-3 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-sm shadow-zinc-900/20 disabled:opacity-50"
           >
             {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
             Save Company Details

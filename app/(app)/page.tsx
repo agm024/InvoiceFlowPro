@@ -11,13 +11,19 @@ export default async function DashboardPage() {
 
   // 1. WELCOME SECTION (Unpaid Invoices)
   const unpaidInvoices = await prisma.invoice.findMany({
-    where: { status: { in: ['draft', 'sent'] } }
+    where: { 
+      status: { in: ['draft', 'sent'] },
+      invoiceType: { not: 'QUOTATION' }
+    }
   })
   const unpaidCount = unpaidInvoices.length
   const unpaidValue = unpaidInvoices.reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0)
 
   // 2. RICH KPI CARDS (Revenue, Outstanding, etc.)
-  const allInvoices = await prisma.invoice.findMany({ include: { client: true } })
+  const allInvoices = await prisma.invoice.findMany({ 
+    where: { invoiceType: { not: 'QUOTATION' } },
+    include: { client: true } 
+  })
   const paidThisMonth = allInvoices.filter(i => i.status === 'paid' && i.date >= currentMonthStart)
   const paidLastMonth = allInvoices.filter(i => i.status === 'paid' && i.date >= previousMonthStart && i.date <= previousMonthEnd)
   
@@ -44,8 +50,8 @@ export default async function DashboardPage() {
   // 4. TOP CLIENTS WIDGET
   const allClients = await prisma.client.findMany({ include: { invoices: true } })
   const topClients = allClients.map(client => {
-    const revenue = client.invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
-    const outstanding = client.invoices.filter(i => i.status === 'sent').reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
+    const revenue = client.invoices.filter(i => i.status === 'paid' && i.invoiceType !== 'QUOTATION').reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
+    const outstanding = client.invoices.filter(i => i.status === 'sent' && i.invoiceType !== 'QUOTATION').reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
     return { ...client, revenue, outstanding }
   }).sort((a, b) => b.revenue - a.revenue).slice(0, 5)
 
@@ -100,7 +106,7 @@ export default async function DashboardPage() {
             You have {unpaidCount} unpaid invoices worth <span className="font-semibold text-foreground">₹{unpaidValue.toLocaleString()}</span>.
           </p>
         </div>
-        <Link href="/invoices/new" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm transition-colors">
+        <Link href="/invoices/new" className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:bg-black dark:hover:bg-zinc-200 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm transition-colors">
           + Create Invoice
         </Link>
       </div>
@@ -240,7 +246,7 @@ export default async function DashboardPage() {
             <div className="absolute left-2.5 top-2 bottom-2 w-px bg-zinc-200 dark:bg-zinc-800"></div>
             {timeline.map((event, i) => (
               <div key={i} className="flex items-start gap-4 relative z-10">
-                <div className={`w-5 h-5 rounded-full mt-0.5 border-2 border-white dark:border-zinc-950 shadow-sm flex-shrink-0 ${event.type === 'INVOICE' ? 'bg-blue-500' : 'bg-emerald-500'}`}></div>
+                <div className={`w-5 h-5 rounded-full mt-0.5 border-2 border-white dark:border-zinc-950 shadow-sm flex-shrink-0 ${event.type === 'INVOICE' ? 'bg-zinc-100 dark:bg-zinc-8000' : 'bg-emerald-500'}`}></div>
                 <div>
                   <p className="text-sm font-medium text-foreground">{event.title}</p>
                   <p className="text-xs text-zinc-500 mt-0.5">{format(event.date, 'MMM d, yyyy • h:mm a')}</p>

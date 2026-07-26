@@ -63,7 +63,7 @@ export default function ProductForm({ initialData, action, title }: ProductFormP
               name="name" 
               defaultValue={initialData?.name}
               required 
-              className="w-full rounded-md px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" 
+              className="w-full rounded-md px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" 
               placeholder="e.g. Website Design" 
             />
           </div>
@@ -82,12 +82,12 @@ export default function ProductForm({ initialData, action, title }: ProductFormP
                   name="price" 
                   defaultValue={initialData?.price}
                   required 
-                  className="w-full px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" 
+                  className="w-full px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" 
                 />
                 <select 
                   value={taxInclusive}
                   onChange={(e) => setTaxInclusive(e.target.value)}
-                  className="border border-l-0 border-sidebar-border bg-background rounded-r-md px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 text-zinc-600"
+                  className="border border-l-0 border-sidebar-border bg-background rounded-r-md px-3 py-2.5 text-sm focus:outline-none focus:border-zinc-900 dark:border-white text-zinc-600"
                 >
                   <option value="false">without Tax</option>
                   <option value="true">with Tax</option>
@@ -106,7 +106,7 @@ export default function ProductForm({ initialData, action, title }: ProductFormP
                 <select 
                   name="gstRate" 
                   defaultValue={initialData?.gstRate?.toString() || "18"} 
-                  className="w-full rounded-md px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500 appearance-none"
+                  className="w-full rounded-md px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white appearance-none"
                 >
                   <option value="0">0</option>
                   <option value="5">5</option>
@@ -130,7 +130,7 @@ export default function ProductForm({ initialData, action, title }: ProductFormP
             <input 
               name="unit" 
               defaultValue={initialData?.unit || ''}
-              className="w-full md:w-1/2 rounded-md px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" 
+              className="w-full md:w-1/2 rounded-md px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" 
               placeholder="" 
             />
           </div>
@@ -146,9 +146,9 @@ export default function ProductForm({ initialData, action, title }: ProductFormP
                 <input 
                   name="hsn" 
                   defaultValue={initialData?.hsn || ''}
-                  className="w-full rounded-md px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" 
+                  className="w-full rounded-md px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" 
                 />
-                <a href="#" className="text-blue-500 text-xs mt-2 inline-block hover:underline">Click here to check GST approved HSN/SAC codes.</a>
+                <a href="#" className="text-zinc-900 dark:text-white text-xs mt-2 inline-block hover:underline">Click here to check GST approved HSN/SAC codes.</a>
               </div>
               
               <div>
@@ -161,7 +161,7 @@ export default function ProductForm({ initialData, action, title }: ProductFormP
                     step="0.01" 
                     name="purchasePrice" 
                     defaultValue={initialData?.purchasePrice || '0'}
-                    className="w-full px-4 py-2.5 bg-background border border-r-0 border-sidebar-border rounded-l-md focus:outline-none focus:border-blue-500" 
+                    className="w-full px-4 py-2.5 bg-background border border-r-0 border-sidebar-border rounded-l-md focus:outline-none focus:border-zinc-900 dark:border-white" 
                   />
                   <div className="border border-sidebar-border bg-sidebar-bg rounded-r-md px-4 py-2.5 text-sm flex items-center text-zinc-500">
                     with Tax
@@ -177,7 +177,7 @@ export default function ProductForm({ initialData, action, title }: ProductFormP
             <button 
               type="submit" 
               disabled={loading}
-              className="bg-blue-600 text-white px-8 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-8 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors disabled:opacity-50"
             >
               {loading ? 'Saving...' : 'Save Product'}
             </button>

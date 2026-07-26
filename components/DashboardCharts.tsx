@@ -12,8 +12,8 @@ export function RevenueChart({ data }: { data: any[] }) {
         <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3}/>
-              <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#18181b" stopOpacity={0.2}/>
+              <stop offset="95%" stopColor="#18181b" stopOpacity={0}/>
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e4e4e7" />
@@ -34,7 +34,7 @@ export function RevenueChart({ data }: { data: any[] }) {
             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
             formatter={(value: any) => [`₹${value.toLocaleString()}`, 'Revenue']}
           />
-          <Area type="monotone" dataKey="revenue" stroke="#2563eb" strokeWidth={2} fillOpacity={1} fill="url(#colorRevenue)" />
+          <Area type="monotone" dataKey="revenue" stroke="#18181b" strokeWidth={2} fillOpacity={1} fill="url(#colorRevenue)" />
         </AreaChart>
       </ResponsiveContainer>
     </div>
@@ -61,9 +61,9 @@ export function TopCustomersChart({ data }: { data: any[] }) {
             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
             formatter={(value: any) => [`₹${value.toLocaleString()}`, 'Paid Revenue']}
           />
-          <Bar dataKey="revenue" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={24}>
+          <Bar dataKey="revenue" fill="#27272a" radius={[0, 4, 4, 0]} barSize={24}>
             {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={index === 0 ? '#2563eb' : '#60a5fa'} />
+              <Cell key={`cell-${index}`} fill={index === 0 ? '#18181b' : '#3f3f46'} />
             ))}
           </Bar>
         </BarChart>

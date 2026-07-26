@@ -15,7 +15,7 @@ export default function ProductTransactionsClient({ invoiceItems }: { invoiceIte
       {/* Tabs */}
       <div className="px-8 pt-4 border-b border-sidebar-border">
         <div className="flex gap-8">
-          <button className="pb-3 border-b-2 border-blue-600 text-blue-600 font-semibold text-sm">
+          <button className="pb-3 border-b-2 border-zinc-600 text-zinc-900 dark:text-white font-semibold text-sm">
             Bill-Wise Transactions
           </button>
         </div>
@@ -31,7 +31,7 @@ export default function ProductTransactionsClient({ invoiceItems }: { invoiceIte
               placeholder="Search customer or bill..." 
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="pl-9 pr-3 py-1.5 bg-background border border-sidebar-border rounded-md text-sm focus:outline-none focus:border-blue-500 w-64" 
+              className="pl-9 pr-3 py-1.5 bg-background border border-sidebar-border rounded-md text-sm focus:outline-none focus:border-zinc-900 dark:border-white w-64" 
             />
           </div>
         </div>

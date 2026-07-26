@@ -13,7 +13,7 @@ export default async function EstimatesPage() {
   const estimates = await getEstimates()
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-8 pt-8 pb-12">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Estimates</h1>
@@ -21,7 +21,7 @@ export default async function EstimatesPage() {
         </div>
         <Link 
           href="/estimates/new" 
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-1.5"
+          className="bg-zinc-900 hover:bg-black dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-1.5"
         >
           <Plus size={16} /> New Estimate
         </Link>
@@ -44,7 +44,7 @@ export default async function EstimatesPage() {
               {estimates.map((estimate) => (
                 <tr key={estimate.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                   <td className="px-6 py-4">
-                    <Link href={`/estimates/${estimate.id}`} className="font-medium text-blue-600 hover:underline">
+                    <Link href={`/estimates/${estimate.id}`} className="font-medium text-zinc-900 dark:text-white hover:underline">
                       {estimate.estimateNumber}
                     </Link>
                   </td>
@@ -59,7 +59,7 @@ export default async function EstimatesPage() {
                       estimate.status === 'accepted' ? 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400' :
                       estimate.status === 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400' :
                       estimate.status === 'invoiced' ? 'bg-purple-100 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400' :
-                      'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400'
+                      'bg-zinc-100 text-zinc-700 dark:bg-zinc-500/10 dark:text-zinc-400'
                     }`}>
                       {estimate.status === 'accepted' ? <CheckCircle size={12} /> :
                        estimate.status === 'rejected' ? <XCircle size={12} /> :
@@ -74,7 +74,7 @@ export default async function EstimatesPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2 items-center">
-                      <Link href={`/estimates/${estimate.id}`} className="text-zinc-400 hover:text-blue-600 transition-colors p-1" title="View">
+                      <Link href={`/estimates/${estimate.id}`} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors p-1" title="View">
                         <FileText size={18} />
                       </Link>
                       <DeleteEstimateButton id={estimate.id} />
@@ -91,7 +91,7 @@ export default async function EstimatesPage() {
             <p className="mb-6">Create your first estimate to send to a client.</p>
             <Link 
               href="/estimates/new"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors inline-flex items-center gap-2"
+              className="bg-zinc-900 hover:bg-black dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors inline-flex items-center gap-2"
             >
               <Plus size={18} /> New Estimate
             </Link>

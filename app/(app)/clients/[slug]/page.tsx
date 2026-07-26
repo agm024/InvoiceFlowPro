@@ -1,14 +1,19 @@
 import prisma from '@/utils/prisma'
+import { getCompanySettings, getBanks } from '../../settings/actions'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { getStateNameByCode } from '@/utils/stateCodes'
 import StatusBadge from '@/components/StatusBadge'
 import DeleteProjectButton from '../../projects/DeleteProjectButton'
+import InvoiceListClient from '../../invoices/InvoiceListClient'
 
 export default async function ClientDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   
+  const settings = await getCompanySettings()
+  const banks = await getBanks()
+
   const client = await prisma.client.findUnique({
     where: { slug },
     include: {
@@ -41,6 +46,16 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
       status: inv.status,
       date: inv.date
     }))
+
+  const invoicesWithClient = client.invoices.map(inv => ({
+    ...inv,
+    client: {
+      id: client.id,
+      name: client.name,
+      email: client.email,
+      phone: client.phone
+    }
+  }))
 
   // Calculate Money Got and Remaining in INR, factoring in partial payments
   const totalPaid = client.invoices.reduce((sum, inv) => {
@@ -145,7 +160,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
                       const isSent = milestone.status === 'SENT'
 
                       // Define dynamic styling based on milestone status
-                      const dotColor = isPaid ? 'bg-emerald-500 border-emerald-500' : isSent ? 'bg-blue-500 border-blue-500' : 'bg-zinc-700 border-zinc-600'
+                      const dotColor = isPaid ? 'bg-emerald-500 border-emerald-500' : isSent ? 'bg-zinc-100 dark:bg-zinc-8000 border-zinc-900 dark:border-white' : 'bg-zinc-700 border-zinc-600'
                       const boxStyle = isUnbilled ? 'opacity-60 border-dashed border-zinc-600' : 'border-card-border shadow-sm'
                       const textColor = isUnbilled ? 'text-zinc-400' : 'text-foreground'
                       
@@ -175,10 +190,10 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
                                   </span>
                                 )}
                                 {isSent && (
-                                  <span className="flex items-center gap-1 text-xs font-bold text-blue-500 bg-blue-500/10 px-2 py-1 rounded">
+                                  <span className="flex items-center gap-1 text-xs font-bold text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-8000/10 px-2 py-1 rounded">
                                     <span className="relative flex h-2 w-2 mr-1">
-                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                      <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-zinc-400 opacity-75"></span>
+                                      <span className="relative inline-flex rounded-full h-2 w-2 bg-zinc-100 dark:bg-zinc-8000"></span>
                                     </span>
                                     SENT - Awaiting Payment
                                   </span>
@@ -223,6 +238,16 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
             )
           })
         )}
+      </div>
+
+      <div className="mt-12 mb-6 flex justify-between items-center">
+        <h2 className="text-xl font-bold tracking-tight text-foreground">Client Invoices</h2>
+        <Link href={`/invoices/new?clientId=${client.id}`} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-colors">
+          + New Invoice
+        </Link>
+      </div>
+      <div className="mb-12 h-[600px]">
+        <InvoiceListClient initialInvoices={invoicesWithClient} hideHeader={true} banks={banks} settings={settings} />
       </div>
 
     </div>

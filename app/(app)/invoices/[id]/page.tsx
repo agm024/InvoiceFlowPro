@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import InvoiceActionsDropdown from './InvoiceActionsDropdown'
+import SendEmailButton from './SendEmailButton'
 import StatusBadge from '@/components/StatusBadge'
 
 export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -35,6 +36,14 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
         
         {/* Actions Component */}
         <div className="flex items-center gap-3 mt-4 md:mt-0">
+          <SendEmailButton 
+            invoiceId={invoice.id} 
+            invoiceNumber={invoice.invoiceNumber}
+            total={invoice.total}
+            status={invoice.status}
+            clientName={invoice.client.name}
+            clientEmail={invoice.client.email}
+          />
           <Link href={`/invoices/${invoice.id}/edit`} className="text-sm bg-sidebar-bg border border-sidebar-border px-4 py-2 rounded-md font-medium text-foreground hover:bg-sidebar-border transition-colors">
             Edit Invoice
           </Link>
@@ -45,6 +54,8 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
             total={invoice.total}
             amountPaid={invoice.amountPaid}
             status={invoice.status}
+            clientName={invoice.client.name}
+            clientEmail={invoice.client.email}
           />
         </div>
       </div>

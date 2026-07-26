@@ -29,7 +29,7 @@ export default async function EstimateViewPage({ params }: { params: Promise<{ i
         <div className="flex items-center gap-3">
           <span className={`px-3 py-1 rounded-full text-xs font-medium border ${
             estimate.status === 'invoiced' ? 'bg-green-100 text-green-700 border-green-200' :
-            estimate.status === 'accepted' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+            estimate.status === 'accepted' ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white border-zinc-200 dark:border-zinc-700' :
             'bg-yellow-100 text-yellow-700 border-yellow-200'
           }`}>
             {estimate.status.toUpperCase()}

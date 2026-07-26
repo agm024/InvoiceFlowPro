@@ -8,7 +8,7 @@ import { deleteClient, updateClient, generateMissingPortalTokens } from './actio
 import { useEffect } from 'react'
 import { format } from 'date-fns'
 
-type InvoiceStub = { total: number, status: string, date: Date }
+type InvoiceStub = { total: number, status: string, date: Date, invoiceType?: string }
 type Client = any // We'll assume it has invoices: InvoiceStub[]
 
 export default function ClientsClient({ initialClients }: { initialClients: Client[] }) {
@@ -74,14 +74,19 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
     let lastPaymentDate: Date | null = null
 
     invoices.forEach(inv => {
+      if (inv.invoiceType === 'QUOTATION' || inv.status === 'cancelled') return;
+      
       totalBilled += inv.total
-      if (inv.status === 'PAID') {
-        totalPaid += inv.total
+      
+      const paid = inv.amountPaid || (inv.status === 'paid' ? inv.total : 0)
+      totalPaid += paid
+      
+      if (inv.status === 'paid') {
         if (!lastPaymentDate || new Date(inv.date) > new Date(lastPaymentDate)) {
           lastPaymentDate = inv.date
         }
-      } else if (inv.status === 'SENT' || inv.status === 'OVERDUE') {
-        outstanding += inv.total
+      } else if (inv.status === 'sent' || inv.status === 'overdue' || inv.status === 'partially_paid') {
+        outstanding += (inv.total - paid)
       }
     })
 
@@ -103,12 +108,12 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
               placeholder="Search clients..." 
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="pl-9 pr-4 py-2 bg-card-bg border border-card-border rounded-lg text-sm focus:outline-none focus:border-blue-500 text-foreground shadow-sm w-full md:w-64"
+              className="pl-9 pr-4 py-2 bg-card-bg border border-card-border rounded-lg text-sm focus:outline-none focus:border-zinc-900 dark:border-white text-foreground shadow-sm w-full md:w-64"
             />
           </div>
           <Link 
             href="/clients/new" 
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2 shrink-0"
+            className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm flex items-center gap-2 shrink-0"
           >
             <Plus size={18} /> <span className="hidden sm:inline">Add Client</span>
           </Link>
@@ -117,12 +122,12 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
 
       {filteredClients.length === 0 ? (
         <div className="bg-card-bg border border-card-border rounded-xl shadow-sm p-12 text-center">
-          <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Users size={32} />
           </div>
           <h3 className="text-lg font-semibold text-foreground mb-1">No clients found</h3>
           <p className="text-zinc-500 mb-6">You haven&apos;t added any clients yet, or none match your search.</p>
-          <Link href="/clients/new" className="text-blue-600 font-medium hover:underline inline-flex items-center gap-1">
+          <Link href="/clients/new" className="text-zinc-900 dark:text-white font-medium hover:underline inline-flex items-center gap-1">
             <Plus size={16} /> Create your first client
           </Link>
         </div>
@@ -135,7 +140,7 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
               <div key={client.id} className="bg-card-bg border border-card-border rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col group">
                 <div className="p-5 border-b border-card-border">
                   <div className="flex justify-between items-start mb-2">
-                    <Link href={`/clients/${client.slug}`} className="font-bold text-lg text-foreground hover:text-blue-600 transition-colors truncate pr-2">
+                    <Link href={`/clients/${client.slug}`} className="font-bold text-lg text-foreground hover:text-zinc-900 dark:text-white transition-colors truncate pr-2">
                       {client.name}
                     </Link>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
@@ -151,10 +156,29 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
                       >
                         <Send size={14} />
                       </button>
-                      <button onClick={() => copyPortalLink(client.portalToken)} title="Copy Portal Link" className="text-zinc-400 hover:text-green-600 p-1.5 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
+                      <button 
+                        onClick={async () => {
+                          if (!client.portalToken) return toast.error('Token not generated yet.')
+                          if (!client.email) return toast.error('Client has no email address.')
+                          
+                          toast.loading('Sending portal link via email...', { id: 'email' })
+                          const { sendPortalLink } = await import('@/app/actions/email')
+                          const res = await sendPortalLink(client.email, client.name, client.portalToken)
+                          if (res.success) {
+                            toast.success('Portal link sent!', { id: 'email' })
+                          } else {
+                            toast.error('Failed to send link', { id: 'email' })
+                          }
+                        }}
+                        title="Email Portal Link" 
+                        className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                      >
+                        <Mail size={14} />
+                      </button>
+                      <button onClick={() => copyPortalLink(client.portalToken)} title="Copy Portal Link" className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
                         <LinkIcon size={14} />
                       </button>
-                      <button onClick={() => setEditingClient(client)} className="text-zinc-400 hover:text-blue-600 p-1.5 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                      <button onClick={() => setEditingClient(client)} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
                         <Edit2 size={14} />
                       </button>
                       <button onClick={() => handleDelete(client.id)} className="text-zinc-400 hover:text-red-600 p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
@@ -216,36 +240,36 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="sm:col-span-2">
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Company / Client Name *</label>
-                  <input type="text" name="name" defaultValue={editingClient.name} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500" />
+                  <input type="text" name="name" defaultValue={editingClient.name} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" />
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Email Address</label>
-                  <input type="email" name="email" defaultValue={editingClient.email || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500" />
+                  <input type="email" name="email" defaultValue={editingClient.email || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" />
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Phone Number</label>
-                  <input type="text" name="phone" defaultValue={editingClient.phone || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500" />
+                  <input type="text" name="phone" defaultValue={editingClient.phone || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" />
                 </div>
                 <div className="sm:col-span-2">
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Billing Address</label>
-                  <textarea name="address" defaultValue={editingClient.address || ''} rows={2} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 resize-none"></textarea>
+                  <textarea name="address" defaultValue={editingClient.address || ''} rows={2} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white resize-none"></textarea>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">GSTIN</label>
-                  <input type="text" name="gstin" defaultValue={editingClient.gstin || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 uppercase" />
+                  <input type="text" name="gstin" defaultValue={editingClient.gstin || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white uppercase" />
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">PAN Number</label>
-                  <input type="text" name="panNo" defaultValue={editingClient.panNo || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 uppercase" />
+                  <input type="text" name="panNo" defaultValue={editingClient.panNo || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white uppercase" />
                 </div>
                 <div className="sm:col-span-2">
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">State Code (e.g. 27)</label>
-                  <input type="text" name="stateCode" defaultValue={editingClient.stateCode || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500" />
+                  <input type="text" name="stateCode" defaultValue={editingClient.stateCode || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" />
                 </div>
               </div>
               <div className="flex justify-end gap-3 mt-4 pt-6 border-t border-card-border">
                 <button type="button" onClick={() => setEditingClient(null)} className="px-5 py-2.5 font-medium text-zinc-500 hover:bg-sidebar-bg rounded-lg transition-colors">Cancel</button>
-                <button type="submit" className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm">Save Changes</button>
+                <button type="submit" className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm">Save Changes</button>
               </div>
             </form>
           </div>

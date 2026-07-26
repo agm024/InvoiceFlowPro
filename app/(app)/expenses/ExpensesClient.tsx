@@ -62,7 +62,7 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
           </button>
           <button 
             onClick={() => setActiveForm(activeForm === 'EXPENSE' ? 'NONE' : 'EXPENSE')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm ${activeForm === 'EXPENSE' ? 'bg-zinc-200 text-zinc-800' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/20'}`}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm ${activeForm === 'EXPENSE' ? 'bg-zinc-200 text-zinc-800' : 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white hover:bg-black dark:hover:bg-zinc-200 shadow-zinc-900/20'}`}
           >
             <Plus size={18} /> {activeForm === 'EXPENSE' ? 'Cancel' : 'Add Expense'}
           </button>
@@ -150,7 +150,7 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
                 </div>
               </label>
               <label className="flex items-start gap-3 cursor-pointer mt-2">
-                <input type="checkbox" name="itcEligible" defaultChecked className="mt-1 w-4 h-4 text-blue-600 rounded border-gray-300" />
+                <input type="checkbox" name="itcEligible" defaultChecked className="mt-1 w-4 h-4 text-zinc-900 dark:text-white rounded border-gray-300" />
                 <div>
                   <div className="font-semibold text-foreground">Eligible for Input Tax Credit (ITC)?</div>
                   <div className="text-xs text-zinc-500 mt-1">Check this if you plan to claim ITC on this purchase in GSTR-3B.</div>
@@ -159,7 +159,7 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
             </div>
 
             <div className="flex justify-end mt-4">
-              <button disabled={isSubmitting} type="submit" className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50">
+              <button disabled={isSubmitting} type="submit" className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm disabled:opacity-50">
                 {isSubmitting ? 'Saving...' : 'Save Expense'}
               </button>
             </div>
@@ -227,7 +227,7 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex gap-2">
                     {exp.isRcm && <span className="px-2 py-0.5 bg-orange-100 text-orange-700 rounded text-xs font-semibold">RCM</span>}
-                    {exp.itcEligible && <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-semibold">ITC</span>}
+                    {exp.itcEligible && <span className="px-2 py-0.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white rounded text-xs font-semibold">ITC</span>}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">

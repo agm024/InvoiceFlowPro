@@ -377,7 +377,7 @@ export default function InvoiceForm({
                   />
                   {isFetchingRate && (
                     <div className="absolute right-2 flex items-center justify-center">
-                      <div className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-3 h-3 border-2 border-zinc-900 dark:border-white border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   )}
                 </div>
@@ -401,10 +401,10 @@ export default function InvoiceForm({
                   if (!e.target.value) setClientId('')
                 }}
                 onFocus={() => setShowClientDropdown(true)}
-                className={`w-full rounded-md pl-9 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 font-medium text-foreground truncate ${!clientId ? 'pr-32' : 'pr-4'}`}
+                className={`w-full rounded-md pl-9 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white font-medium text-foreground truncate ${!clientId ? 'pr-32' : 'pr-4'}`}
               />
               {!clientId && (
-                <button type="button" onClick={() => setIsAddingClient(true)} className="absolute right-2 top-1.5 text-blue-500 hover:bg-blue-50 px-2 py-1 rounded text-xs font-medium transition-colors whitespace-nowrap">
+                <button type="button" onClick={() => setIsAddingClient(true)} className="absolute right-2 top-1.5 text-zinc-900 dark:text-white hover:bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded text-xs font-medium transition-colors whitespace-nowrap">
                   + Customer
                 </button>
               )}
@@ -447,7 +447,7 @@ export default function InvoiceForm({
                 </div>
                 <div className="mt-4 flex justify-end">
                   <button type="button" onClick={() => setIsAddingClient(false)} className="px-4 py-2 text-zinc-500 mr-2">Cancel</button>
-                  <button type="button" onClick={handleCreateClient} className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium text-sm">Save</button>
+                  <button type="button" onClick={handleCreateClient} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-4 py-2 rounded-md font-medium text-sm">Save</button>
                 </div>
               </div>
             )}
@@ -480,7 +480,7 @@ export default function InvoiceForm({
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border-b border-card-border bg-sidebar-bg/50 gap-3">
             <h3 className="font-semibold text-foreground flex items-center gap-2"><FileText size={16} className="text-zinc-400" /> Products & Services</h3>
             {items.length > 0 && (
-              <button type="button" onClick={() => setIsProductModalOpen(true)} className="text-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-md font-medium text-sm transition-colors flex items-center gap-1 w-full sm:w-auto justify-center border border-blue-100 sm:border-none">
+              <button type="button" onClick={() => setIsProductModalOpen(true)} className="text-zinc-900 dark:text-white hover:bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-md font-medium text-sm transition-colors flex items-center gap-1 w-full sm:w-auto justify-center border border-zinc-200 dark:border-zinc-700 sm:border-none">
                 <Plus size={14} /> Add Product
               </button>
             )}
@@ -494,7 +494,7 @@ export default function InvoiceForm({
               <p className="text-zinc-500 mb-6 text-center max-w-sm text-sm">
                 Search existing products to add to this list or add new product to get started ✨
               </p>
-              <button type="button" onClick={() => setIsProductModalOpen(true)} className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20 flex items-center gap-2">
+              <button type="button" onClick={() => setIsProductModalOpen(true)} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm shadow-zinc-900/20 flex items-center gap-2">
                 <Plus size={16} /> Add New Product
               </button>
             </div>
@@ -521,14 +521,14 @@ export default function InvoiceForm({
                         <input 
                           type="number" min="1" value={item.quantity || ""} 
                           onChange={e => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
-                          className="w-full bg-transparent border-b border-transparent hover:border-sidebar-border focus:border-blue-500 focus:outline-none px-1 py-1"
+                          className="w-full bg-transparent border-b border-transparent hover:border-sidebar-border focus:border-zinc-900 dark:border-white focus:outline-none px-1 py-1"
                         />
                       </td>
                       <td className="px-6 py-4">
                         <input 
                           type="number" step="0.01" value={item.price || ""} 
                           onChange={e => updateItem(index, 'price', e.target.value === '' ? '' : parseFloat(e.target.value))}
-                          className="w-full bg-transparent border-b border-transparent hover:border-sidebar-border focus:border-blue-500 focus:outline-none px-1 py-1"
+                          className="w-full bg-transparent border-b border-transparent hover:border-sidebar-border focus:border-zinc-900 dark:border-white focus:outline-none px-1 py-1"
                         />
                       </td>
                       {invoiceType === 'REGULAR' && (
@@ -655,7 +655,7 @@ export default function InvoiceForm({
             } else {
               setShowPreviewModal(true)
             }
-          }} className={`${showDesktopPreview ? '2xl:hidden' : ''} bg-blue-50 text-blue-700 shadow-sm px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-blue-100 transition-colors w-full sm:w-auto border border-blue-200 flex items-center justify-center gap-2`}>
+          }} className={`${showDesktopPreview ? '2xl:hidden' : ''} bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors w-full sm:w-auto border border-zinc-200 dark:border-zinc-700 flex items-center justify-center gap-2`}>
             <Eye size={18} /> Preview
           </button>
           
@@ -663,7 +663,7 @@ export default function InvoiceForm({
             Save as Draft
           </button>
           
-          <button type="submit" onClick={() => setSubmitAction('sent')} className="bg-blue-100 text-blue-700 shadow-sm px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-blue-200 transition-colors w-full sm:w-auto border border-blue-200">
+          <button type="submit" onClick={() => setSubmitAction('sent')} className="bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-zinc-200 transition-colors w-full sm:w-auto border border-zinc-200 dark:border-zinc-700">
             Save
           </button>
 
@@ -671,7 +671,7 @@ export default function InvoiceForm({
             Save & Mark as Paid
           </button>
           
-          <button type="submit" onClick={() => setSubmitAction('sent_and_print')} className="bg-blue-600 text-white shadow-md shadow-blue-500/20 px-8 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors w-full sm:w-auto">
+          <button type="submit" onClick={() => setSubmitAction('sent_and_print')} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white shadow-md shadow-zinc-900/20 px-8 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors w-full sm:w-auto">
             Save & Print
           </button>
         </div>
@@ -827,25 +827,25 @@ export default function InvoiceForm({
               <form onSubmit={handleSaveProduct} className="p-6 flex flex-col gap-6 overflow-y-auto">
                 <div>
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Product Name *</label>
-                  <input type="text" name="name" defaultValue={editingProduct.name} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors" />
+                  <input type="text" name="name" defaultValue={editingProduct.name} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                   <div>
                     <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Base Price (INR) *</label>
-                    <input type="number" step="0.01" name="price" defaultValue={editingProduct.price} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors" />
+                    <input type="number" step="0.01" name="price" defaultValue={editingProduct.price} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors" />
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">HSN Code</label>
-                    <input type="text" name="hsn" defaultValue={editingProduct.hsn || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors" />
+                    <input type="text" name="hsn" defaultValue={editingProduct.hsn || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors" />
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">GST Rate (%)</label>
-                    <input type="number" name="gstRate" defaultValue={editingProduct.gstRate || 18} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 transition-colors" />
+                    <input type="number" name="gstRate" defaultValue={editingProduct.gstRate || 18} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors" />
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-card-border">
                   <button type="button" onClick={() => setEditingProduct(null)} className="px-5 py-2.5 font-medium text-zinc-500 hover:bg-sidebar-bg rounded-lg transition-colors">Back</button>
-                  <button type="submit" className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm">Save Product</button>
+                  <button type="submit" className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm">Save Product</button>
                 </div>
               </form>
             ) : (
@@ -857,7 +857,7 @@ export default function InvoiceForm({
                       type="text" autoFocus
                       placeholder="Search existing products..."
                       value={productSearch} onChange={e => setProductSearch(e.target.value)}
-                      className="w-full rounded-xl pl-11 pr-4 py-3 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-blue-500 text-base shadow-sm"
+                      className="w-full rounded-xl pl-11 pr-4 py-3 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white text-base shadow-sm"
                     />
                   </div>
                 </div>
@@ -869,10 +869,10 @@ export default function InvoiceForm({
                         <div className="text-sm text-zinc-500 font-medium">Base Price: ₹{p.price} <span className="text-zinc-300 mx-2">|</span> GST: {p.gstRate}%</div>
                       </div>
                       <div className="flex items-center gap-2 pr-2">
-                        <button onClick={() => setEditingProduct(p)} className="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
+                        <button onClick={() => setEditingProduct(p)} className="p-2 text-zinc-400 hover:text-zinc-900 dark:text-white hover:bg-zinc-100 dark:bg-zinc-800 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
                           <Edit2 size={18} />
                         </button>
-                        <button onClick={() => handleSelectProduct(p)} className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:border-blue-500 hover:text-blue-600 text-foreground px-5 py-2 rounded-lg font-medium text-sm transition-colors shadow-sm">
+                        <button onClick={() => handleSelectProduct(p)} className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:border-zinc-900 dark:border-white hover:text-zinc-900 dark:text-white text-foreground px-5 py-2 rounded-lg font-medium text-sm transition-colors shadow-sm">
                           Add
                         </button>
                       </div>
@@ -889,7 +889,7 @@ export default function InvoiceForm({
                 </div>
                 <div className="p-5 border-t border-card-border bg-sidebar-bg/50 flex justify-between items-center">
                   <span className="text-sm font-medium text-zinc-500">Didn't find what you need?</span>
-                  <button onClick={() => setEditingProduct({ name: productSearch, price: 0, gstRate: 18 })} className="text-blue-600 font-semibold hover:underline flex items-center gap-1.5 bg-blue-50 px-4 py-2 rounded-lg">
+                  <button onClick={() => setEditingProduct({ name: productSearch, price: 0, gstRate: 18 })} className="text-zinc-900 dark:text-white font-semibold hover:underline flex items-center gap-1.5 bg-zinc-100 dark:bg-zinc-800 px-4 py-2 rounded-lg">
                     <Plus size={16} /> Create New Product
                   </button>
                 </div>

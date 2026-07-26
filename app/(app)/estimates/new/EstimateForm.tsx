@@ -137,7 +137,7 @@ export default function EstimateForm({
         <button 
           type="submit" 
           disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
+          className="bg-zinc-900 hover:bg-black dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
         >
           {loading ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
           Save Estimate
@@ -152,7 +152,7 @@ export default function EstimateForm({
               <div>
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Client</label>
                 <select 
-                  className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
                   value={formData.clientId}
                   onChange={e => handleClientChange(e.target.value)}
                   required
@@ -165,11 +165,27 @@ export default function EstimateForm({
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Estimate Date</label>
                 <input 
                   type="date"
-                  className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
                   value={formData.date}
                   onChange={e => setFormData({ ...formData, date: e.target.value })}
                   required
                 />
+              </div>
+              <div className="col-span-2 mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Currency</label>
+                <div className="flex gap-2">
+                  <select 
+                    className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
+                    value={formData.currency}
+                    onChange={e => setFormData({ ...formData, currency: e.target.value })}
+                  >
+                    <option value="INR">INR</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                    <option value="AUD">AUD</option>
+                  </select>
+                </div>
               </div>
             </div>
             
@@ -181,7 +197,7 @@ export default function EstimateForm({
                   <div key={item.id} className="grid grid-cols-12 gap-3 items-start border-b border-zinc-100 dark:border-zinc-800 pb-4">
                     <div className="col-span-12 md:col-span-4">
                       <select 
-                        className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
                         value={item.productId}
                         onChange={e => handleItemChange(item.id, 'productId', e.target.value)}
                         required
@@ -201,7 +217,7 @@ export default function EstimateForm({
                       <input 
                         type="number"
                         placeholder="Qty"
-                        className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
                         value={item.quantity || ""}
                         onChange={e => handleItemChange(item.id, 'quantity', e.target.value)}
                         min="0.01" step="0.01" required
@@ -211,7 +227,7 @@ export default function EstimateForm({
                       <input 
                         type="number"
                         placeholder="Rate"
-                        className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
                         value={item.rate || ""}
                         onChange={e => handleItemChange(item.id, 'rate', e.target.value)}
                         min="0" step="0.01" required
@@ -231,7 +247,7 @@ export default function EstimateForm({
               <button 
                 type="button" 
                 onClick={addItem}
-                className="mt-4 flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                className="mt-4 flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white hover:underline transition-colors"
               >
                 <Plus size={16} /> Add Item
               </button>
@@ -248,7 +264,7 @@ export default function EstimateForm({
               <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Estimate #</label>
               <input 
                 type="text"
-                className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
                 value={formData.estimateNumber}
                 onChange={e => setFormData({ ...formData, estimateNumber: e.target.value })}
                 required
@@ -276,7 +292,7 @@ export default function EstimateForm({
             <div>
               <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Notes</label>
               <textarea 
-                className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 h-20 resize-none"
+                className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white h-20 resize-none"
                 value={formData.notes}
                 onChange={e => setFormData({ ...formData, notes: e.target.value })}
               />

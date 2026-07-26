@@ -74,7 +74,7 @@ export default function TransfersClient({
         </div>
         <button 
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20"
+          className="flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm shadow-zinc-900/20"
         >
           <Plus size={18} /> {showForm ? 'Cancel' : 'Record Transfer'}
         </button>

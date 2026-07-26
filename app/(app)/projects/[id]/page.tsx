@@ -27,7 +27,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <div className="flex justify-between items-start mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white mb-1">{project.name}</h1>
-          <p className="text-zinc-500">Client: <Link href={`/clients/${project.client.slug}`} className="hover:underline font-medium text-blue-600">{project.client.name}</Link></p>
+          <p className="text-zinc-500">Client: <Link href={`/clients/${project.client.slug}`} className="hover:underline font-medium text-zinc-900 dark:text-white">{project.client.name}</Link></p>
         </div>
       </div>
 

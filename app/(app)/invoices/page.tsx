@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { getInvoices, deleteInvoice } from './actions'
-import { getCompanySettings } from '../settings/actions'
+import { getCompanySettings, getBanks } from '../settings/actions'
 import InvoiceListClient from './InvoiceListClient'
 
 export const metadata = {
@@ -12,12 +12,14 @@ export default async function InvoicesPage() {
   const allInvoices = await getInvoices()
   const invoices = allInvoices.filter(inv => inv.invoiceType !== 'QUOTATION')
   const settings = await getCompanySettings()
+  const banks = await getBanks()
 
   return (
     <div className="h-full w-full bg-background flex flex-col p-4 md:p-8 overflow-hidden">
       <InvoiceListClient 
         initialInvoices={invoices} 
         settings={settings}
+        banks={banks}
       />
     </div>
   )

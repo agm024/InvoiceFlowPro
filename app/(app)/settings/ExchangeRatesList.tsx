@@ -78,7 +78,7 @@ export default function ExchangeRatesList({ initialRates }: { initialRates: any[
           <button 
             onClick={handleSyncAll}
             disabled={isSyncing}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium bg-zinc-100 dark:bg-zinc-800 dark:bg-zinc-800/20 text-zinc-900 dark:text-white dark:text-zinc-900 dark:text-white rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 dark:hover:bg-zinc-800/40 transition-colors disabled:opacity-50"
           >
             {isSyncing ? <Loader2 size={14} className="animate-spin" /> : <RefreshCcw size={14} />}
             Sync All Rates
@@ -125,14 +125,14 @@ export default function ExchangeRatesList({ initialRates }: { initialRates: any[
               onChange={(e) => setCurrency(e.target.value)}
               required 
               maxLength={3} 
-              className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500 uppercase pr-24" 
+              className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white uppercase pr-24" 
               placeholder="e.g. USD, EUR" 
             />
             <button
               type="button"
               onClick={handleFetchRate}
               disabled={isFetching || currency.length < 3}
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded-md transition-colors disabled:opacity-50"
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-zinc-900 dark:text-white dark:text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 dark:bg-zinc-800/20 hover:bg-zinc-200 dark:hover:bg-zinc-700 dark:hover:bg-zinc-800/40 rounded-md transition-colors disabled:opacity-50"
             >
               {isFetching ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
               Fetch
@@ -148,7 +148,7 @@ export default function ExchangeRatesList({ initialRates }: { initialRates: any[
             value={rateInput}
             onChange={(e) => setRateInput(e.target.value)}
             required 
-            className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" 
+            className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" 
             placeholder="e.g. 83.50" 
           />
         </div>

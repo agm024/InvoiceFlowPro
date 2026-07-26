@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal, Link as LinkIcon, Printer, CheckCircle, Clock } from 'lucide-react'
+import { MoreHorizontal, Link as LinkIcon, Printer, CheckCircle, Clock, Mail } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { updateInvoiceStatus, convertToInvoice, recordPayment } from './actions'
 
@@ -12,13 +12,17 @@ interface Props {
   total: number;
   amountPaid: number;
   status: string;
+  clientName: string;
+  clientEmail: string | null;
 }
 
-export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoiceType, total, amountPaid, status }: Props) {
+export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoiceType, total, amountPaid, status, clientName, clientEmail }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [paymentAmount, setPaymentAmount] = useState((total - amountPaid).toString())
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSendingReminder, setIsSendingReminder] = useState(false)
+  const [isSendingInvoice, setIsSendingInvoice] = useState(false)
   
   const handleCopyLink = () => {
     const url = `${window.location.origin}/pay/${encodeURIComponent(invoiceNumber)}`
@@ -68,6 +72,45 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
     setIsOpen(false)
   }
 
+  const handleSendReminder = async () => {
+    if (!clientEmail) {
+      toast.error('Client has no email address.')
+      return
+    }
+    setIsSendingReminder(true)
+    const { sendPaymentReminder } = await import('@/app/actions/email')
+    const formattedAmount = '₹ ' + total.toFixed(2)
+    const res = await sendPaymentReminder(clientEmail, clientName, invoiceNumber, invoiceId, formattedAmount)
+    if (res.success) {
+      toast.success('Reminder sent successfully!')
+    } else {
+      toast.error('Failed to send reminder.')
+    }
+    setIsSendingReminder(false)
+    setIsOpen(false)
+  }
+
+  const handleSendInvoice = async () => {
+    if (!clientEmail) {
+      toast.error('Client has no email address.')
+      return
+    }
+    setIsSendingInvoice(true)
+    const { sendInvoiceEmail } = await import('@/app/actions/email')
+    const formattedAmount = '₹ ' + total.toFixed(2)
+    const res = await sendInvoiceEmail(clientEmail, clientName, invoiceNumber, invoiceId, formattedAmount)
+    if (res.success) {
+      toast.success('Invoice sent successfully!')
+      if (status === 'draft') {
+        await updateInvoiceStatus(invoiceId, 'sent')
+      }
+    } else {
+      toast.error('Failed to send invoice.')
+    }
+    setIsSendingInvoice(false)
+    setIsOpen(false)
+  }
+
   return (
     <div className="relative">
       <button 
@@ -97,13 +140,33 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
               >
                 <Printer size={16} /> Download / Print PDF
               </button>
+
+              {clientEmail && (
+                <button
+                  onClick={handleSendInvoice}
+                  disabled={isSendingInvoice}
+                  className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-sidebar-bg flex items-center gap-2 disabled:opacity-50"
+                >
+                  <Mail size={16} /> {isSendingInvoice ? 'Sending...' : 'Send via Email'}
+                </button>
+              )}
+
+              {invoiceType !== 'QUOTATION' && status !== 'paid' && clientEmail && (
+                <button
+                  onClick={handleSendReminder}
+                  disabled={isSendingReminder}
+                  className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-sidebar-bg flex items-center gap-2 disabled:opacity-50"
+                >
+                  <Clock size={16} /> {isSendingReminder ? 'Sending...' : 'Send Reminder'}
+                </button>
+              )}
               
               {invoiceType === 'QUOTATION' && (
                 <>
                   <div className="border-t border-card-border my-1"></div>
                   <button
                     onClick={handleConvertToInvoice}
-                    className="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 flex items-center gap-2 font-medium"
+                    className="w-full text-left px-4 py-2 text-sm text-zinc-900 dark:text-white hover:bg-zinc-100 dark:bg-zinc-800 flex items-center gap-2 font-medium"
                   >
                     <CheckCircle size={16} /> Convert to Invoice
                   </button>
@@ -154,7 +217,7 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
                     disabled={isSubmitting}
-                    className="w-full pl-8 pr-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full pl-8 pr-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:outline-none"
                     required
                   />
                 </div>

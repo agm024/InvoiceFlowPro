@@ -69,8 +69,11 @@ export async function getBanks() {
 
   return banks.map(bank => {
     const totalIn = bank.invoices
-      .filter(i => i.status === 'paid')
-      .reduce((sum, i) => sum + (i.total * (i.exchangeRate || 1)), 0) 
+      .filter(i => i.status === 'paid' || i.status === 'partially_paid')
+      .reduce((sum, i) => {
+        const paid = i.amountPaid || (i.status === 'paid' ? i.total : 0)
+        return sum + (paid * (i.exchangeRate || 1))
+      }, 0) 
       + bank.transfersIn.reduce((sum, t) => sum + t.amount, 0)
     
     const totalOut = bank.expenses.reduce((sum, e) => sum + e.totalAmount, 0) 

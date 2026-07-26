@@ -49,7 +49,7 @@ export default function KanbanBoard({ project }: { project: any }) {
 
   const columns = [
     { id: 'TODO', title: 'To Do', color: 'border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50' },
-    { id: 'IN_PROGRESS', title: 'In Progress', color: 'border-blue-200 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-900/10' },
+    { id: 'IN_PROGRESS', title: 'In Progress', color: 'border-zinc-200 dark:border-zinc-700 dark:border-zinc-900/50 bg-zinc-100 dark:bg-zinc-800 dark:bg-zinc-900/10' },
     { id: 'DONE', title: 'Done', color: 'border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/10' }
   ]
 
@@ -70,7 +70,7 @@ export default function KanbanBoard({ project }: { project: any }) {
             value={project.stage} 
             onChange={handleUpdateStage}
             disabled={isUpdatingStage}
-            className="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+            className="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white font-medium"
           >
             {stages.map(s => (
               <option key={s} value={s}>{s}</option>
@@ -86,12 +86,12 @@ export default function KanbanBoard({ project }: { project: any }) {
           placeholder="New task title..." 
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
-          className="flex-1 px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
         />
         <button 
           type="submit" 
           disabled={isAdding || !newTaskTitle.trim()}
-          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
+          className="px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:bg-black dark:hover:bg-zinc-200 text-white font-medium rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
         >
           {isAdding ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Add Task
         </button>
@@ -122,7 +122,7 @@ export default function KanbanBoard({ project }: { project: any }) {
                     )}
                     <div className="flex-1"></div>
                     {col.id !== 'DONE' && (
-                      <button onClick={() => handleMoveTask(task.id, col.id === 'TODO' ? 'IN_PROGRESS' : 'DONE')} className="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 flex items-center gap-1">
+                      <button onClick={() => handleMoveTask(task.id, col.id === 'TODO' ? 'IN_PROGRESS' : 'DONE')} className="text-xs font-medium text-zinc-900 dark:text-white hover:text-zinc-900 dark:text-white dark:text-zinc-900 dark:text-white flex items-center gap-1">
                         Move forward →
                       </button>
                     )}

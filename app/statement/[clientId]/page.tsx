@@ -96,7 +96,7 @@ export default async function StatementPage({ params }: { params: Promise<{ clie
           </div>
           <div className="bg-zinc-50 p-6 rounded-lg text-right min-w-[250px]">
             <p className="text-sm font-bold text-zinc-500 mb-1">TOTAL OUTSTANDING</p>
-            <h2 className="text-3xl font-bold text-blue-600">
+            <h2 className="text-3xl font-bold text-zinc-900 dark:text-white">
               {currency} {finalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h2>
           </div>

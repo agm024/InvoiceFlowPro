@@ -10,7 +10,9 @@ export const metadata = {
   title: 'Settings - InvoiceFlowPro'
 }
 
-export default async function SettingsPage() {
+export default async function SettingsPage(props: { searchParams: Promise<{ tab?: string }> }) {
+  const searchParams = await props.searchParams
+  const initialTab = searchParams.tab || 'company'
   const settings = await getCompanySettings()
   const banks = await getBanks()
   const exchangeRates = await getExchangeRates()
@@ -23,7 +25,7 @@ export default async function SettingsPage() {
         <p className="text-zinc-500 mt-1">Manage your company profile, bank accounts, and preferences.</p>
       </div>
 
-      <SettingsTabs settings={settings} banks={banks} exchangeRates={exchangeRates} internalTransfers={internalTransfers} />
+      <SettingsTabs settings={settings} banks={banks} exchangeRates={exchangeRates} internalTransfers={internalTransfers} initialTab={initialTab} />
     </div>
   )
 }

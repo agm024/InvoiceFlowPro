@@ -14,7 +14,9 @@ export async function getClients() {
         select: {
           total: true,
           status: true,
-          date: true
+          date: true,
+          invoiceType: true,
+          amountPaid: true
         }
       }
     }

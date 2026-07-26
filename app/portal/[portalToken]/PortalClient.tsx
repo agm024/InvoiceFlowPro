@@ -309,7 +309,7 @@ export default function PortalClient({
                               <div key={stage} className="flex flex-col items-center w-full relative">
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold z-10 ${
                                   isPast ? 'bg-green-500 text-white' :
-                                  isCurrent ? 'bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white ring-4 ring-blue-100 dark:ring-blue-900/30' :
+                                  isCurrent ? 'bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white ring-4 ring-zinc-200 dark:ring-zinc-800' :
                                   'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'
                                 }`}>
                                   {isPast ? <CheckCircle size={16} /> : idx + 1}

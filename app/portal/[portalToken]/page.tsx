@@ -37,8 +37,8 @@ export default async function ClientPortalPage({ params }: { params: Promise<{ p
 
   const companySettings = await prisma.companySettings.findFirst()
 
-  const unpaidInvoices = client.invoices.filter(i => i.status !== 'paid' && i.status !== 'cancelled' && i.status !== 'draft')
-  const paidInvoices = client.invoices.filter(i => i.status === 'paid')
+  const unpaidInvoices = client.invoices.filter(i => i.status !== 'paid' && i.status !== 'cancelled' && i.status !== 'draft' && i.invoiceType !== 'QUOTATION')
+  const paidInvoices = client.invoices.filter(i => i.status === 'paid' && i.invoiceType !== 'QUOTATION')
   const outstandingBalance = unpaidInvoices.reduce((acc, inv) => acc + (inv.total - (inv.amountPaid || 0)), 0)
 
   return (

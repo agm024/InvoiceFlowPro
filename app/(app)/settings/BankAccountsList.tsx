@@ -46,7 +46,7 @@ export default function BankAccountsList({ initialBanks, initialTransfers = [] }
           {banks.map(bank => (
             <div key={bank.id} className="p-4 rounded-xl border border-card-border bg-sidebar-bg flex justify-between items-start">
               <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+                <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 dark:bg-zinc-800/30 flex items-center justify-center text-zinc-900 dark:text-white dark:text-zinc-900 dark:text-white shrink-0">
                   <Building2 size={20} />
                 </div>
                 <div>
@@ -87,7 +87,7 @@ export default function BankAccountsList({ initialBanks, initialTransfers = [] }
             <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Bank Region / Type</label>
             <div className="flex flex-wrap gap-3">
               {['DOMESTIC', 'US', 'UK', 'EUROPE', 'OTHER'].map(region => (
-                <label key={region} className={`px-4 py-2 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${bankRegion === region ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-background border-sidebar-border text-zinc-600 hover:bg-sidebar-bg'}`}>
+                <label key={region} className={`px-4 py-2 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${bankRegion === region ? 'bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white' : 'bg-background border-sidebar-border text-zinc-600 hover:bg-sidebar-bg'}`}>
                   <input type="radio" name="bankRegion" value={region} checked={bankRegion === region} onChange={() => setBankRegion(region)} className="hidden" />
                   {region === 'DOMESTIC' ? 'India (Domestic)' : region === 'US' ? 'United States' : region === 'UK' ? 'United Kingdom' : region === 'EUROPE' ? 'Europe / SEPA' : 'Other International'}
                 </label>
@@ -96,33 +96,33 @@ export default function BankAccountsList({ initialBanks, initialTransfers = [] }
           </div>
           <div>
             <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Bank Name *</label>
-            <input type="text" name="bankName" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder={bankRegion === 'US' ? "e.g. Mercury, Razorpay US" : "e.g. HDFC Bank"} />
+            <input type="text" name="bankName" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" placeholder={bankRegion === 'US' ? "e.g. Mercury, Razorpay US" : "e.g. HDFC Bank"} />
           </div>
           {bankRegion !== 'EUROPE' && (
             <div>
               <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Account Number *</label>
-              <input type="text" name="accountNumber" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="A/C Number" />
+              <input type="text" name="accountNumber" required className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" placeholder="A/C Number" />
             </div>
           )}
           
           {(bankRegion === 'DOMESTIC' || bankRegion === 'OTHER') && (
             <div>
               <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">IFSC Code {bankRegion === 'DOMESTIC' && '*'}</label>
-              <input type="text" name="ifsc" required={bankRegion === 'DOMESTIC'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="HDFC000123" />
+              <input type="text" name="ifsc" required={bankRegion === 'DOMESTIC'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" placeholder="HDFC000123" />
             </div>
           )}
           
           {(bankRegion === 'US' || bankRegion === 'OTHER') && (
             <div>
               <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">ABA Routing Number {bankRegion === 'US' && '*'}</label>
-              <input type="text" name="routingNumber" required={bankRegion === 'US'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="9-digit Routing No." />
+              <input type="text" name="routingNumber" required={bankRegion === 'US'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" placeholder="9-digit Routing No." />
             </div>
           )}
           
           {(bankRegion === 'UK' || bankRegion === 'OTHER') && (
             <div>
               <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Sort Code {bankRegion === 'UK' && '*'}</label>
-              <input type="text" name="routingNumber" required={bankRegion === 'UK'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="XX-XX-XX or XXXXXX" />
+              <input type="text" name="routingNumber" required={bankRegion === 'UK'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" placeholder="XX-XX-XX or XXXXXX" />
             </div>
           )}
           
@@ -130,11 +130,11 @@ export default function BankAccountsList({ initialBanks, initialTransfers = [] }
             <>
               <div>
                 <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">IBAN {bankRegion === 'EUROPE' && '*'}</label>
-                <input type="text" name="iban" required={bankRegion === 'EUROPE'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="DE..." />
+                <input type="text" name="iban" required={bankRegion === 'EUROPE'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" placeholder="DE..." />
               </div>
               <div>
                 <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">SWIFT / BIC Code {bankRegion === 'EUROPE' && '*'}</label>
-                <input type="text" name="swiftCode" required={bankRegion === 'EUROPE'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-blue-500" placeholder="SWIFT Code" />
+                <input type="text" name="swiftCode" required={bankRegion === 'EUROPE'} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" placeholder="SWIFT Code" />
               </div>
             </>
           )}
@@ -194,7 +194,7 @@ export default function BankAccountsList({ initialBanks, initialTransfers = [] }
               <input type="date" name="date" required defaultValue={format(new Date(), 'yyyy-MM-dd')} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border" />
             </div>
             <div>
-              <button disabled={isTransferring} type="submit" className="w-full bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2">
+              <button disabled={isTransferring} type="submit" className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 disabled:opacity-50 flex items-center justify-center gap-2">
                 <ArrowRightLeft size={16} /> Transfer
               </button>
             </div>

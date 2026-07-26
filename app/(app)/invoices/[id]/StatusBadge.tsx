@@ -4,7 +4,7 @@ export default function StatusBadge({ status, invoiceId }: { status: string, inv
       case 'paid':
         return 'bg-green-500/10 text-green-500'
       case 'sent':
-        return 'bg-blue-500/10 text-blue-500'
+        return 'bg-zinc-100 dark:bg-zinc-8000/10 text-zinc-900 dark:text-white'
       case 'overdue':
         return 'bg-red-500/10 text-red-500'
       default:

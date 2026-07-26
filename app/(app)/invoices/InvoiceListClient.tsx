@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { format, isToday, isYesterday, isThisWeek, isThisMonth, isThisYear, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subWeeks, subMonths, subYears, startOfYear, endOfYear, startOfQuarter, subQuarters, isWithinInterval, parseISO } from 'date-fns'
-import { Search, Plus, PlayCircle, Settings, SlidersHorizontal, ChevronDown, Eye, Send, MoreHorizontal, Copy, Check, X } from 'lucide-react'
+import { Search, Plus, PlayCircle, Settings, SlidersHorizontal, ChevronDown, Eye, Send, MoreHorizontal, Copy, Check, X, Mail } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { deleteInvoice } from './actions'
 import StatusBadge from '@/components/StatusBadge'
@@ -11,16 +11,34 @@ import StatusBadge from '@/components/StatusBadge'
 type Invoice = any // using any for simplicity, usually from prisma type
 type TabType = 'All' | 'Pending' | 'Paid' | 'Cancelled' | 'Drafts'
 
-export default function InvoiceListClient({ initialInvoices, settings, type = 'invoice' }: { initialInvoices: Invoice[], settings: any, type?: 'invoice' | 'quotation' }) {
+export default function InvoiceListClient({ 
+  initialInvoices, 
+  settings, 
+  type = 'invoice', 
+  hideHeader = false,
+  banks = []
+}: { 
+  initialInvoices: Invoice[], 
+  settings?: any, 
+  type?: 'invoice' | 'quotation', 
+  hideHeader?: boolean,
+  banks?: any[] 
+}) {
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices)
   const [activeTab, setActiveTab] = useState<TabType>('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [emailModalOpen, setEmailModalOpen] = useState(false)
+  const [emailSubject, setEmailSubject] = useState('')
+  const [emailMessage, setEmailMessage] = useState('')
+  const [selectedInvoiceForEmail, setSelectedInvoiceForEmail] = useState<Invoice | null>(null)
+  const [isSubmittingEmail, setIsSubmittingEmail] = useState(false)
   
   // Payment Modal State
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   const [paymentAmount, setPaymentAmount] = useState('')
+  const [paymentBankId, setPaymentBankId] = useState('')
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false)
 
   const [dateRange, setDateRange] = useState('This Year')
@@ -55,6 +73,48 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
     setTimeout(() => setCopiedId(null), 2000)
   }
 
+  const openEmailModal = (invoice: Invoice) => {
+    if (!invoice.client.email) {
+      toast.error('Client has no email address.')
+      return
+    }
+    setSelectedInvoiceForEmail(invoice)
+    setEmailSubject(`Invoice Available: ${invoice.invoiceNumber}`)
+    setEmailMessage('A new invoice has been generated for you and is now available for review and payment.')
+    setEmailModalOpen(true)
+  }
+
+  const handleSendEmail = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedInvoiceForEmail) return
+
+    setIsSubmittingEmail(true)
+    const { sendInvoiceEmail } = await import('@/app/actions/email')
+    const formattedAmount = '₹ ' + selectedInvoiceForEmail.total.toFixed(2)
+    const res = await sendInvoiceEmail(
+      selectedInvoiceForEmail.client.email, 
+      selectedInvoiceForEmail.client.name, 
+      selectedInvoiceForEmail.invoiceNumber, 
+      selectedInvoiceForEmail.id, 
+      formattedAmount,
+      emailSubject,
+      emailMessage
+    )
+    
+    if (res.success) {
+      toast.success('Invoice sent via email!')
+      if (selectedInvoiceForEmail.status === 'draft') {
+        const { updateInvoiceStatus } = await import('@/app/(app)/invoices/[id]/actions')
+        await updateInvoiceStatus(selectedInvoiceForEmail.id, 'sent')
+        setInvoices(invoices.map(i => i.id === selectedInvoiceForEmail.id ? { ...i, status: 'sent' } : i))
+      }
+      setEmailModalOpen(false)
+    } else {
+      toast.error('Failed to send email.')
+    }
+    setIsSubmittingEmail(false)
+  }
+
   const handlePaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedInvoice) return
@@ -70,7 +130,7 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
 
     try {
       const { recordPayment } = await import('./actions')
-      const res = await recordPayment(selectedInvoice.id, amount)
+      const res = await recordPayment(selectedInvoice.id, amount, paymentBankId || undefined)
       
       if (res.error) {
         toast.error(res.error)
@@ -79,7 +139,7 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
           if (i.id === selectedInvoice.id) {
             return {
               ...i,
-              amountPaid: i.amountPaid + amount,
+              amountPaid: (i.amountPaid || 0) + amount,
               status: res.isFullyPaid ? 'paid' : 'partially_paid'
             }
           }
@@ -200,24 +260,26 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
     <div className="flex flex-col h-full bg-white dark:bg-card-bg rounded-2xl shadow-sm border border-zinc-200 dark:border-card-border overflow-hidden">
       
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 border-b border-zinc-100 dark:border-sidebar-border gap-4">
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">{type === 'quotation' ? 'Quotations' : 'Sales'}</h1>
-          <PlayCircle className="text-pink-500 fill-pink-50" size={24} />
+      {!hideHeader && (
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 border-b border-zinc-100 dark:border-sidebar-border gap-4">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">{type === 'quotation' ? 'Quotations' : 'Sales'}</h1>
+            <PlayCircle className="text-pink-500 fill-pink-50" size={24} />
+          </div>
+          
+          <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+            <Link href="/settings" className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+              <Settings size={16} /> Document Settings
+            </Link>
+            <Link 
+              href={type === 'quotation' ? '/quotations/new' : '/invoices/new'} 
+              className="flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm shadow-zinc-900/20"
+            >
+              <Plus size={18} /> Create {type === 'quotation' ? 'Quotation' : 'Invoice'}
+            </Link>
+          </div>
         </div>
-        
-        <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-          <Link href="/settings" className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
-            <Settings size={16} /> Document Settings
-          </Link>
-          <Link 
-            href={type === 'quotation' ? '/quotations/new' : '/invoices/new'} 
-            className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20"
-          >
-            <Plus size={18} /> Create {type === 'quotation' ? 'Quotation' : 'Invoice'}
-          </Link>
-        </div>
-      </div>
+      )}
 
       {/* Tabs */}
       <div className="flex px-6 border-b border-zinc-100 dark:border-sidebar-border overflow-x-auto hide-scrollbar">
@@ -227,13 +289,13 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
             onClick={() => setActiveTab(tab)}
             className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
               activeTab === tab 
-                ? 'border-blue-600 text-blue-600' 
+                ? 'border-zinc-600 text-zinc-900 dark:text-white' 
                 : 'border-transparent text-zinc-500 hover:text-zinc-700'
             }`}
           >
             {tab}
             {tab === 'All' && (
-              <span className={`px-2 py-0.5 rounded-full text-xs ${activeTab === 'All' ? 'bg-blue-100 text-blue-700' : 'bg-zinc-100 text-zinc-600'}`}>
+              <span className={`px-2 py-0.5 rounded-full text-xs ${activeTab === 'All' ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'bg-zinc-100 text-zinc-600'}`}>
                 {invoices.length}
               </span>
             )}
@@ -250,7 +312,7 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
             placeholder="Search by transaction, customers, invoice etc.."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg pl-10 pr-4 py-2 bg-zinc-50 dark:bg-sidebar-bg border border-zinc-200 dark:border-sidebar-border focus:outline-none focus:border-blue-500 text-sm transition-colors"
+            className="w-full rounded-lg pl-10 pr-4 py-2 bg-zinc-50 dark:bg-sidebar-bg border border-zinc-200 dark:border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white text-sm transition-colors"
           />
         </div>
         
@@ -284,7 +346,7 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
                       onClick={() => { setDateRange(range); setIsDateDropdownOpen(false); }}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                         dateRange === range 
-                          ? 'bg-blue-600 text-white border-blue-600' 
+                          ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white border-zinc-600' 
                           : 'bg-transparent text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-sidebar-border hover:border-zinc-300 dark:hover:border-zinc-500'
                       }`}
                     >
@@ -340,7 +402,7 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
                         UPI
                       </span>
                     ) : invoice.paymentMethod === 'BANK' ? (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100 uppercase">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-700 uppercase">
                         BANK
                       </span>
                     ) : (
@@ -385,6 +447,16 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
                       >
                         <Send size={14} /> WhatsApp
                       </button>
+
+                      {/* Send Email Button */}
+                      {invoice.client.email && (
+                        <button 
+                          onClick={() => openEmailModal(invoice)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-sidebar-bg dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-lg text-xs font-medium transition-colors"
+                        >
+                          <Mail size={14} /> Email
+                        </button>
+                      )}
                       
                       {/* Simplified More Options for this UI */}
                       <div className="relative group/dropdown">
@@ -448,10 +520,26 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
                     disabled={isSubmittingPayment}
-                    className="w-full pl-8 pr-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full pl-8 pr-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:outline-none"
                     required
                   />
                 </div>
+              </div>
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-foreground mb-1">Deposit To Bank Account</label>
+                <select
+                  value={paymentBankId}
+                  onChange={(e) => setPaymentBankId(e.target.value)}
+                  disabled={isSubmittingPayment}
+                  className="w-full px-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:outline-none"
+                  required
+                >
+                  <option value="">Select bank...</option>
+                  {banks.map(b => (
+                    <option key={b.id} value={b.id}>{b.bankName}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-zinc-500 mt-1">Select the account where this payment was received.</p>
               </div>
               <div className="flex gap-3 justify-end">
                 <button
@@ -475,11 +563,62 @@ export default function InvoiceListClient({ initialInvoices, settings, type = 'i
         </div>
       )}
 
+      {emailModalOpen && selectedInvoiceForEmail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !isSubmittingEmail && setEmailModalOpen(false)} />
+          <div className="bg-card-bg border border-card-border rounded-xl shadow-xl w-full max-w-lg relative z-10 p-6 animate-in fade-in zoom-in-95 duration-200">
+            <h2 className="text-lg font-bold text-foreground mb-1">Send Email</h2>
+            <p className="text-sm text-zinc-500 mb-6">Send invoice {selectedInvoiceForEmail.invoiceNumber} to {selectedInvoiceForEmail.client.email}</p>
+            <form onSubmit={handleSendEmail}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-foreground mb-1">Subject</label>
+                <input
+                  type="text"
+                  value={emailSubject}
+                  onChange={(e) => setEmailSubject(e.target.value)}
+                  disabled={isSubmittingEmail}
+                  className="w-full px-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:outline-none"
+                  required
+                />
+              </div>
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-foreground mb-1">Message</label>
+                <textarea
+                  rows={4}
+                  value={emailMessage}
+                  onChange={(e) => setEmailMessage(e.target.value)}
+                  disabled={isSubmittingEmail}
+                  className="w-full px-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:outline-none resize-none"
+                  required
+                />
+              </div>
+              <div className="flex gap-3 justify-end">
+                <button
+                  type="button"
+                  onClick={() => setEmailModalOpen(false)}
+                  disabled={isSubmittingEmail}
+                  className="px-4 py-2 text-sm font-medium text-zinc-500 hover:text-foreground transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingEmail}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-foreground text-background rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  <Send size={14} /> {isSubmittingEmail ? 'Sending...' : 'Send Invoice'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Summary Footer */}
       <div className="bg-zinc-50 dark:bg-sidebar-bg p-4 border-t border-zinc-100 dark:border-sidebar-border flex flex-col md:flex-row justify-between items-center gap-4">
         
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 px-4 py-2 rounded-xl border border-blue-100 dark:border-blue-800">
+          <div className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800 dark:bg-zinc-800/20 text-zinc-800 dark:text-zinc-200 px-4 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 dark:border-zinc-800">
             <span className="text-sm font-medium">Total</span>
             <span className="font-bold">₹{summary.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
           </div>

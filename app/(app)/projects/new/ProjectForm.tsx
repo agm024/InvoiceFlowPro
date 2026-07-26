@@ -108,7 +108,7 @@ export default function ProjectForm({ clients }: { clients: Client[] }) {
       <div className="lg:col-span-2 space-y-6">
         <div className="bg-white dark:bg-card-bg border border-zinc-200 dark:border-card-border p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
           <div className="flex items-center gap-3 mb-6">
-            <div className="h-10 w-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+            <div className="h-10 w-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-900 dark:text-zinc-100">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
             </div>
             <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Contract Overview</h2>
@@ -119,7 +119,7 @@ export default function ProjectForm({ clients }: { clients: Client[] }) {
               <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Client Link</label>
               <div className="relative">
                 <select 
-                  className="w-full bg-zinc-50 dark:bg-sidebar-bg border-0 ring-1 ring-zinc-200 dark:ring-sidebar-border rounded-xl px-4 py-3 text-zinc-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-blue-500 transition-shadow appearance-none"
+                  className="w-full bg-zinc-50 dark:bg-sidebar-bg border-0 ring-1 ring-zinc-200 dark:ring-sidebar-border rounded-xl px-4 py-3 text-zinc-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-shadow appearance-none"
                   value={clientId}
                   onChange={(e) => setClientId(e.target.value)}
                 >
@@ -139,7 +139,7 @@ export default function ProjectForm({ clients }: { clients: Client[] }) {
               <div className="flex gap-2">
                 <div className="relative w-28 shrink-0">
                   <select 
-                    className="w-full bg-zinc-50 dark:bg-sidebar-bg border-0 ring-1 ring-zinc-200 dark:ring-sidebar-border rounded-xl px-4 py-3 text-zinc-900 dark:text-white text-sm font-bold focus:ring-2 focus:ring-blue-500 transition-shadow appearance-none"
+                    className="w-full bg-zinc-50 dark:bg-sidebar-bg border-0 ring-1 ring-zinc-200 dark:ring-sidebar-border rounded-xl px-4 py-3 text-zinc-900 dark:text-white text-sm font-bold focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-shadow appearance-none"
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value)}
                   >
@@ -156,7 +156,7 @@ export default function ProjectForm({ clients }: { clients: Client[] }) {
                   <input 
                     type="number"
                     placeholder="5,00,000"
-                    className="w-full bg-zinc-50 dark:bg-sidebar-bg border-0 ring-1 ring-zinc-200 dark:ring-sidebar-border rounded-xl pl-8 pr-4 py-3 text-zinc-900 dark:text-white text-sm font-bold focus:ring-2 focus:ring-blue-500 transition-shadow tabular-nums"
+                    className="w-full bg-zinc-50 dark:bg-sidebar-bg border-0 ring-1 ring-zinc-200 dark:ring-sidebar-border rounded-xl pl-8 pr-4 py-3 text-zinc-900 dark:text-white text-sm font-bold focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-shadow tabular-nums"
                     value={projectCostStr}
                     onChange={(e) => setProjectCostStr(e.target.value)}
                   />
@@ -169,7 +169,7 @@ export default function ProjectForm({ clients }: { clients: Client[] }) {
               <input 
                 type="text"
                 placeholder="e.g. Next-Gen Web Application Redesign"
-                className="w-full bg-zinc-50 dark:bg-sidebar-bg border-0 ring-1 ring-zinc-200 dark:ring-sidebar-border rounded-xl px-4 py-3 text-zinc-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-blue-500 transition-shadow"
+                className="w-full bg-zinc-50 dark:bg-sidebar-bg border-0 ring-1 ring-zinc-200 dark:ring-sidebar-border rounded-xl px-4 py-3 text-zinc-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-shadow"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -187,7 +187,7 @@ export default function ProjectForm({ clients }: { clients: Client[] }) {
             </div>
             <button 
               onClick={addMilestone} 
-              className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
+              className="flex items-center gap-1.5 text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 px-4 py-2 rounded-xl text-sm font-bold hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
               Add Phase
@@ -204,7 +204,7 @@ export default function ProjectForm({ clients }: { clients: Client[] }) {
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-bold text-xs uppercase tracking-wider">{index + 1}.</span>
                     <input 
                       type="text"
-                      className="w-full bg-white dark:bg-card-bg border-0 ring-1 ring-zinc-200 dark:ring-sidebar-border pl-12 pr-4 py-2.5 rounded-xl text-sm font-semibold text-zinc-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-shadow placeholder-zinc-400"
+                      className="w-full bg-white dark:bg-card-bg border-0 ring-1 ring-zinc-200 dark:ring-sidebar-border pl-12 pr-4 py-2.5 rounded-xl text-sm font-semibold text-zinc-900 dark:text-white focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-shadow placeholder-zinc-400"
                       value={m.name}
                       onChange={(e) => updateMilestone(m.id, 'name', e.target.value)}
                       placeholder="Phase Name"
@@ -221,16 +221,16 @@ export default function ProjectForm({ clients }: { clients: Client[] }) {
                     <div className="flex bg-zinc-100 dark:bg-sidebar-bg rounded-lg border border-zinc-200 dark:border-sidebar-border text-xs font-bold overflow-hidden p-0.5 gap-0.5">
                       <button 
                         onClick={() => updateMilestone(m.id, 'isPercentage', false)}
-                        className={`px-3 py-1.5 rounded-md transition-colors ${!m.isPercentage ? 'bg-white dark:bg-card-bg text-blue-600 dark:text-blue-400 shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'}`}
+                        className={`px-3 py-1.5 rounded-md transition-colors ${!m.isPercentage ? 'bg-white dark:bg-card-bg text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'}`}
                       >{currencySymbol}</button>
                       <button 
                         onClick={() => updateMilestone(m.id, 'isPercentage', true)}
-                        className={`px-3 py-1.5 rounded-md transition-colors ${m.isPercentage ? 'bg-white dark:bg-card-bg text-blue-600 dark:text-blue-400 shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'}`}
+                        className={`px-3 py-1.5 rounded-md transition-colors ${m.isPercentage ? 'bg-white dark:bg-card-bg text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'}`}
                       >%</button>
                     </div>
                   </div>
                   
-                  <div className="w-28 text-right font-bold text-zinc-900 dark:text-white text-sm tabular-nums bg-blue-50 dark:bg-blue-900/20 px-3 py-2 rounded-lg border border-blue-100 dark:border-blue-900/30">
+                  <div className="w-28 text-right font-bold text-zinc-900 dark:text-white text-sm tabular-nums bg-zinc-100 dark:bg-zinc-800 px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700">
                     {currencySymbol} {calc.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </div>
 
@@ -316,7 +316,7 @@ export default function ProjectForm({ clients }: { clients: Client[] }) {
         <div className="bg-white p-8 rounded-2xl shadow-[0_20px_40px_rgb(0,0,0,0.08)] border border-zinc-200 aspect-[1/1.414] relative overflow-hidden text-black hidden xl:block transform rotate-1 hover:rotate-0 transition-transform duration-500 origin-bottom-right">
           <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] opacity-40"></div>
           
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-zinc-500 via-zinc-700 to-zinc-900"></div>
 
           <div className="relative z-10">
             <h3 className="font-serif text-2xl border-b-2 border-zinc-100 pb-4 mb-6 text-zinc-800 tracking-tight">Milestone Schedule</h3>

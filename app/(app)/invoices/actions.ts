@@ -251,7 +251,7 @@ export async function markInvoiceAsPaid(id: string) {
   }
 }
 
-export async function recordPayment(id: string, amountReceived: number) {
+export async function recordPayment(id: string, amountReceived: number, bankId?: string) {
   try {
     const invoice = await prisma.invoice.findUnique({ 
       where: { id },
@@ -267,7 +267,8 @@ export async function recordPayment(id: string, amountReceived: number) {
       where: { id },
       data: {
         amountPaid: newAmountPaid,
-        status: isFullyPaid ? 'paid' : 'partially_paid'
+        status: isFullyPaid ? 'paid' : 'partially_paid',
+        ...(bankId ? { bankId } : {})
       }
     })
     

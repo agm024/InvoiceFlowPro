@@ -24,7 +24,7 @@ export default async function ReportsPage() {
   const netTaxLiability = Math.max(0, totalTaxCollected - totalTaxPaid)
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-8 pt-8 pb-12">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Financial Reports</h1>
@@ -61,7 +61,7 @@ export default async function ReportsPage() {
         </div>
 
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
-          <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center mb-4">
+          <div className="w-10 h-10 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white rounded-lg flex items-center justify-center mb-4">
             <DollarSign size={20} />
           </div>
           <p className="text-sm text-zinc-500 mb-1">Net Profit</p>
@@ -102,7 +102,7 @@ export default async function ReportsPage() {
               <div>
                 <p className="font-bold text-zinc-900 dark:text-white">Net Tax Liability</p>
               </div>
-              <p className="text-xl font-bold text-blue-600">
+              <p className="text-xl font-black text-zinc-900 dark:text-white">
                 ₹{Math.max(0, totalTaxCollected - totalTaxPaid).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
             </div>

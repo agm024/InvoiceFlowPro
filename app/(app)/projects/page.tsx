@@ -48,7 +48,7 @@ export default async function ProjectsPage() {
                   <tr key={project.id} className="hover:bg-sidebar-bg/50 transition-colors group cursor-pointer">
                     <td className="px-6 py-4">
                       <div className="font-bold text-foreground">
-                        <Link href={`/projects/${project.id}`} className="hover:underline text-blue-600">{project.name}</Link>
+                        <Link href={`/projects/${project.id}`} className="hover:underline text-zinc-900 dark:text-white">{project.name}</Link>
                       </div>
                       <div className="text-xs text-zinc-500 mt-1">{project.milestones.length} Phases</div>
                     </td>
@@ -56,7 +56,7 @@ export default async function ProjectsPage() {
                       <Link href={`/clients/${project.client.slug}`} className="hover:underline">{project.client.name}</Link>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${isCompleted ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-500/10 text-blue-600'}`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${isCompleted ? 'bg-emerald-500/10 text-emerald-600' : 'bg-zinc-100 dark:bg-zinc-8000/10 text-zinc-900 dark:text-white'}`}>
                         {isCompleted ? 'COMPLETED' : project.status}
                       </span>
                     </td>
