@@ -16,18 +16,19 @@ export default async function ProjectsPage() {
 
   return (
     <div className="p-8 max-w-6xl mx-auto w-full">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Projects</h1>
           <p className="text-sm text-zinc-500 mt-1">Manage project ceilings and milestone pipelines.</p>
         </div>
-        <Link href="/projects/new" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors">
+        <Link href="/projects/new" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors w-full sm:w-auto text-center">
           + New Project
         </Link>
       </div>
 
       <div className="bg-card-bg border border-card-border rounded-xl shadow-sm overflow-hidden">
-        <table className="w-full text-sm text-left">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
           <thead className="bg-sidebar-bg text-zinc-500 border-b border-sidebar-border uppercase text-xs">
             <tr>
               <th className="px-6 py-4 font-medium">Project Name</th>
@@ -80,6 +81,7 @@ export default async function ProjectsPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   )

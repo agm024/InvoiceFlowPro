@@ -35,7 +35,8 @@ export async function POST(req: Request) {
             data: {
               status: 'paid',
               paymentId: payment.id,
-              amountPaid: payment.amount / 100 // Convert paise back to standard
+              amountPaid: payment.amount / 100, // Convert paise back to standard
+              paymentMethod: 'Razorpay'
             }
           })
           

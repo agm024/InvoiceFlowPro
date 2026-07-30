@@ -43,7 +43,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
         
         {/* Company Logo */}
         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             Company Logo :
           </label>
           <div className="flex-1">
@@ -83,7 +83,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* Brand Name */}
         <div className="flex flex-col md:flex-row gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0 mt-2">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0 mt-2">
             Company Address :
           </label>
           <textarea 
@@ -94,7 +94,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* Brand Name */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             <span className="text-red-500">*</span>Brand Name :
           </label>
           <input 
@@ -105,7 +105,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* Company Name */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             <span className="text-red-500">*</span>Company Name :
           </label>
           <input 
@@ -116,7 +116,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* Company Phone */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             Company Phone :
           </label>
           <div className="flex-1 flex gap-3">
@@ -134,7 +134,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* Company Email */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             Company Email :
           </label>
           <input 
@@ -145,7 +145,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* GSTIN */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             GSTIN :
           </label>
           <div className="flex-1 flex overflow-hidden rounded-md border border-sidebar-border bg-sidebar-bg focus-within:border-zinc-900 dark:border-white transition-colors">
@@ -161,7 +161,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* LUT No */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             LUT Number (Exports) :
           </label>
           <input 
@@ -172,7 +172,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* GST State Code */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             <span className="text-red-500">*</span>Home State Code :
           </label>
           <input 
@@ -183,7 +183,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* Business Type */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             Business Type :
           </label>
           <select 
@@ -201,7 +201,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* Alternative Contact Number */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             Alternative Contact Number :
           </label>
           <input 
@@ -212,7 +212,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* Website */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             Website :
           </label>
           <input 
@@ -223,7 +223,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* PAN Number */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             PAN Number :
           </label>
           <input 
@@ -234,7 +234,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         {/* Default UPI ID */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-48 shrink-0">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
             Default UPI ID :
           </label>
           <input 

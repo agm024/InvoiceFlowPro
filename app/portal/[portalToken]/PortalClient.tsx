@@ -102,9 +102,9 @@ export default function PortalClient({
       )}
       {/* Header */}
       <header className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-zinc-900 dark:bg-white dark:text-zinc-900 rounded-xl flex items-center justify-center text-white shadow-sm">
+        <div className="max-w-5xl mx-auto px-6 py-4 sm:py-0 sm:h-16 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <div className="w-10 h-10 bg-zinc-900 dark:bg-white dark:text-zinc-900 rounded-xl flex items-center justify-center text-white shadow-sm shrink-0">
               <Building2 size={20} />
             </div>
             <div>
@@ -112,7 +112,7 @@ export default function PortalClient({
               <p className="text-xs text-zinc-500 dark:text-zinc-400">Client Portal</p>
             </div>
           </div>
-          <div className="text-right">
+          <div className="text-left sm:text-right w-full sm:w-auto bg-zinc-50 sm:bg-transparent p-3 sm:p-0 rounded-lg">
             <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{client.name}</p>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">{client.email}</p>
           </div>
@@ -146,9 +146,9 @@ export default function PortalClient({
         {/* DASHBOARD TAB */}
         {activeTab === 'dashboard' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-8">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Financial Overview</h2>
-              <Link href={`/statement/${client.id}`} target="_blank" className="flex items-center gap-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors">
+              <Link href={`/statement/${client.id}`} target="_blank" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors">
                 <Download size={16} /> Statement of Account
               </Link>
             </div>

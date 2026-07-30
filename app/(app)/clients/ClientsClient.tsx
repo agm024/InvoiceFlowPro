@@ -115,13 +115,13 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto w-full font-sans">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 w-full">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Clients</h1>
           <p className="text-zinc-500 mt-1">Manage your customers and view their billing history.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="relative">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="relative flex-1 sm:flex-none">
             <Search className="absolute left-3 top-2.5 text-zinc-400" size={16} />
             <input 
               type="text" 

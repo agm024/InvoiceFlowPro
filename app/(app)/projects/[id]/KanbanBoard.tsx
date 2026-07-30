@@ -87,8 +87,8 @@ export default function KanbanBoard({ project }: { project: any }) {
 
         <div className="hidden lg:block lg:col-span-1 h-12 w-px bg-zinc-100 dark:bg-zinc-800"></div>
 
-        <div className="lg:col-span-8 flex-1">
-          <form onSubmit={handleAddTask} className="flex gap-2">
+        <div className="lg:col-span-8 flex-1 w-full">
+          <form onSubmit={handleAddTask} className="flex flex-col sm:flex-row gap-2 w-full">
             <input 
               type="text" 
               placeholder="What needs to be done next? (e.g. Wireframe homepage...)" 
@@ -99,7 +99,7 @@ export default function KanbanBoard({ project }: { project: any }) {
             <button 
               type="submit" 
               disabled={isAdding || !newTaskTitle.trim()}
-              className="m-1 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:hover:bg-blue-600 flex items-center gap-2 shadow-sm hover:shadow-md"
+              className="m-1 px-4 sm:px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:hover:bg-blue-600 flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
             >
               {isAdding ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />} Add Task
             </button>
@@ -108,14 +108,14 @@ export default function KanbanBoard({ project }: { project: any }) {
       </div>
 
       {/* Kanban Board */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 overflow-x-auto pb-4">
+      <div className="flex overflow-x-auto md:grid md:grid-cols-5 gap-4 pb-4 snap-x snap-mandatory">
         {columns.map((col, colIndex) => {
           const colTasks = normalizedTasks.filter((t: any) => t.status === col.id);
           const prevCol = columns[colIndex - 1];
           const nextCol = columns[colIndex + 1];
 
           return (
-            <div key={col.id} className={`rounded-3xl border ${col.color} p-2 flex flex-col min-h-[500px] min-w-[280px]`}>
+            <div key={col.id} className={`rounded-3xl border ${col.color} p-2 flex flex-col min-h-[500px] w-[85vw] sm:w-[280px] md:w-auto shrink-0 snap-center`}>
               {/* Column Header */}
               <div className="flex items-center justify-between p-3 mb-2">
                 <h3 className={`font-black text-sm tracking-wide ${col.title.includes('Done') || col.id === 'DONE' ? 'text-emerald-700 dark:text-emerald-400' : 'text-zinc-700 dark:text-zinc-300'}`}>
