@@ -50,9 +50,7 @@ export default function InvoiceForm({
   const [dueDate, setDueDate] = useState(existingInvoice?.dueDate ? new Date(existingInvoice.dueDate).toISOString().split('T')[0] : '')
   const [reference, setReference] = useState(existingInvoice?.reference || '')
   
-  const [showPreviewModal, setShowPreviewModal] = useState(false)
-  const [showDesktopPreview, setShowDesktopPreview] = useState(true)
-  
+
   const [notes, setNotes] = useState(existingInvoice?.notes || '')
   const [invoiceType, setInvoiceType] = useState(existingInvoice?.invoiceType || defaultInvoiceType || 'REGULAR') // REGULAR, EXPORT, QUOTATION
   const [currency, setCurrency] = useState(existingInvoice?.currency || adHocMilestoneDetails?.currency || 'INR')
@@ -339,9 +337,9 @@ export default function InvoiceForm({
   const selectedClientData = clients.find(c => c.id === clientId)
 
   return (
-    <div className="relative font-sans text-sm flex flex-col 2xl:flex-row gap-8 items-start w-full">
+    <div className="relative font-sans text-sm flex justify-center items-start w-full">
       
-      <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-6 text-foreground w-full 2xl:max-w-4xl pb-12">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6 text-foreground w-full max-w-4xl pb-12">
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-card-bg p-4 rounded-xl border border-card-border shadow-sm gap-4">
           <div className="flex items-center gap-4 w-full md:w-auto">
@@ -665,15 +663,7 @@ export default function InvoiceForm({
             Cancel
           </button>
           
-          <button type="button" onClick={() => {
-            if (window.innerWidth >= 1536) {
-              setShowDesktopPreview(true)
-            } else {
-              setShowPreviewModal(true)
-            }
-          }} className={`${showDesktopPreview ? '2xl:hidden' : ''} bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors w-full sm:w-auto border border-zinc-200 dark:border-zinc-700 flex items-center justify-center gap-2`}>
-            <Eye size={18} /> Preview
-          </button>
+
           
           <button type="submit" onClick={() => setSubmitAction('draft')} className="bg-zinc-100 dark:bg-sidebar-bg text-foreground border border-zinc-200 dark:border-sidebar-border shadow-sm px-6 py-3 sm:py-2.5 rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors w-full sm:w-auto">
             Save as Draft
@@ -693,139 +683,7 @@ export default function InvoiceForm({
         </div>
       </form>
 
-      {(() => {
-        const previewContent = (
-          <div className="bg-white border border-zinc-200 shadow-xl rounded-lg overflow-hidden h-[750px]">
-            <div className="origin-top-left w-[800px] p-10 bg-white" style={{ transform: 'scale(0.75)' }}>
-            
-            <div className="border-b-2 border-zinc-900 pb-8 mb-8 flex justify-between items-end">
-              <div>
-                <h1 className="text-5xl font-black text-zinc-900 tracking-tight uppercase">INVOICE</h1>
-                <p className="text-zinc-500 mt-2 font-medium">#{invoiceNumber || 'INV-0000'}</p>
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-zinc-900">{companySettings?.companyName || 'Your Company'}</div>
-                <div className="text-zinc-500 mt-1">{companySettings?.email || 'contact@yourcompany.com'}</div>
-              </div>
-            </div>
 
-            <div className="flex justify-between mb-12">
-              <div>
-                <p className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">Billed To</p>
-                <h3 className="text-xl font-bold text-zinc-900">{selectedClientData?.name || 'Client Name'}</h3>
-                {selectedClientData?.address && <p className="text-zinc-600 whitespace-pre-wrap mt-1 max-w-xs">{selectedClientData.address}</p>}
-                {selectedClientData?.gstin && <p className="text-zinc-600 mt-1">GSTIN: {selectedClientData.gstin}</p>}
-              </div>
-              <div className="text-right flex flex-col gap-4">
-                <div>
-                  <p className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1">Invoice Date</p>
-                  <p className="text-lg font-medium text-zinc-900">{date ? format(new Date(date), 'dd MMM yyyy') : '-'}</p>
-                </div>
-                {dueDate && (
-                  <div>
-                    <p className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1">Due Date</p>
-                    <p className="text-lg font-medium text-zinc-900">{format(new Date(dueDate), 'dd MMM yyyy')}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <table className="w-full text-left mb-8 border-collapse">
-              <thead>
-                <tr className="border-b-2 border-zinc-900 text-sm uppercase tracking-wider text-zinc-900 font-bold">
-                  <th className="py-3 pr-4">Description</th>
-                  <th className="py-3 px-4 text-center">Qty</th>
-                  <th className="py-3 px-4 text-right">Price</th>
-                  <th className="py-3 pl-4 text-right">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {calculatedItems.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="py-8 text-center text-zinc-400 italic">No items added yet</td>
-                  </tr>
-                ) : (
-                  calculatedItems.map((item, idx) => (
-                    <tr key={idx} className="border-b border-zinc-200">
-                      <td className="py-4 pr-4 font-medium text-zinc-900">{item.name || '-'}</td>
-                      <td className="py-4 px-4 text-center text-zinc-600">{item.quantity}</td>
-                      <td className="py-4 px-4 text-right text-zinc-600">{currency} {item.price.toFixed(2)}</td>
-                      <td className="py-4 pl-4 text-right font-medium text-zinc-900">{currency} {item.totalWithoutTax.toFixed(2)}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-
-            <div className="flex justify-end">
-              <div className="w-1/2">
-                <div className="flex justify-between py-2 text-zinc-600 border-b border-zinc-100">
-                  <span>Subtotal</span>
-                  <span>{currency} {subTotal.toFixed(2)}</span>
-                </div>
-                {taxTotal > 0 && (
-                  <div className="flex justify-between py-2 text-zinc-600 border-b border-zinc-100">
-                    <span>Tax</span>
-                    <span>{currency} {taxTotal.toFixed(2)}</span>
-                  </div>
-                )}
-                {discountAmount > 0 && (
-                  <div className="flex justify-between py-2 text-green-600 border-b border-zinc-100">
-                    <span>Discount</span>
-                    <span>-{currency} {discountAmount.toFixed(2)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between py-4 text-2xl font-black text-zinc-900 mt-2 border-t-2 border-zinc-900">
-                  <span>Total</span>
-                  <span>{currency} {finalTotal.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-
-            {notes && (
-              <div className="mt-12 pt-8 border-t border-zinc-200">
-                <p className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">Notes</p>
-                <p className="text-zinc-600 whitespace-pre-wrap">{notes}</p>
-              </div>
-            )}
-            </div>
-          </div>
-        )
-
-        return (
-          <>
-            {showDesktopPreview && (
-              <div className="hidden 2xl:flex w-[600px] sticky top-8 flex-shrink-0 flex-col gap-4">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-bold text-foreground">Live Preview</h3>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs text-zinc-400 bg-sidebar-bg px-2 py-1 rounded">Updates automatically</span>
-                    <button type="button" onClick={() => setShowDesktopPreview(false)} className="text-zinc-400 hover:text-foreground p-1 rounded transition-colors"><X size={16} /></button>
-                  </div>
-                </div>
-                {previewContent}
-              </div>
-            )}
-
-            {showPreviewModal && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 2xl:hidden">
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPreviewModal(false)}></div>
-                <div className="bg-card-bg border border-card-border rounded-2xl shadow-2xl w-full max-w-[650px] relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
-                  <div className="px-6 py-4 border-b border-card-border flex justify-between items-center bg-sidebar-bg/50">
-                    <h2 className="text-lg font-semibold text-foreground">Invoice Preview</h2>
-                    <button onClick={() => setShowPreviewModal(false)} className="text-zinc-400 hover:text-foreground bg-sidebar-border hover:bg-zinc-200 dark:hover:bg-zinc-700 p-1.5 rounded-md transition-colors"><X size={18} /></button>
-                  </div>
-                  <div className="p-6 overflow-y-auto bg-zinc-50 flex flex-col items-center">
-                    <div className="w-[600px]">
-                      {previewContent}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </>
-        )
-      })()}
 
       {isProductModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

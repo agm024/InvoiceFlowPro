@@ -141,7 +141,7 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
       </div>
 
       {filteredClients.length === 0 ? (
-        <div className="bg-card-bg border border-card-border rounded-xl shadow-sm p-12 text-center">
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-sm p-12 text-center">
           <div className="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Users size={32} />
           </div>
@@ -157,7 +157,7 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
             const stats = calculateClientStats(client)
             
             return (
-              <div key={client.id} className="bg-card-bg border border-card-border rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col group">
+              <div key={client.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col group">
                 <div className="p-5 border-b border-card-border">
                   <div className="flex justify-between items-start mb-2">
                     <Link href={`/clients/${client.slug}`} className="font-bold text-lg text-foreground hover:text-zinc-900 dark:text-white transition-colors truncate pr-2">

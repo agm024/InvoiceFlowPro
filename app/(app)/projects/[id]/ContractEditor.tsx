@@ -51,11 +51,11 @@ export default function ContractEditor({ projectId, initialContract, isSigned }:
   }
 
   return (
-    <div className="bg-card-bg border border-card-border rounded-xl shadow-sm mb-8 overflow-hidden">
-      <div className="p-4 border-b border-card-border flex justify-between items-center bg-zinc-50 dark:bg-zinc-800/50">
-        <h3 className="font-bold flex items-center gap-2 text-foreground">
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-sm mb-8 overflow-hidden">
+      <div className="p-6 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center bg-zinc-50 dark:bg-zinc-900/50">
+        <h3 className="font-bold flex items-center gap-2 text-zinc-900 dark:text-white">
           <FileText size={18} /> Contract Variables
-          {isSigned && <span className="ml-2 text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full border border-green-200 dark:border-green-800">Locked (Signed)</span>}
+          {isSigned && <span className="ml-2 text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2.5 py-1 rounded-md border border-green-200 dark:border-green-800">Locked (Signed)</span>}
         </h3>
         <button 
           onClick={handleSave}

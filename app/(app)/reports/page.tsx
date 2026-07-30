@@ -13,11 +13,12 @@ export default async function ReportsPage() {
   
   const expenses = await prisma.expense.findMany()
 
-  const totalRevenue = invoices.reduce((acc, inv) => acc + (inv.total * (inv.exchangeRate || 1.0)), 0)
+  const totalRevenue = invoices.reduce((acc, inv) => acc + ((inv.total - inv.taxTotal) * (inv.exchangeRate || 1.0)), 0)
   const totalTaxCollected = invoices.reduce((acc, inv) => acc + (inv.taxTotal * (inv.exchangeRate || 1.0)), 0)
 
-  const totalExpenses = expenses.reduce((acc, exp) => acc + exp.totalAmount, 0)
-  const totalTaxPaid = expenses.reduce((acc, exp) => acc + (exp.taxAmount || 0), 0)
+  const operatingExpenses = expenses.filter(exp => exp.category !== 'GST_PAYMENT')
+  const totalExpenses = operatingExpenses.reduce((acc, exp) => acc + exp.totalAmount, 0)
+  const totalTaxPaid = operatingExpenses.reduce((acc, exp) => acc + (exp.taxAmount || 0), 0)
 
   const netProfit = totalRevenue - totalExpenses
   const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0

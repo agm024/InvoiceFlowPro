@@ -34,7 +34,7 @@ export default function PortalClient({
   }
 
   const [isUpdating, setIsUpdating] = useState(false)
-  const [signatureModal, setSignatureModal] = useState<{ isOpen: boolean, type: 'contract' | 'handover', projectId: string, projectName: string } | null>(null)
+  const [signatureModal, setSignatureModal] = useState<{ isOpen: boolean, type: 'contract' | 'handover', projectId: string, projectName: string, contractText?: string | null } | null>(null)
 
   const handleProfileUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -424,19 +424,30 @@ export default function PortalClient({
                       
                       {/* Active Tasks */}
                       <div className="p-6">
-                        <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">Current Tasks</h4>
+                        <h4 className="text-sm font-black text-zinc-700 dark:text-zinc-300 mb-4 uppercase tracking-wider">Current Tasks</h4>
                         <div className="space-y-3">
-                          {project.tasks?.filter((t: any) => t.status !== 'DONE').map((task: any) => (
-                            <div key={task.id} className="flex gap-3 items-start bg-white dark:bg-zinc-900 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800">
-                              <div className="mt-1 w-2 h-2 rounded-full bg-zinc-900 dark:bg-white"></div>
-                              <div>
-                                <p className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{task.title}</p>
-                                <p className="text-xs text-zinc-500 capitalize">{task.status.replace('_', ' ').toLowerCase()}</p>
+                          {project.tasks?.filter((t: any) => t.status !== 'DONE').map((task: any) => {
+                            const phaseName = task.status === 'TODO' ? 'Planning' 
+                                            : task.status === 'DESIGN' ? 'Design'
+                                            : task.status === 'DEVELOPMENT' || task.status === 'IN_PROGRESS' ? 'Development'
+                                            : task.status === 'REVIEW' ? 'Review'
+                                            : task.status;
+                            return (
+                            <div key={task.id} className="flex gap-4 items-center bg-white dark:bg-zinc-900/90 p-3.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 shadow-sm backdrop-blur-sm">
+                              <div className="shrink-0 w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                              <div className="flex-1">
+                                <p className="font-bold text-sm text-zinc-900 dark:text-white">{task.title}</p>
                               </div>
+                              <span className="shrink-0 text-[10px] font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2.5 py-1 rounded-md uppercase tracking-wide">
+                                {phaseName}
+                              </span>
                             </div>
-                          ))}
+                            )
+                          })}
                           {!project.tasks?.filter((t: any) => t.status !== 'DONE').length && (
-                            <p className="text-xs text-zinc-500 italic">No active tasks right now.</p>
+                            <div className="flex items-center justify-center p-6 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl">
+                              <p className="text-xs font-medium text-zinc-500">No active tasks right now.</p>
+                            </div>
                           )}
                         </div>
                       </div>
