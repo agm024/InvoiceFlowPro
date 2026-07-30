@@ -32,24 +32,42 @@ export async function updateEstimateStatus(estimateId: string, status: string) {
   }
 }
 
-export async function signProjectContract(projectId: string) {
+export async function signProjectContract(projectId: string, signature: string) {
   try {
-    await prisma.project.update({
+    const project = await prisma.project.update({
       where: { id: projectId },
-      data: { contractApprovedAt: new Date() }
+      data: { contractApprovedAt: new Date(), contractSignedBy: signature }
     })
+
+    await prisma.activityLog.create({
+      data: {
+        clientId: project.clientId,
+        action: 'CONTRACT_SIGNED',
+        description: signature
+      }
+    })
+
     return { success: true }
   } catch (error: any) {
     return { error: error.message }
   }
 }
 
-export async function signOffProject(projectId: string) {
+export async function signOffProject(projectId: string, signature: string) {
   try {
-    await prisma.project.update({
+    const project = await prisma.project.update({
       where: { id: projectId },
       data: { projectClosedAt: new Date(), status: 'COMPLETED', stage: 'CLOSED' }
     })
+
+    await prisma.activityLog.create({
+      data: {
+        clientId: project.clientId,
+        action: 'HANDOVER_SIGNED',
+        description: signature
+      }
+    })
+
     return { success: true }
   } catch (error: any) {
     return { error: error.message }

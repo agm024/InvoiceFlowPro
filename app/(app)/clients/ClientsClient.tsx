@@ -9,7 +9,27 @@ import { useEffect } from 'react'
 import { format } from 'date-fns'
 
 type InvoiceStub = { total: number, status: string, date: Date, invoiceType?: string, amountPaid?: number }
-type Client = any // We'll assume it has invoices: InvoiceStub[]
+type Client = any // We'll assume it has invoices: InvoiceStub[], and status: string
+
+const statusColors: Record<string, string> = {
+  LEAD: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
+  IN_DISCUSSION: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  PROPOSAL_SENT: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+  ACTIVE: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+  CLOSED: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
+  REOPENED: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+  LOST: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+}
+
+const statusLabels: Record<string, string> = {
+  LEAD: 'Lead',
+  IN_DISCUSSION: 'In Discussion',
+  PROPOSAL_SENT: 'Proposal Sent',
+  ACTIVE: 'Active Client',
+  CLOSED: 'Closed',
+  REOPENED: 'Reopened',
+  LOST: 'Lost / Inactive'
+}
 
 export default function ClientsClient({ initialClients }: { initialClients: Client[] }) {
   const [clients, setClients] = useState(initialClients)
@@ -127,8 +147,8 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
           </div>
           <h3 className="text-lg font-semibold text-foreground mb-1">No clients found</h3>
           <p className="text-zinc-500 mb-6">You haven&apos;t added any clients yet, or none match your search.</p>
-          <Link href="/clients/new" className="text-zinc-900 dark:text-white font-medium hover:underline inline-flex items-center gap-1">
-            <Plus size={16} /> Create your first client
+          <Link href="/clients/new" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
+            <Plus size={18} /> Create your first client
           </Link>
         </div>
       ) : (
@@ -143,7 +163,14 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
                     <Link href={`/clients/${client.slug}`} className="font-bold text-lg text-foreground hover:text-zinc-900 dark:text-white transition-colors truncate pr-2">
                       {client.name}
                     </Link>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                    <div className="flex items-center gap-1 shrink-0">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${statusColors[client.status || 'ACTIVE']}`}>
+                        {statusLabels[client.status || 'ACTIVE']}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity mt-1 mb-2">
                       <button 
                         onClick={() => {
                           if (!client.portalToken) return toast.error('Token not generated yet.')
@@ -185,9 +212,8 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
                         <Trash2 size={14} />
                       </button>
                     </div>
-                  </div>
-                  
-                  <div className="flex flex-col gap-1.5 text-sm text-zinc-500 mt-3">
+
+                  <div className="flex flex-col gap-1.5 text-sm text-zinc-500 mt-1">
                     {client.email && <div className="flex items-center gap-2 truncate"><Mail size={14} className="shrink-0" /> <span className="truncate">{client.email}</span></div>}
                     {client.phone && <div className="flex items-center gap-2"><Phone size={14} className="shrink-0" /> {client.phone}</div>}
                   </div>
@@ -265,6 +291,18 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
                 <div className="sm:col-span-2">
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">State Code (e.g. 27)</label>
                   <input type="text" name="stateCode" defaultValue={editingClient.stateCode || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Client Status</label>
+                  <select name="status" defaultValue={editingClient.status || 'ACTIVE'} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white">
+                    <option value="LEAD">Lead</option>
+                    <option value="IN_DISCUSSION">In Discussion</option>
+                    <option value="PROPOSAL_SENT">Proposal Sent</option>
+                    <option value="ACTIVE">Active Client</option>
+                    <option value="CLOSED">Closed (Work Done)</option>
+                    <option value="REOPENED">Reopened</option>
+                    <option value="LOST">Lost / Inactive</option>
+                  </select>
                 </div>
               </div>
               <div className="flex justify-end gap-3 mt-4 pt-6 border-t border-card-border">

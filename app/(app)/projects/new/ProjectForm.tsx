@@ -24,10 +24,10 @@ const CURRENCIES = [
   { symbol: 'د.إ', code: 'AED' },
 ]
 
-export default function ProjectForm({ clients }: { clients: Client[] }) {
+export default function ProjectForm({ clients, initialClientId = '' }: { clients: Client[], initialClientId?: string }) {
   const router = useRouter()
   
-  const [clientId, setClientId] = useState('')
+  const [clientId, setClientId] = useState(initialClientId)
   const [name, setName] = useState('')
   const [projectCostStr, setProjectCostStr] = useState('')
   const [currency, setCurrency] = useState('INR')
@@ -297,7 +297,7 @@ export default function ProjectForm({ clients }: { clients: Client[] }) {
             disabled={isOverAllocated || !isExactlyAllocated}
             className={`w-full py-3.5 rounded-xl font-bold text-white transition-all shadow-lg flex items-center justify-center gap-2 ${
               isExactlyAllocated 
-              ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/20 hover:shadow-emerald-600/40 hover:-translate-y-0.5' 
+              ? 'bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 shadow-xl hover:-translate-y-0.5' 
               : 'bg-zinc-800 dark:bg-zinc-800 cursor-not-allowed opacity-50 shadow-none'
             }`}
           >

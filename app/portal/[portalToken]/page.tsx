@@ -1,6 +1,7 @@
 import prisma from '@/utils/prisma'
 import { notFound } from 'next/navigation'
 import PortalClient from './PortalClient'
+import { Suspense } from 'react'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,12 +43,14 @@ export default async function ClientPortalPage({ params }: { params: Promise<{ p
   const outstandingBalance = unpaidInvoices.reduce((acc, inv) => acc + (inv.total - (inv.amountPaid || 0)), 0)
 
   return (
-    <PortalClient 
-      client={client}
-      unpaidInvoices={unpaidInvoices}
-      paidInvoices={paidInvoices}
-      outstandingBalance={outstandingBalance}
-      companySettings={companySettings}
-    />
+    <Suspense fallback={<div className="p-8 text-center text-zinc-500">Loading Portal...</div>}>
+      <PortalClient 
+        client={client}
+        unpaidInvoices={unpaidInvoices}
+        paidInvoices={paidInvoices}
+        outstandingBalance={outstandingBalance}
+        companySettings={companySettings}
+      />
+    </Suspense>
   )
 }

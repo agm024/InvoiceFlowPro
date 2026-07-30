@@ -15,6 +15,26 @@ export async function createProject(data: {
   }>
 }) {
   try {
+    const client = await prisma.client.findUnique({
+      where: { id: data.clientId }
+    });
+
+    const defaultContractVars = JSON.stringify({
+      pages: '5',
+      seoTier: 'Standard',
+      totalFee: data.totalValue.toString(),
+      paymentRails: 'Razorpay MoneySaver / Bank Transfer / UPI',
+      revisions: '2',
+      assetDays: '14',
+      reactivationFee: (data.totalValue * 0.1).toString(), // 10%
+      noticeDays: '7',
+      warrantyDays: '30',
+      jurisdiction: 'Mumbai, Maharashtra, India',
+      companyName: client?.name || "[Client’s Company Name]",
+      companyAddress: "[Client’s Full Physical Address]",
+      primaryEmail: client?.email || "[Client’s Primary Email]"
+    });
+
     const project = await prisma.project.create({
       data: {
         clientId: data.clientId,
@@ -22,6 +42,7 @@ export async function createProject(data: {
         totalValue: data.totalValue,
         currency: data.currency || 'INR',
         status: 'ACTIVE',
+        contractText: defaultContractVars,
         milestones: {
           create: data.milestones.map((m, index) => ({
             name: m.name,
@@ -108,6 +129,20 @@ export async function deleteProject(projectId: string) {
   } catch (error) {
     console.error('Failed to delete project:', error)
     return { error: 'Failed to delete project' }
+  }
+}
+
+export async function updateProjectContract(projectId: string, contractText: string) {
+  try {
+    await prisma.project.update({
+      where: { id: projectId },
+      data: { contractText }
+    })
+    revalidatePath('/clients', 'layout')
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to update project contract:', error)
+    return { error: 'Failed to update contract' }
   }
 }
 

@@ -2,10 +2,12 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Building2, Receipt, FileText, Download, CreditCard, CheckCircle, HelpCircle, Briefcase, User, MapPin, XCircle } from 'lucide-react'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
 import { updateClientProfile, updateEstimateStatus, signProjectContract, signOffProject } from './actions'
+import SignatureModal from './SignatureModal'
 
 export default function PortalClient({ 
   client, 
@@ -20,8 +22,19 @@ export default function PortalClient({
   outstandingBalance: number,
   companySettings: any
 }) {
-  const [activeTab, setActiveTab] = useState('dashboard')
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const activeTab = searchParams.get('tab') || 'dashboard'
+
+  const setActiveTab = (tab: string) => {
+    const params = new URLSearchParams(searchParams)
+    params.set('tab', tab)
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+  }
+
   const [isUpdating, setIsUpdating] = useState(false)
+  const [signatureModal, setSignatureModal] = useState<{ isOpen: boolean, type: 'contract' | 'handover', projectId: string, projectName: string } | null>(null)
 
   const handleProfileUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -54,8 +67,39 @@ export default function PortalClient({
     }
   }
 
+  const handleSign = async (signature: string) => {
+    if (!signatureModal) return
+    const { type, projectId } = signatureModal
+    
+    toast.loading(`Signing ${type}...`, { id: 'sign' })
+    let res;
+    if (type === 'contract') {
+      res = await signProjectContract(projectId, signature)
+    } else {
+      res = await signOffProject(projectId, signature)
+    }
+
+    if (res.success) {
+      toast.success(`${type === 'contract' ? 'Contract' : 'Handover document'} signed successfully!`, { id: 'sign' })
+      window.location.reload()
+    } else {
+      toast.error('Error signing document', { id: 'sign' })
+    }
+  }
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950/50 pb-24">
+      {signatureModal && (
+        <SignatureModal
+          isOpen={signatureModal.isOpen}
+          onClose={() => setSignatureModal(null)}
+          onSign={handleSign}
+          type={signatureModal.type}
+          projectName={signatureModal.projectName}
+          companyName={companySettings?.companyName || 'Your Company'}
+          contractText={signatureModal.contractText}
+        />
+      )}
       {/* Header */}
       <header className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -334,16 +378,23 @@ export default function PortalClient({
                           <h4 className="font-semibold text-sm text-zinc-900 dark:text-white mb-1">Contract Approval</h4>
                           <p className="text-xs text-zinc-500 mb-3">Sign off on the initial project scope.</p>
                           {project.contractApprovedAt ? (
-                            <div className="flex items-center gap-2 text-xs font-medium text-green-600">
-                              <CheckCircle size={14} /> Signed on {format(new Date(project.contractApprovedAt), 'MMM dd, yyyy')}
+                            <div className="flex flex-col gap-1 mt-2">
+                              <div className="flex items-center gap-2 text-xs font-bold text-green-600">
+                                <CheckCircle size={14} /> 
+                                Digitally Signed by {project.contractSignedBy || "Client"}
+                              </div>
+                              <div className="text-[11px] text-green-700/80 font-mono ml-5 border-l-2 border-green-600/20 pl-2">
+                                {format(new Date(project.contractApprovedAt), "MMM dd, yyyy 'at' hh:mm a")} • IP Verified
+                              </div>
                             </div>
                           ) : (
-                            <button onClick={async () => {
-                              toast.loading('Signing contract...', { id: 'contract' })
-                              const res = await signProjectContract(project.id)
-                              if (res.success) { toast.success('Contract signed!', { id: 'contract' }); window.location.reload() }
-                              else { toast.error('Error signing', { id: 'contract' }) }
-                            }} className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-semibold w-full transition-colors">
+                            <button onClick={() => setSignatureModal({
+                              isOpen: true,
+                              type: 'contract',
+                              projectId: project.id,
+                              projectName: project.name,
+                              contractText: project.contractText
+                            })} className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-semibold w-full transition-colors">
                               Sign Contract
                             </button>
                           )}
@@ -356,12 +407,12 @@ export default function PortalClient({
                               <CheckCircle size={14} /> Closed on {format(new Date(project.projectClosedAt), 'MMM dd, yyyy')}
                             </div>
                           ) : (
-                            <button onClick={async () => {
-                              toast.loading('Closing project...', { id: 'close' })
-                              const res = await signOffProject(project.id)
-                              if (res.success) { toast.success('Project closed!', { id: 'close' }); window.location.reload() }
-                              else { toast.error('Error closing', { id: 'close' }) }
-                            }} disabled={project.stage !== 'REVIEW'} className="px-4 py-2 bg-zinc-900 dark:bg-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white rounded-lg text-xs font-semibold w-full transition-colors disabled:opacity-50">
+                            <button onClick={() => setSignatureModal({
+                              isOpen: true,
+                              type: 'handover',
+                              projectId: project.id,
+                              projectName: project.name
+                            })} disabled={project.stage !== 'REVIEW'} className="px-4 py-2 bg-zinc-900 dark:bg-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white rounded-lg text-xs font-semibold w-full transition-colors disabled:opacity-50">
                               {project.stage !== 'REVIEW' ? 'Not Ready for Closure' : 'Sign-Off Project'}
                             </button>
                           )}

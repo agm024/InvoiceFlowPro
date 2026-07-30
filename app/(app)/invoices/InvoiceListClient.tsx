@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { format, isToday, isYesterday, isThisWeek, isThisMonth, isThisYear, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subWeeks, subMonths, subYears, startOfYear, endOfYear, startOfQuarter, subQuarters, isWithinInterval, parseISO } from 'date-fns'
-import { Search, Plus, PlayCircle, Settings, SlidersHorizontal, ChevronDown, Eye, Send, MoreHorizontal, Copy, Check, X, Mail } from 'lucide-react'
+import { Search, Plus, PlayCircle, Settings, SlidersHorizontal, ChevronDown, Eye, Send, MoreHorizontal, Copy, Check, X, Mail, Receipt } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { deleteInvoice } from './actions'
 import StatusBadge from '@/components/StatusBadge'
@@ -483,8 +483,15 @@ export default function InvoiceListClient({
               ))}
               {filteredInvoices.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-zinc-500">
-                    No invoices found matching your criteria.
+                  <td colSpan={7} className="px-6 py-16 text-center">
+                    <div className="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Receipt size={32} />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">No invoices found</h3>
+                    <p className="text-zinc-500 mb-6">Create a new invoice to bill a client for your services.</p>
+                    <Link href="/invoices/new" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
+                      <Plus size={18} /> Create Invoice
+                    </Link>
                   </td>
                 </tr>
               )}

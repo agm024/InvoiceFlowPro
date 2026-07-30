@@ -317,7 +317,7 @@ export default function ExportClient({ invoices, settings, expenses = [] }: { in
       <div className="flex gap-4">
         <button 
           onClick={handleDownload}
-          className="bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium inline-block hover:opacity-90 transition-opacity"
+          className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-3 rounded-lg font-medium inline-block transition-colors"
         >
           Download GST Excel (.xlsx)
         </button>

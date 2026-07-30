@@ -13,8 +13,11 @@ model User {
   email     String   @unique
   name      String?
   role      String   @default("admin")
+  clerkId   String?  @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  comments  Comment[]
+  tasks     ProjectTask[]
 }
 
 model Client {
@@ -31,9 +34,12 @@ model Client {
   stateCode String?
   stateName String?
   portalToken String?   @unique
+  status      String    @default("ACTIVE") // LEAD, IN_DISCUSSION, PROPOSAL_SENT, ACTIVE, LOST
   invoices  Invoice[]
   projects  Project[]
   estimates Estimate[]
+  activityLogs ActivityLog[]
+  contracts Contract[]
 }
 
 model Product {
@@ -165,12 +171,14 @@ model Project {
   totalValue   Float
   currency     String      @default("INR")
   status       String      @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
+  contractText String?     @db.Text
   stage        String      @default("PLANNING") // PLANNING, DESIGN, DEVELOPMENT, TESTING, REVIEW, CLOSED
   clientId     String
   client       Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
   milestones   Milestone[]
   tasks        ProjectTask[]
   contractApprovedAt DateTime?
+  contractSignedBy   String?
   projectClosedAt    DateTime?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
@@ -199,6 +207,8 @@ model ProjectTask {
   status      String      @default("TODO") // TODO, IN_PROGRESS, DONE
   projectId   String
   project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assigneeId  String?
+  assignee    User?       @relation(fields: [assigneeId], references: [id])
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
@@ -249,4 +259,44 @@ model EstimateItem {
   productId  String
   estimate   Estimate @relation(fields: [estimateId], references: [id], onDelete: Cascade)
   product    Product  @relation(fields: [productId], references: [id])
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  action      String   // e.g. "Email Sent", "Note Added", "Status Changed"
+  description String?
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  content     String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  invoiceId   String?
+  projectId   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Asset {
+  id          String   @id @default(cuid())
+  name        String
+  url         String
+  category    String   @default("GENERAL") // LOGO, TAX_DOC, GENERAL
+  createdAt   DateTime @default(now())
+}
+
+model Contract {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  status      String   @default("DRAFT") // DRAFT, SENT, SIGNED
+  signedAt    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

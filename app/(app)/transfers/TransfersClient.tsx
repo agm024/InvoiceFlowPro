@@ -124,7 +124,7 @@ export default function TransfersClient({
                 </div>
               </div>
               <div className="flex justify-end mt-4">
-                <button disabled={isSubmitting} type="submit" className="bg-emerald-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-50">
+                <button disabled={isSubmitting} type="submit" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50">
                   {isSubmitting ? 'Saving...' : 'Save Transfer'}
                 </button>
               </div>

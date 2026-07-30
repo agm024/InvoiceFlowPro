@@ -1,6 +1,7 @@
 import prisma from '@/utils/prisma'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import { Briefcase, Plus } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,7 +21,7 @@ export default async function ProjectsPage() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Projects</h1>
           <p className="text-sm text-zinc-500 mt-1">Manage project ceilings and milestone pipelines.</p>
         </div>
-        <Link href="/projects/new" className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm shadow-emerald-500/20 transition-colors">
+        <Link href="/projects/new" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors">
           + New Project
         </Link>
       </div>
@@ -38,7 +39,16 @@ export default async function ProjectsPage() {
           <tbody className="divide-y divide-sidebar-border">
             {projects.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-zinc-500">No projects found. Create one to start mapping milestones.</td>
+                <td colSpan={4} className="px-6 py-16 text-center">
+                  <div className="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Briefcase size={32} />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-1">No active projects</h3>
+                  <p className="text-zinc-500 mb-6">Create your first project to start mapping milestones and ceilings.</p>
+                  <Link href="/projects/new" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
+                    <Plus size={18} /> Create Project
+                  </Link>
+                </td>
               </tr>
             ) : (
               projects.map((project) => {

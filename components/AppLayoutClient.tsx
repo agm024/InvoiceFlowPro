@@ -21,9 +21,9 @@ export default function AppLayoutClient({
   }, [pathname])
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background relative">
+    <div className="flex h-screen overflow-hidden bg-background relative print:h-auto print:overflow-visible print:block">
       {/* Mobile Top Bar */}
-      <div className="md:hidden absolute top-0 left-0 right-0 h-16 bg-sidebar-bg border-b border-sidebar-border z-50 flex items-center justify-between px-4 shrink-0">
+      <div className="md:hidden absolute top-0 left-0 right-0 h-16 bg-sidebar-bg border-b border-sidebar-border z-50 flex items-center justify-between px-4 shrink-0 print:hidden">
         <h1 className="text-xl font-bold tracking-tighter">InvoiceFlowPro</h1>
         <button 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -44,14 +44,14 @@ export default function AppLayoutClient({
       {/* Sidebar Container */}
       <div className={`
         fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out
-        md:relative md:translate-x-0
+        md:relative md:translate-x-0 print:hidden
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         {sidebar}
       </div>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-screen overflow-y-auto pt-16 md:pt-0 w-full min-w-0">
+      <main className="flex-1 flex flex-col h-screen overflow-y-auto pt-16 md:pt-0 w-full min-w-0 print:h-auto print:overflow-visible print:block">
         {children}
       </main>
     </div>

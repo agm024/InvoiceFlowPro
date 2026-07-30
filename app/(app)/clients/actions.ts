@@ -45,6 +45,7 @@ export async function createClient(formData: FormData) {
   const panNo = formData.get('panNo') as string
   const stateCode = formData.get('stateCode') as string
   const providedStateName = formData.get('stateName') as string
+  const status = (formData.get('status') as string) || 'ACTIVE'
   
   const stateName = providedStateName || (stateCode ? getStateNameByCode(stateCode) : '')
   const slug = await generateUniqueSlug(name, prisma.client)
@@ -52,8 +53,17 @@ export async function createClient(formData: FormData) {
 
   try {
     const client = await prisma.client.create({
-      data: { name, slug, email, phone, address, gstin, panNo, stateCode, stateName, portalToken }
+      data: { name, slug, email, phone, address, gstin, panNo, stateCode, stateName, portalToken, status }
     })
+    
+    await prisma.activityLog.create({
+      data: {
+        clientId: client.id,
+        action: 'NOTE_ADDED',
+        description: `Client ${name} was added to the system as ${status.replace('_', ' ')}.`
+      }
+    })
+    
     revalidatePath('/clients')
     return { success: true, client }
   } catch (error) {
@@ -121,15 +131,29 @@ export async function updateClient(id: string, formData: FormData) {
   const panNo = formData.get('panNo') as string
   const stateCode = formData.get('stateCode') as string
   const providedStateName = formData.get('stateName') as string
+  const status = (formData.get('status') as string) || 'ACTIVE'
 
   const stateName = providedStateName || (stateCode ? getStateNameByCode(stateCode) : '')
   const slug = await generateUniqueSlug(name, prisma.client, id)
 
   try {
+    const existing = await prisma.client.findUnique({ where: { id } })
+    
     const client = await prisma.client.update({
       where: { id },
-      data: { name, slug, email, phone, address, gstin, panNo, stateCode, stateName }
+      data: { name, slug, email, phone, address, gstin, panNo, stateCode, stateName, status }
     })
+
+    if (existing && existing.status !== status) {
+      await prisma.activityLog.create({
+        data: {
+          clientId: client.id,
+          action: 'STATUS_CHANGED',
+          description: `Status updated from ${existing.status || 'ACTIVE'} to ${status}`
+        }
+      })
+    }
+
     revalidatePath('/clients')
     return { success: true, client }
   } catch (error) {

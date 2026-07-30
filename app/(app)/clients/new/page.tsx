@@ -48,6 +48,18 @@ export default function NewClientPage() {
               <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">State Code (e.g. 27)</label>
               <input name="stateCode" className="rounded-md px-3 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-foreground" />
             </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Client Status</label>
+              <select name="status" defaultValue="ACTIVE" className="rounded-md px-3 py-2 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-foreground">
+                <option value="LEAD">Lead</option>
+                <option value="IN_DISCUSSION">In Discussion</option>
+                <option value="PROPOSAL_SENT">Proposal Sent</option>
+                <option value="ACTIVE">Active Client</option>
+                <option value="CLOSED">Closed (Work Done)</option>
+                <option value="REOPENED">Reopened</option>
+                <option value="LOST">Lost / Inactive</option>
+              </select>
+            </div>
           </div>
           
           <div className="flex flex-col gap-2">

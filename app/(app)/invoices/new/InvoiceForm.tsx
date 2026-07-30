@@ -314,7 +314,23 @@ export default function InvoiceForm({
       } else {
         router.push(redirectPath);
       }
-      toast.success(existingInvoice ? `${invoiceType === 'QUOTATION' ? 'Quotation' : 'Invoice'} updated!` : `${invoiceType === 'QUOTATION' ? 'Quotation' : 'Invoice'} created successfully!`)
+      toast.success(
+        (t) => (
+          <span className="flex items-center gap-2">
+            {existingInvoice ? `${invoiceType === 'QUOTATION' ? 'Quotation' : 'Invoice'} updated!` : `${invoiceType === 'QUOTATION' ? 'Quotation' : 'Invoice'} created successfully!`}
+            <button 
+              onClick={() => {
+                toast.dismiss(t.id)
+                router.push(existingInvoice ? `/invoices/${existingInvoice.id}` : `/invoices`)
+              }}
+              className="ml-2 px-3 py-1 bg-zinc-900 text-white rounded-md text-xs font-bold hover:bg-black transition-colors"
+            >
+              View
+            </button>
+          </span>
+        ),
+        { duration: 5000 }
+      )
     } else {
       toast.error('Error saving document')
     }
