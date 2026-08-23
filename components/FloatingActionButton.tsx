@@ -18,19 +18,19 @@ export default function FloatingActionButton() {
 
       {isOpen && (
         <div className="flex flex-col gap-3 transition-opacity duration-200">
-          <Link href="/invoices/new" onClick={() => setIsOpen(false)} className="flex items-center justify-end gap-3 group">
+          <Link href="/app/invoices/new" onClick={() => setIsOpen(false)} className="flex items-center justify-end gap-3 group">
             <span className="bg-zinc-800 text-white text-xs font-medium px-3 py-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Create Invoice</span>
             <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground p-3 rounded-full shadow-md hover:text-blue-600 transition-colors">
               <FileSpreadsheet size={20} />
             </div>
           </Link>
-          <Link href="/clients" onClick={() => setIsOpen(false)} className="flex items-center justify-end gap-3 group">
+          <Link href="/app/clients" onClick={() => setIsOpen(false)} className="flex items-center justify-end gap-3 group">
             <span className="bg-zinc-800 text-white text-xs font-medium px-3 py-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Client</span>
             <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground p-3 rounded-full shadow-md hover:text-blue-600 transition-colors">
               <Users size={20} />
             </div>
           </Link>
-          <Link href="/expenses" onClick={() => setIsOpen(false)} className="flex items-center justify-end gap-3 group">
+          <Link href="/app/expenses" onClick={() => setIsOpen(false)} className="flex items-center justify-end gap-3 group">
             <span className="bg-zinc-800 text-white text-xs font-medium px-3 py-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Record Expense</span>
             <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-foreground p-3 rounded-full shadow-md hover:text-blue-600 transition-colors">
               <CreditCard size={20} />
@@ -41,3 +41,4 @@ export default function FloatingActionButton() {
     </div>
   )
 }
+

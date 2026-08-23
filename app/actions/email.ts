@@ -49,8 +49,12 @@ export async function sendEmail({
   }
 }
 
-export async function sendPortalLink(clientEmail: string, clientName: string, portalToken: string) {
+export async function sendPortalLink(clientEmail: string, clientName: string, portalToken: string, customSubject?: string, customMessage?: string) {
   const portalUrl = `https://invoice.siteradiant.co.in/portal/${portalToken}`;
+  
+  const defaultMessage = `Here is the link to access your dedicated Client Portal. You can view your active projects, estimates, outstanding invoices, and statement of accounts.`;
+  const messageBody = customMessage ? customMessage.replace(/\n/g, '<br/>') : defaultMessage;
+
   const html = `
     <div style="background-color: #f4f4f5; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
       <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
@@ -60,7 +64,7 @@ export async function sendPortalLink(clientEmail: string, clientName: string, po
         <div style="padding: 40px;">
           <h2 style="color: #18181b; margin-top: 0; font-size: 20px; font-weight: 600;">Hello ${clientName},</h2>
           <p style="color: #52525b; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-            Here is the link to access your dedicated Client Portal. You can view your active projects, estimates, outstanding invoices, and statement of accounts.
+            ${messageBody}
           </p>
           <div style="text-align: center; margin: 40px 0 20px 0;">
             <a href="${portalUrl}" style="display: inline-block; background-color: #18181b; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
@@ -81,7 +85,7 @@ export async function sendPortalLink(clientEmail: string, clientName: string, po
   
   return await sendEmail({
     to: clientEmail,
-    subject: "Your Client Portal Access - Site Radiant",
+    subject: customSubject || "Your Client Portal Access - Site Radiant",
     html
   });
 }

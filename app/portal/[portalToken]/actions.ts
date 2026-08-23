@@ -41,6 +41,7 @@ export async function signProjectContract(projectId: string, signature: string) 
 
     await prisma.activityLog.create({
       data: {
+        companyId: project.companyId,
         clientId: project.clientId,
         action: 'CONTRACT_SIGNED',
         description: signature
@@ -62,6 +63,7 @@ export async function signOffProject(projectId: string, signature: string) {
 
     await prisma.activityLog.create({
       data: {
+        companyId: project.companyId,
         clientId: project.clientId,
         action: 'HANDOVER_SIGNED',
         description: signature

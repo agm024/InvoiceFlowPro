@@ -102,7 +102,8 @@ export default async function StatementPage({ params }: { params: Promise<{ clie
           </div>
         </div>
 
-        <table className="w-full text-left text-sm mb-12 border-collapse">
+        <div className="overflow-x-auto">
+        <table className="whitespace-nowrap w-full text-left text-sm mb-12 border-collapse">
           <thead>
             <tr className="border-b-2 border-zinc-900">
               <th className="py-3 px-2 font-bold text-zinc-600">Date</th>
@@ -139,6 +140,7 @@ export default async function StatementPage({ params }: { params: Promise<{ clie
             )}
           </tbody>
         </table>
+        </div>
 
         {/* Print Button (hidden when printing) */}
         <div className="flex justify-center print:hidden mt-12 pb-12">

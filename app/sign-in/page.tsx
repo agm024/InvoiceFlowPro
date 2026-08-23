@@ -1,0 +1,91 @@
+'use client'
+
+import Link from 'next/link'
+import { ArrowRight, Loader2, Check } from 'lucide-react'
+import { signInAction } from './actions'
+import { useState, Suspense } from 'react'
+import { toast } from 'react-hot-toast'
+import { useSearchParams } from 'next/navigation'
+
+function SignInForm() {
+  const [loading, setLoading] = useState(false)
+  const searchParams = useSearchParams()
+  const registered = searchParams.get('registered')
+
+  async function handleSubmit(formData: FormData) {
+    setLoading(true)
+    try {
+      const result = await signInAction(formData)
+      if (result?.error) {
+        toast.error(result.error)
+        setLoading(false)
+      }
+    } catch (e) {
+      // next-auth redirects throw errors which we shouldn't catch or just ignore here
+    }
+  }
+
+  return (
+    <>
+      {registered && (
+        <div className="mb-6 p-4 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg text-sm font-medium border border-emerald-200 dark:border-emerald-900 flex items-center gap-2">
+          <Check size={16} />
+          Account created successfully! Please sign in.
+        </div>
+      )}
+      <form action={handleSubmit} className="space-y-5">
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Email address</label>
+          <input type="email" name="email" required placeholder="you@company.com" className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 focus:outline-none focus:border-blue-500 dark:focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+        </div>
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Password</label>
+            <Link href="#" className="text-sm text-blue-600 dark:text-blue-500 hover:underline">Forgot password?</Link>
+          </div>
+          <input type="password" name="password" required placeholder="••••••••" className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 focus:outline-none focus:border-blue-500 dark:focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <input type="checkbox" id="remember" className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500 h-4 w-4" />
+          <label htmlFor="remember" className="text-sm text-zinc-600 dark:text-zinc-400">Remember me</label>
+        </div>
+        
+        <button disabled={loading} type="submit" className="w-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-3 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-white/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+          {loading ? <Loader2 className="animate-spin" size={18} /> : <>Sign in <ArrowRight size={18} /></>}
+        </button>
+      </form>
+    </>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 p-4">
+      <div className="w-full max-w-[400px]">
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+            <div className="w-10 h-10 bg-zinc-900 dark:bg-zinc-100 rounded-xl flex items-center justify-center shadow-sm">
+              <span className="text-white dark:text-zinc-900 font-bold text-xl">I</span>
+            </div>
+            <span className="font-bold text-2xl tracking-tight">InvoiceFlow<span className="text-blue-600">Pro</span></span>
+          </Link>
+          <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome back</h1>
+          <p className="text-zinc-500 dark:text-zinc-400">Please enter your details to sign in.</p>
+        </div>
+
+        <div className="bg-white dark:bg-zinc-900/50 p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm backdrop-blur-xl">
+          <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="animate-spin text-zinc-400" size={24} /></div>}>
+            <SignInForm />
+          </Suspense>
+
+          <p className="mt-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
+            Don't have an account? <Link href="/sign-up" className="text-zinc-900 dark:text-zinc-100 font-medium hover:underline">Sign up</Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+

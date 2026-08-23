@@ -8,12 +8,78 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model Company {
+  id            String   @id @default(cuid())
+  name          String
+  gstin         String?
+  pan           String?
+  address       String?
+  city          String?
+  state         String?
+  country       String?  @default("India")
+  businessType  String?
+  status        String   @default("ACTIVE")
+  supportAccessGranted Boolean @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  users             User[]
+  clients           Client[]
+  products          Product[]
+  invoices          Invoice[]
+  projects          Project[]
+  estimates         Estimate[]
+  expenses          Expense[]
+  banks             Bank[]
+  exchangeRates     ExchangeRate[]
+  internalTransfers InternalTransfer[]
+  assets            Asset[]
+  contracts         Contract[]
+  settings          CompanySettings?
+  subscription      Subscription?
+  activityLogs      ActivityLog[]
+  tickets           Ticket[]
+}
+
+model Plan {
+  id            String   @id @default(cuid())
+  name          String
+  price         Float
+  currency      String   @default("USD")
+  interval      String   @default("month")
+  trialPeriod   Int      @default(0)
+  userLimits    Int      @default(0)
+  clientLimits  Int      @default(0)
+  invoiceLimits Int      @default(0)
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  companyId   String   @unique
+  planId      String
+  status      String   @default("active")
+  currentPeriodEnd DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  plan        Plan     @relation(fields: [planId], references: [id])
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
+  passwordHash String?
   name      String?
-  role      String   @default("admin")
+  role      String   @default("admin") // admin, member
   clerkId   String?  @unique
+  isSuperAdmin Boolean @default(false)
+  companyId String
+  company Company @relation(fields: [companyId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   comments  Comment[]
@@ -28,13 +94,15 @@ model Client {
   address   String?
   email     String?
   phone     String?
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   panNo     String?
   stateCode String?
   stateName String?
   portalToken String?   @unique
-  status      String    @default("ACTIVE") // LEAD, IN_DISCUSSION, PROPOSAL_SENT, ACTIVE, LOST
+  status      String    @default("ACTIVE")
   invoices  Invoice[]
   projects  Project[]
   estimates Estimate[]
@@ -50,6 +118,8 @@ model Product {
   price        Float
   hsn          String?
   gstRate      Float         @default(0)
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   discount     Float         @default(0)
@@ -62,7 +132,9 @@ model Product {
 }
 
 model CompanySettings {
-  id           String   @id @default("default")
+  id           String   @id @default(cuid())
+  companyId String  @unique
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyName  String   @default("Your Company Name")
   address      String?
   gstin        String?
@@ -78,13 +150,15 @@ model CompanySettings {
   panNo        String?
   phone        String?
   website      String?
-  stateCode    String?   @default("27") // Default to Maharashtra for safety
+  stateCode    String?   @default("27")
 }
 
 model ExchangeRate {
   id        String   @id @default(cuid())
   currency  String   @unique
   rate      Float
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -97,6 +171,8 @@ model Bank {
   swiftCode     String?
   routingNumber String?
   iban          String?
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   invoices      Invoice[]
@@ -116,6 +192,8 @@ model Invoice {
   total         Float         @default(0)
   notes         String?
   clientId      String
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   bankId        String?
@@ -151,14 +229,16 @@ model Expense {
   id          String   @id @default(cuid())
   date        DateTime @default(now())
   vendorName  String
-  category    String   @default("SOFTWARE") // SOFTWARE, HARDWARE, RENT, GST_PAYMENT, OTHER
+  category    String   @default("SOFTWARE")
   description String?
   totalAmount Float
   subTotal    Float    @default(0)
   taxRate     Float    @default(0)
   taxAmount   Float    @default(0)
-  isRcm       Boolean  @default(false)       // Reverse Charge Mechanism
+  isRcm       Boolean  @default(false)
   itcEligible Boolean  @default(true)
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   bankId      String?
@@ -170,10 +250,12 @@ model Project {
   name         String
   totalValue   Float
   currency     String      @default("INR")
-  status       String      @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
+  status       String      @default("ACTIVE")
   contractText String?     @db.Text
-  stage        String      @default("PLANNING") // PLANNING, DESIGN, DEVELOPMENT, TESTING, REVIEW, CLOSED
+  stage        String      @default("PLANNING")
   clientId     String
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   client       Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
   milestones   Milestone[]
   tasks        ProjectTask[]
@@ -189,7 +271,7 @@ model Milestone {
   name             String
   percentage       Float?
   amount           Float
-  status           String      @default("UNBILLED") // UNBILLED, BILLED, PAID
+  status           String      @default("UNBILLED")
   clientApprovedAt DateTime?
   projectId        String
   project          Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -204,7 +286,7 @@ model ProjectTask {
   id          String      @id @default(cuid())
   title       String
   description String?
-  status      String      @default("TODO") // TODO, IN_PROGRESS, DONE
+  status      String      @default("TODO")
   projectId   String
   project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
   assigneeId  String?
@@ -221,6 +303,8 @@ model InternalTransfer {
   toBankId      String
   reference     String?
   notes         String?
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   fromBank      Bank     @relation("TransferFrom", fields: [fromBankId], references: [id])
   toBank        Bank     @relation("TransferTo", fields: [toBankId], references: [id])
   createdAt     DateTime @default(now())
@@ -232,12 +316,14 @@ model Estimate {
   estimateNumber String       @unique
   date          DateTime      @default(now())
   expiryDate    DateTime?
-  status        String        @default("draft") // draft, sent, accepted, rejected, invoiced
+  status        String        @default("draft")
   subTotal      Float         @default(0)
   taxTotal      Float         @default(0)
   total         Float         @default(0)
   notes         String?
   clientId      String
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   client        Client        @relation(fields: [clientId], references: [id])
   currency      String        @default("INR")
   discountType  String?
@@ -263,9 +349,11 @@ model EstimateItem {
 
 model ActivityLog {
   id          String   @id @default(cuid())
-  action      String   // e.g. "Email Sent", "Note Added", "Status Changed"
+  action      String
   description String?
   clientId    String
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
 }
@@ -285,7 +373,9 @@ model Asset {
   id          String   @id @default(cuid())
   name        String
   url         String
-  category    String   @default("GENERAL") // LOGO, TAX_DOC, GENERAL
+  category    String   @default("GENERAL")
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
 }
 
@@ -294,9 +384,43 @@ model Contract {
   title       String
   content     String
   clientId    String
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
   client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  status      String   @default("DRAFT") // DRAFT, SENT, SIGNED
+  status      String   @default("DRAFT")
   signedAt    DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  adminId   String
+  targetId  String?
+  companyId String?
+  metadata  String?  @db.Text
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+model Ticket {
+  id        String   @id @default(cuid())
+  subject   String
+  status    String   @default("OPEN") // OPEN, PENDING, RESOLVED
+  priority  String   @default("MEDIUM")
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String   @db.Text
+  target    String   @default("ALL") // ALL, SPECIFIC_PLANS
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -174,7 +174,7 @@ export default function PortalClient({
               <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Unpaid Invoices</h3>
               {unpaidInvoices.length > 0 ? (
                 <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-x-auto">
-                  <table className="w-full text-left text-sm">
+                  <table className="whitespace-nowrap w-full text-left text-sm">
                     <thead>
                       <tr className="bg-zinc-50 dark:bg-zinc-800/50 text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-800">
                         <th className="px-6 py-4 font-medium">Invoice #</th>
@@ -233,7 +233,7 @@ export default function PortalClient({
               <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Payment History</h3>
               {paidInvoices.length > 0 ? (
                 <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-x-auto">
-                  <table className="w-full text-left text-sm">
+                  <table className="whitespace-nowrap w-full text-left text-sm">
                     <thead>
                       <tr className="bg-zinc-50 dark:bg-zinc-800/50 text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-800">
                         <th className="px-6 py-4 font-medium">Invoice #</th>

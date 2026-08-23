@@ -24,7 +24,12 @@ export default function AppLayoutClient({
     <div className="flex h-screen overflow-hidden bg-background relative print:h-auto print:overflow-visible print:block">
       {/* Mobile Top Bar */}
       <div className="md:hidden absolute top-0 left-0 right-0 h-16 bg-sidebar-bg border-b border-sidebar-border z-50 flex items-center justify-between px-4 shrink-0 print:hidden">
-        <h1 className="text-xl font-bold tracking-tighter">InvoiceFlowPro</h1>
+        <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+          <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary-foreground"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17V7"/></svg>
+          </div>
+          InvoiceFlow
+        </h1>
         <button 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="text-foreground p-2 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"

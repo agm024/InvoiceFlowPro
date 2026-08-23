@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import PrintButton from '../PrintButton'
 import { ArrowLeft } from 'lucide-react'
+import { getCurrencySymbol } from '@/utils/currency'
 
 export default async function PublicInvoicePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
@@ -54,7 +55,8 @@ export default async function PublicInvoicePage({ params }: { params: Promise<{ 
         </div>
 
         {/* Line Items */}
-        <table className="w-full text-sm text-left">
+        <div className="overflow-x-auto">
+        <table className="whitespace-nowrap w-full text-sm text-left">
           <thead className="bg-zinc-50 text-zinc-500 border-b border-zinc-200 uppercase text-xs">
             <tr>
               <th className="px-8 py-4 font-medium">Item Description</th>
@@ -72,28 +74,29 @@ export default async function PublicInvoicePage({ params }: { params: Promise<{ 
                   {item.product.hsn && <p className="text-xs text-zinc-500 mt-1">HSN: {item.product.hsn}</p>}
                 </td>
                 <td className="px-8 py-4 text-right">{item.quantity}</td>
-                <td className="px-8 py-4 text-right">{invoice.currency === 'INR' ? '₹' : invoice.currency + ' '}{item.price.toFixed(2)}</td>
-                <td className="px-8 py-4 text-right">{invoice.currency === 'INR' ? '₹' : invoice.currency + ' '}{item.tax.toFixed(2)}</td>
-                <td className="px-8 py-4 text-right font-medium">{invoice.currency === 'INR' ? '₹' : invoice.currency + ' '}{((item.price * item.quantity) + item.tax).toFixed(2)}</td>
+                <td className="px-8 py-4 text-right">{getCurrencySymbol(invoice.currency)} {item.price.toFixed(2)}</td>
+                <td className="px-8 py-4 text-right">{getCurrencySymbol(invoice.currency)} {item.tax.toFixed(2)}</td>
+                <td className="px-8 py-4 text-right font-medium">{getCurrencySymbol(invoice.currency)} {((item.price * item.quantity) + item.tax).toFixed(2)}</td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
 
         {/* Totals */}
         <div className="p-8 bg-zinc-50 flex justify-end">
           <div className="w-full md:w-72">
-            <div className="flex justify-between mb-3 text-sm">
+            <div className="flex justify-between items-center text-sm">
               <span className="text-zinc-500">Subtotal</span>
-              <span className="font-medium">{invoice.currency === 'INR' ? '₹' : invoice.currency + ' '}{invoice.subTotal.toFixed(2)}</span>
+              <span className="font-medium">{getCurrencySymbol(invoice.currency)} {invoice.subTotal.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between mb-4 text-sm">
-              <span className="text-zinc-500">Total Tax (GST)</span>
-              <span className="font-medium">{invoice.currency === 'INR' ? '₹' : invoice.currency + ' '}{invoice.taxTotal.toFixed(2)}</span>
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-zinc-500">Tax</span>
+              <span className="font-medium">{getCurrencySymbol(invoice.currency)} {invoice.taxTotal.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between pt-4 border-t border-zinc-200 text-lg font-bold">
+            <div className="flex justify-between items-center text-lg font-bold border-t border-zinc-200 pt-3 mt-1">
               <span>Total</span>
-              <span>{invoice.currency === 'INR' ? '₹' : invoice.currency + ' '}{invoice.total.toFixed(2)}</span>
+              <span>{getCurrencySymbol(invoice.currency)} {invoice.total.toFixed(2)}</span>
             </div>
           </div>
         </div>
