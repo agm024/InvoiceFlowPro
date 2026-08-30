@@ -1,37 +1,46 @@
-'use server'
+"use server"
 
-import prisma from '@/utils/prisma'
-import { requireSuperAdmin } from '@/lib/auth-context'
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
+import prisma from "@/utils/prisma"
+import { requireSuperAdmin } from "@/lib/auth-context"
+import { logAudit } from "@/lib/audit"
+import { redirect } from "next/navigation"
 
-export async function createPlan(formData: FormData) {
-  await requireSuperAdmin()
+export async function savePlan(formData: FormData) {
+  const admin = await requireSuperAdmin()
   
-  const name = formData.get('name') as string
-  const price = parseFloat(formData.get('price') as string)
-  const currency = formData.get('currency') as string
-  const interval = formData.get('interval') as string
+  const id = formData.get("id") as string
+  const name = formData.get("name") as string
+  const monthlyPrice = parseFloat(formData.get("monthlyPrice") as string)
+  const yearlyPrice = parseFloat(formData.get("yearlyPrice") as string)
+  const currency = formData.get("currency") as string
+  const isPopular = formData.get("isPopular") === "on"
+  const trialPeriod = parseInt(formData.get("trialPeriod") as string)
+  const displayOrder = parseInt(formData.get("displayOrder") as string)
+  
+  const userLimits = parseInt(formData.get("userLimits") as string)
+  const clientLimits = parseInt(formData.get("clientLimits") as string)
+  const invoiceLimits = parseInt(formData.get("invoiceLimits") as string)
 
-  if (!name || isNaN(price)) {
-    throw new Error('Invalid plan details')
+  const data = {
+    name,
+    monthlyPrice,
+    yearlyPrice,
+    currency,
+    isPopular,
+    trialPeriod,
+    displayOrder,
+    userLimits,
+    clientLimits,
+    invoiceLimits
   }
 
-  await prisma.plan.create({
-    data: {
-      name,
-      price,
-      currency: currency || 'USD',
-      interval: interval || 'month'
-    }
-  })
+  if (id) {
+    await prisma.plan.update({ where: { id }, data })
+    await logAudit({ action: 'PLAN_UPDATED', targetId: id, metadata: data })
+  } else {
+    const newPlan = await prisma.plan.create({ data })
+    await logAudit({ action: 'PLAN_CREATED', targetId: newPlan.id, metadata: data })
+  }
 
-  revalidatePath('/app/admin/billing/plans')
-  redirect('/app/admin/billing/plans')
-}
-
-export async function deletePlan(id: string) {
-  await requireSuperAdmin()
-  await prisma.plan.delete({ where: { id } })
-  revalidatePath('/app/admin/billing/plans')
+  redirect("/app/admin/billing/plans")
 }

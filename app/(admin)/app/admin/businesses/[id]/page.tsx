@@ -6,7 +6,7 @@ import { ArrowLeft, Building2, Users, FileText, Activity } from 'lucide-react'
 import { getCurrencySymbol } from '@/utils/currency'
 
 export default async function CompanyDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireSuperAdmin()
+  const admin = await requireSuperAdmin()
   const { id } = await params
 
   const company = await prisma.company.findUnique({
@@ -26,6 +26,8 @@ export default async function CompanyDetailsPage({ params }: { params: Promise<{
   if (!company) {
     notFound()
   }
+
+  const cannotImpersonate = !company.supportAccessGranted || admin.isImpersonating
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -58,18 +60,20 @@ export default async function CompanyDetailsPage({ params }: { params: Promise<{
         
         <form action={async () => {
           'use server'
+          const adminUser = await requireSuperAdmin()
+          if (adminUser.isImpersonating) throw new Error('Cannot impersonate while already impersonating')
           const { impersonateCompany } = await import('@/app/(admin)/app/admin/impersonate-actions')
           await impersonateCompany(company.id)
         }}>
           <button 
             type="submit" 
-            disabled={!company.supportAccessGranted}
+            disabled={cannotImpersonate}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2 ${
-              company.supportAccessGranted 
+              !cannotImpersonate 
                 ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90' 
                 : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed'
             }`}
-            title={!company.supportAccessGranted ? 'Customer has not granted support access' : ''}
+            title={admin.isImpersonating ? 'Already impersonating a tenant' : !company.supportAccessGranted ? 'Customer has not granted support access' : ''}
           >
             {!company.supportAccessGranted && <span className="text-xs">🔒</span>}
             View as Company

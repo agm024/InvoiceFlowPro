@@ -12,6 +12,7 @@ export async function getCurrentUser() {
 
   let companyId = (session.user as any).companyId
   const isSuperAdmin = (session.user as any).isSuperAdmin
+  let isImpersonating = false
 
   // Handle impersonation
   if (isSuperAdmin) {
@@ -19,6 +20,7 @@ export async function getCurrentUser() {
     const impersonatedId = cookieStore.get('impersonatedCompanyId')?.value
     if (impersonatedId) {
       companyId = impersonatedId
+      isImpersonating = true
     }
   }
 
@@ -28,7 +30,8 @@ export async function getCurrentUser() {
     name: session.user.name,
     role: (session.user as any).role,
     companyId,
-    isSuperAdmin
+    isSuperAdmin,
+    isImpersonating
   }
 }
 

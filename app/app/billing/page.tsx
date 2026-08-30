@@ -1,7 +1,8 @@
 import { requireCompany } from '@/lib/auth-context'
 import prisma from '@/utils/prisma'
-import { AlertCircle, CheckCircle2 } from 'lucide-react'
-import { createCheckoutSession } from './actions'
+import { AlertCircle, ShieldAlert } from 'lucide-react'
+import BillingClient from './BillingClient'
+import { cancelSubscription } from './actions'
 
 export default async function BillingPage() {
   const { companyId } = await requireCompany()
@@ -39,71 +40,37 @@ export default async function BillingPage() {
         </div>
       )}
 
-      <div className="bg-white border rounded-xl p-6 shadow-sm">
-        <h2 className="text-xl font-semibold mb-4">Current Subscription</h2>
-        {subscription ? (
-          <div className="space-y-2">
-            <p><strong>Plan:</strong> {subscription.plan?.name}</p>
-            <p><strong>Status:</strong> <span className="capitalize">{subscription.status.replace('_', ' ')}</span></p>
-            {subscription.currentPeriodEnd && (
-              <p><strong>Renews on:</strong> {new Date(subscription.currentPeriodEnd).toLocaleDateString()}</p>
-            )}
+      <div className="bg-white border rounded-xl p-6 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-6">
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Current Subscription</h2>
+          {subscription ? (
+            <div className="space-y-2">
+              <p><strong>Plan:</strong> {subscription.plan?.name}</p>
+              <p><strong>Status:</strong> <span className={`capitalize font-medium ${subscription.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>{subscription.status.replace('_', ' ')}</span></p>
+              <p><strong>Billing Interval:</strong> <span className="capitalize">{subscription.billingInterval || 'Month'}</span></p>
+              {subscription.currentPeriodEnd && (
+                <p><strong>Renews on:</strong> {new Date(subscription.currentPeriodEnd).toLocaleDateString()}</p>
+              )}
+            </div>
+          ) : (
+            <p className="text-gray-600">You do not have an active subscription.</p>
+          )}
+        </div>
+        
+        {subscription && subscription.status === 'active' && (
+          <div className="bg-red-50 p-4 rounded-lg border border-red-100 max-w-sm">
+            <h3 className="text-sm font-semibold text-red-800 flex items-center gap-2 mb-2"><ShieldAlert size={16} /> Danger Zone</h3>
+            <p className="text-xs text-red-700 mb-4">Canceling your subscription will immediately revoke your access to premium features at the end of your billing cycle.</p>
+            <form action={cancelSubscription}>
+              <button type="submit" className="w-full bg-red-100 text-red-700 hover:bg-red-200 py-2 rounded-md text-sm font-semibold transition-colors">
+                Cancel Subscription
+              </button>
+            </form>
           </div>
-        ) : (
-          <p className="text-gray-600">You do not have an active subscription.</p>
         )}
       </div>
 
-      <div>
-        <h2 className="text-2xl font-bold mb-6">Available Plans</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map(plan => (
-            <div key={plan.id} className="border rounded-2xl p-6 flex flex-col bg-white shadow-sm hover:shadow-md transition-shadow relative">
-              {subscription?.planId === plan.id && (
-                <div className="absolute top-0 right-0 bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-bl-lg rounded-tr-2xl">
-                  Current Plan
-                </div>
-              )}
-              <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-              <div className="mb-4">
-                <span className="text-3xl font-bold">
-                  {plan.currency === 'USD' ? '$' : plan.currency === 'INR' ? '₹' : plan.currency}
-                  {plan.price}
-                </span>
-                <span className="text-gray-500">/{plan.interval}</span>
-              </div>
-              <ul className="space-y-3 mb-8 flex-1">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>{plan.userLimits === 0 ? 'Unlimited' : plan.userLimits} Users</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>{plan.clientLimits === 0 ? 'Unlimited' : plan.clientLimits} Clients</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>{plan.invoiceLimits === 0 ? 'Unlimited' : plan.invoiceLimits} Invoices</span>
-                </li>
-              </ul>
-              
-              <form action={async () => {
-                'use server';
-                await createCheckoutSession(plan.id);
-              }}>
-                <button
-                  disabled={subscription?.planId === plan.id && subscription?.status === 'active'}
-                  className="w-full py-2.5 px-4 rounded-lg font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-100 disabled:text-gray-500 disabled:border-gray-200"
-                >
-                  {subscription?.planId === plan.id 
-                    ? (subscription?.status === 'active' ? 'Current Plan' : 'Renew Plan') 
-                    : 'Subscribe'}
-                </button>
-              </form>
-            </div>
-          ))}
-        </div>
-      </div>
+      <BillingClient plans={plans} subscription={subscription} />
     </div>
   )
 }

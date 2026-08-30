@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { MarketingNav, MarketingFooter } from '@/components/MarketingShared'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { auth } from '@/auth'
 
@@ -9,30 +10,7 @@ export default async function LandingPage() {
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100 flex flex-col">
       {/* Navbar */}
-      <nav className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 max-w-7xl mx-auto w-full">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-lg flex items-center justify-center">
-            <span className="text-white dark:text-zinc-900 font-bold text-xl">I</span>
-          </div>
-          <span className="font-bold text-xl tracking-tight">InvoiceFlow<span className="text-blue-600 dark:text-blue-500">Pro</span></span>
-        </div>
-        <div className="flex gap-4 items-center">
-          {session ? (
-            <Link href={dashboardHref} className="text-sm font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg hover:bg-black dark:hover:bg-zinc-200 transition">
-              Go to Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link href="/sign-in" className="text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition">
-                Log in
-              </Link>
-              <Link href="/sign-up" className="text-sm font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg hover:bg-black dark:hover:bg-zinc-200 transition">
-                Get Started
-              </Link>
-            </>
-          )}
-        </div>
-      </nav>
+      <MarketingNav />
 
       {/* Hero Section */}
       <main className="flex-1 flex flex-col items-center justify-center text-center px-4 max-w-4xl mx-auto py-20">
@@ -75,9 +53,11 @@ export default async function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="py-8 text-center text-zinc-500 text-sm border-t border-zinc-200 dark:border-zinc-800">
-        &copy; {new Date().getFullYear()} InvoiceFlowPro. All rights reserved.
-      </footer>
+      <MarketingFooter />
     </div>
   )
 }
+
+
+
+
