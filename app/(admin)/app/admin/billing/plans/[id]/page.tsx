@@ -73,16 +73,18 @@ export default async function EditPlanPage(props: { params: Promise<{ id: string
           <div className="grid grid-cols-3 gap-4 border-t border-zinc-200 dark:border-zinc-800 pt-4">
             <div>
               <label className="block text-sm font-medium mb-1">User Limits</label>
-              <input type="number" name="userLimits" defaultValue={plan?.userLimits ?? 1} required className="w-full px-4 py-2 bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg" />
-              <p className="text-xs text-zinc-500 mt-1">999999 for unlimited</p>
+              <input type="number" name="userLimits" placeholder="Unlimited" defaultValue={plan?.userLimits ?? ""} className="w-full px-4 py-2 bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-semibold" />
+              <p className="text-[10px] text-zinc-400 mt-1">Leave empty for unlimited</p>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Client Limits</label>
-              <input type="number" name="clientLimits" defaultValue={plan?.clientLimits ?? 50} required className="w-full px-4 py-2 bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg" />
+              <input type="number" name="clientLimits" placeholder="Unlimited" defaultValue={plan?.clientLimits ?? ""} className="w-full px-4 py-2 bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-semibold" />
+              <p className="text-[10px] text-zinc-400 mt-1">Leave empty for unlimited</p>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Invoice Limits</label>
-              <input type="number" name="invoiceLimits" defaultValue={plan?.invoiceLimits ?? 200} required className="w-full px-4 py-2 bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg" />
+              <input type="number" name="invoiceLimits" placeholder="Unlimited" defaultValue={plan?.invoiceLimits ?? ""} className="w-full px-4 py-2 bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-semibold" />
+              <p className="text-[10px] text-zinc-400 mt-1">Leave empty for unlimited</p>
             </div>
           </div>
 

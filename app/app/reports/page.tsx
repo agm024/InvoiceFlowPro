@@ -2,6 +2,7 @@ import prisma from '@/utils/prisma'
 import { TrendingUp, TrendingDown, DollarSign, FileText } from 'lucide-react'
 import ExportCSVButton from './ExportCSVButton'
 import { requireCompany } from '@/lib/auth-context'
+import Link from 'next/link'
 
 export const metadata = {
   title: 'Reports | InvoiceFlowPro',
@@ -111,6 +112,13 @@ export default async function ReportsPage() {
               <p className="text-xl font-black text-zinc-900 dark:text-white">
                 ₹{Math.max(0, totalTaxCollected - totalTaxPaid).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800/80 flex justify-between items-center text-xs">
+              <span className="text-zinc-500">Need detailed GST compliance check?</span>
+              <Link href="/app/reports/gst-validation" className="font-bold text-primary hover:underline">
+                Run GST Audit & Export &rarr;
+              </Link>
             </div>
           </div>
         </div>

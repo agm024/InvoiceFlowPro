@@ -40,6 +40,9 @@ model Company {
   activityLogs      ActivityLog[]
   tickets           Ticket[]
   platformPayments  PlatformPayment[]
+  creditNotes       CreditNote[]
+  debitNotes        DebitNote[]
+  gstExports        GstExportHistory[]
 }
 
 model Plan {
@@ -50,9 +53,9 @@ model Plan {
   currency      String         @default("INR")
   isPopular     Boolean        @default(false)
   trialPeriod   Int            @default(0)
-  userLimits    Int            @default(0)
-  clientLimits  Int            @default(0)
-  invoiceLimits Int            @default(0)
+  userLimits    Int?
+  clientLimits  Int?
+  invoiceLimits Int?
   displayOrder  Int            @default(0)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
@@ -216,6 +219,8 @@ model Invoice {
   client          Client        @relation(fields: [clientId], references: [id])
   items           InvoiceItem[]
   milestone       Milestone?
+  creditNotes     CreditNote[]
+  debitNotes      DebitNote[]
 }
 
 model InvoiceItem {
@@ -405,7 +410,66 @@ model AuditLog {
   companyId String?
   metadata  String?  @db.Text
   ipAddress String?
+  userAgent String?
+  requestId String?
+  reason    String?
   createdAt DateTime @default(now())
+}
+
+model EmailTemplate {
+  id            String     @id @default(cuid())
+  name          String     @unique
+  subject       String
+  htmlBody      String     @db.Text
+  plainTextBody String     @db.Text
+  variables     String     // Comma-separated variable names
+  isEnabled     Boolean    @default(true)
+  version       Int        @default(1)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  logs          EmailLog[]
+}
+
+model EmailLog {
+  id                String         @id @default(cuid())
+  recipient          String
+  templateId         String?
+  templateName       String?
+  status             String         // "SENT", "DELIVERED", "BOUNCED", "FAILED"
+  provider           String         // "ZEPTOMAIL", "SMTP", etc.
+  error              String?        @db.Text
+  providerMessageId  String?
+  sentAt             DateTime       @default(now())
+  deliveredAt        DateTime?
+  openedAt           DateTime?
+  bouncedAt          DateTime?
+  
+  template           EmailTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+}
+
+model WebhookLog {
+  id           String    @id @default(cuid())
+  provider     String    // "RAZORPAY", "STRIPE", etc.
+  event        String    // e.g. "payment.authorized"
+  status       String    // "SUCCESS", "FAILED", "RETRYING"
+  attempt      Int       @default(1)
+  payload      String    @db.Text
+  response     String?   @db.Text
+  error        String?   @db.Text
+  createdAt    DateTime  @default(now())
+  processedAt  DateTime?
+}
+
+model BackgroundJobLog {
+  id          String    @id @default(cuid())
+  jobName     String    
+  queue       String    @default("default")
+  status      String    // "PENDING", "RUNNING", "COMPLETED", "FAILED", "RETRYING"
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  duration    Int?      
+  retries     Int       @default(0)
+  error       String?   @db.Text
 }
 
 model Ticket {
@@ -451,4 +515,53 @@ model SystemSettings {
   key       String   @unique
   value     String   @db.Text
   updatedAt DateTime @updatedAt
+}
+
+model CreditNote {
+  id             String   @id @default(cuid())
+  noteNumber     String   @unique
+  invoiceId      String
+  invoice        Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  companyId      String
+  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  amount         Float    @default(0)
+  taxAmount      Float    @default(0)
+  reason         String
+  createdAt      DateTime @default(now())
+}
+
+model DebitNote {
+  id             String   @id @default(cuid())
+  noteNumber     String   @unique
+  invoiceId      String
+  invoice        Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  companyId      String
+  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  amount         Float    @default(0)
+  taxAmount      Float    @default(0)
+  reason         String
+  createdAt      DateTime @default(now())
+}
+
+model GstExportHistory {
+  id           String   @id @default(cuid())
+  companyId    String
+  company      Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  type         String   // "GSTR-1", "GSTR-3B"
+  period       String   // e.g. "2026-08"
+  validCount   Int
+  warningCount Int
+  errorCount   Int
+  metadata     String?  @db.Text
+  createdAt    DateTime @default(now())
+}
+
+model SupportAccessToken {
+  id           String   @id @default(cuid())
+  adminUserId  String
+  companyId    String
+  reason       String
+  expiresAt    DateTime
+  allowWrite   Boolean  @default(false)
+  createdAt    DateTime @default(now())
 }

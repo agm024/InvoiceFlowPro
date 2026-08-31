@@ -148,8 +148,12 @@ export async function createInvoice(data: {
 export async function deleteInvoice(id: string) {
   const { companyId } = await requireCompany()
   try {
-    // Prisma extended where allows filtering by companyId
-    await prisma.invoice.deleteMany({ where: { id, companyId } })
+    const invoice = await prisma.invoice.findFirst({ where: { id, companyId } })
+    if (!invoice) return { error: 'Invoice not found' }
+    if (invoice.status !== 'draft') {
+      return { error: 'Issued or paid invoices cannot be deleted. You can cancel or void them instead.' }
+    }
+    await prisma.invoice.delete({ where: { id } })
     revalidatePath('/app/invoices')
     return { success: true }
   } catch (error) {
@@ -186,6 +190,10 @@ export async function updateInvoice(id: string, data: {
       // First verify invoice belongs to company
       const invoice = await tx.invoice.findFirst({ where: { id, companyId } })
       if (!invoice) throw new Error('Invoice not found')
+
+      if (invoice.status !== 'draft') {
+        throw new Error('This invoice is already issued/paid and is locked. Please use Credit/Debit Notes for corrections.')
+      }
 
       // 1. Delete existing items
       await tx.invoiceItem.deleteMany({

@@ -12,6 +12,7 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses)
   const [activeForm, setActiveForm] = useState<'NONE' | 'EXPENSE' | 'GST'>('NONE')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isOcrProcessing, setIsOcrProcessing] = useState(false)
   
   // Form States for Auto-Calculation
   const [subTotal, setSubTotal] = useState<number | ''>('')
@@ -19,6 +20,52 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
 
   const taxAmount = typeof subTotal === 'number' ? (subTotal * taxRate) / 100 : 0
   const totalAmount = typeof subTotal === 'number' ? subTotal + taxAmount : 0
+
+  const handleReceiptUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsOcrProcessing(true)
+    const toastId = toast.loading("Scanning receipt with AI OCR...")
+
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    const nameLower = file.name.toLowerCase()
+    let parsedVendor = "OpenAI Inc"
+    let parsedSubTotal = 1600.00
+    let parsedTaxRate = 18
+    let parsedCategory = "SOFTWARE"
+
+    if (nameLower.includes("aws") || nameLower.includes("amazon") || nameLower.includes("cloud")) {
+      parsedVendor = "Amazon Web Services"
+      parsedSubTotal = 4500.00
+      parsedCategory = "HOSTING"
+    } else if (nameLower.includes("figma")) {
+      parsedVendor = "Figma Inc"
+      parsedSubTotal = 1200.00
+      parsedCategory = "SOFTWARE"
+    } else if (nameLower.includes("travel") || nameLower.includes("uber") || nameLower.includes("cab")) {
+      parsedVendor = "Uber India"
+      parsedSubTotal = 850.00
+      parsedCategory = "OTHER"
+    }
+
+    setSubTotal(parsedSubTotal)
+    setTaxRate(parsedTaxRate)
+    
+    const vendorInput = document.querySelector('input[name="vendorName"]') as HTMLInputElement
+    if (vendorInput) {
+      vendorInput.value = parsedVendor
+    }
+
+    const categorySelect = document.querySelector('select[name="category"]') as HTMLSelectElement
+    if (categorySelect) {
+      categorySelect.value = parsedCategory
+    }
+
+    toast.success("Receipt pre-filled with OCR details!", { id: toastId })
+    setIsOcrProcessing(false)
+  }
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -73,6 +120,20 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
         <div className="bg-card-bg border border-card-border p-6 rounded-xl shadow-sm mb-8">
           <h2 className="text-lg font-bold mb-4">Log New Expense</h2>
           <form onSubmit={handleAdd} className="flex flex-col gap-4">
+            
+            {/* Receipt OCR Upload */}
+            <div className="bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 text-center flex flex-col items-center justify-center gap-2">
+              <span className="text-xs font-bold text-zinc-500">Scan Receipt with AI OCR (Simulated)</span>
+              <input 
+                type="file" 
+                accept="image/*,application/pdf"
+                onChange={handleReceiptUpload}
+                disabled={isOcrProcessing}
+                className="text-xs text-zinc-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-zinc-950 file:text-white dark:file:bg-white dark:file:text-zinc-950 file:cursor-pointer hover:file:opacity-90 cursor-pointer"
+              />
+              {isOcrProcessing && <p className="text-[10px] text-zinc-400 animate-pulse mt-1">Processing layout structure...</p>}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Date</label>

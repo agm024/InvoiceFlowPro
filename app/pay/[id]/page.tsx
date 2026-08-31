@@ -11,14 +11,26 @@ export const metadata = {
 
 export default async function PayInvoicePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
-  const invoice = await prisma.invoice.findUnique({
+  let invoice = await prisma.invoice.findUnique({
     where: { id: resolvedParams.id },
     include: { client: true, items: { include: { product: true } } }
   })
 
+  if (!invoice) {
+    invoice = await prisma.invoice.findFirst({
+      where: { invoiceNumber: resolvedParams.id },
+      include: { client: true, items: { include: { product: true } } }
+    })
+  }
+
   if (!invoice) notFound()
 
-  const companySettings = await prisma.companySettings.findFirst()
+  let companySettings = await prisma.companySettings.findUnique({
+    where: { companyId: invoice.companyId }
+  })
+  if (!companySettings) {
+    companySettings = await prisma.companySettings.findFirst()
+  }
   const amountDue = invoice.total - (invoice.amountPaid || 0)
   const isPaid = invoice.status === 'paid' || amountDue <= 0
 

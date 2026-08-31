@@ -62,9 +62,9 @@ export function PricingClient({ plans }: { plans: any[] }) {
                 
                 <p className="text-blue-100 mb-8">Everything you need to grow your business.</p>
                 <ul className="space-y-4 mb-8 flex-1">
-                  <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> {plan.userLimits > 1000 ? 'Unlimited' : plan.userLimits} Team Members</li>
-                  <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> {plan.clientLimits > 1000 ? 'Unlimited' : plan.clientLimits} Clients</li>
-                  <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> {plan.invoiceLimits > 10000 ? 'Unlimited' : plan.invoiceLimits} Invoices</li>
+                  <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> {plan.userLimits === null ? 'Unlimited' : plan.userLimits} Team Members</li>
+                  <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> {plan.clientLimits === null ? 'Unlimited' : plan.clientLimits} Clients</li>
+                  <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> {plan.invoiceLimits === null ? 'Unlimited' : plan.invoiceLimits} Invoices</li>
                   <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> Advanced Reporting</li>
                   <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> Dedicated Client Portal</li>
                 </ul>
@@ -85,11 +85,10 @@ export function PricingClient({ plans }: { plans: any[] }) {
               )}
               {(!isAnnual || price === 0) && <div className="mb-6 h-5"></div>}
               
-              <p className="text-zinc-600 dark:text-zinc-400 mb-8">{price === 0 ? "Get started for free." : "Great for growing businesses."}</p>
               <ul className="space-y-4 mb-8 flex-1">
-                <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> {plan.userLimits > 1000 ? 'Unlimited' : plan.userLimits} Team Member{plan.userLimits !== 1 ? 's' : ''}</li>
-                <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> {plan.clientLimits > 1000 ? 'Unlimited' : `Up to ${plan.clientLimits}`} Clients</li>
-                <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> {plan.invoiceLimits > 10000 ? 'Unlimited' : plan.invoiceLimits} Invoices</li>
+                <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> {plan.userLimits === null ? 'Unlimited' : plan.userLimits} Team Member{plan.userLimits !== 1 ? 's' : ''}</li>
+                <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> {plan.clientLimits === null ? 'Unlimited' : `Up to ${plan.clientLimits}`} Clients</li>
+                <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> {plan.invoiceLimits === null ? 'Unlimited' : plan.invoiceLimits} Invoices</li>
                 <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> Basic Reporting</li>
                 {price > 10000 ? (
                   <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> Priority Support</li>

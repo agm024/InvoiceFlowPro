@@ -9,7 +9,7 @@ import { getCurrencySymbol } from '@/utils/currency'
 export default async function PublicInvoicePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
   
-  const invoice = await prisma.invoice.findUnique({
+  let invoice = await prisma.invoice.findUnique({
     where: { id: resolvedParams.id },
     include: {
       client: true,
@@ -18,6 +18,18 @@ export default async function PublicInvoicePage({ params }: { params: Promise<{ 
       }
     }
   })
+  
+  if (!invoice) {
+    invoice = await prisma.invoice.findFirst({
+      where: { invoiceNumber: resolvedParams.id },
+      include: {
+        client: true,
+        items: {
+          include: { product: true }
+        }
+      }
+    })
+  }
   
   if (!invoice) notFound()
 

@@ -35,9 +35,9 @@ export default async function PlansPage() {
             </div>
             <ul className="space-y-3 mb-6 flex-1 text-sm text-zinc-600 dark:text-zinc-400">
               <li className="flex justify-between"><span>Trial Period:</span> <strong>{plan.trialPeriod} days</strong></li>
-              <li className="flex justify-between"><span>Users:</span> <strong>{plan.userLimits > 1000000 ? "Unlimited" : plan.userLimits}</strong></li>
-              <li className="flex justify-between"><span>Clients:</span> <strong>{plan.clientLimits > 1000000 ? "Unlimited" : plan.clientLimits}</strong></li>
-              <li className="flex justify-between"><span>Invoices:</span> <strong>{plan.invoiceLimits > 1000000 ? "Unlimited" : plan.invoiceLimits}</strong></li>
+              <li className="flex justify-between"><span>Users:</span> <strong>{plan.userLimits === null ? "Unlimited" : plan.userLimits}</strong></li>
+              <li className="flex justify-between"><span>Clients:</span> <strong>{plan.clientLimits === null ? "Unlimited" : plan.clientLimits}</strong></li>
+              <li className="flex justify-between"><span>Invoices:</span> <strong>{plan.invoiceLimits === null ? "Unlimited" : plan.invoiceLimits}</strong></li>
               <li className="flex justify-between"><span>Display Order:</span> <strong>{plan.displayOrder}</strong></li>
             </ul>
             <Link href={`/app/admin/billing/plans/${plan.id}`} className="block text-center w-full py-2 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 font-medium rounded-lg transition-colors">

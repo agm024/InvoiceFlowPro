@@ -6,12 +6,16 @@ import prisma from '@/utils/prisma'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-export async function impersonateCompany(companyId: string) {
+export async function impersonateCompany(companyId: string, reason: string, allowWrite: boolean = false) {
   const admin = await requireSuperAdmin()
   
+  if (!reason || reason.trim() === "") {
+    throw new Error('An explicit reason is required to start impersonation.')
+  }
+
   const company = await prisma.company.findUnique({
     where: { id: companyId },
-    select: { supportAccessGranted: true }
+    select: { name: true, supportAccessGranted: true }
   })
 
   if (!company?.supportAccessGranted) {
@@ -21,7 +25,12 @@ export async function impersonateCompany(companyId: string) {
   await logAudit({
     action: 'IMPERSONATE_COMPANY_START',
     companyId,
-    metadata: { reason: 'Support request' }
+    reason: reason,
+    metadata: { 
+      adminEmail: admin.email,
+      companyName: company.name,
+      writeEnabled: allowWrite 
+    }
   })
 
   const cookieStore = await cookies()
@@ -30,6 +39,16 @@ export async function impersonateCompany(companyId: string) {
     secure: process.env.NODE_ENV === 'production',
     path: '/'
   })
+
+  if (allowWrite) {
+    cookieStore.set('impersonateWriteEnabled', 'true', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/'
+    })
+  } else {
+    cookieStore.delete('impersonateWriteEnabled')
+  }
 
   redirect('/app')
 }
@@ -42,9 +61,11 @@ export async function stopImpersonation() {
   if (impersonatedId) {
     await logAudit({
       action: 'IMPERSONATE_COMPANY_STOP',
-      companyId: impersonatedId
+      companyId: impersonatedId,
+      reason: 'Session ended by administrator'
     })
     cookieStore.delete('impersonatedCompanyId')
+    cookieStore.delete('impersonateWriteEnabled')
   }
 
   redirect('/app/admin/businesses')

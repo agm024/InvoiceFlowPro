@@ -12,8 +12,12 @@ export function RevenueChart({ data }: { data: any[] }) {
         <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#18181b" stopOpacity={0.2}/>
-              <stop offset="95%" stopColor="#18181b" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
+              <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+            </linearGradient>
+            <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2}/>
+              <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e4e4e7" />
@@ -28,13 +32,14 @@ export function RevenueChart({ data }: { data: any[] }) {
             axisLine={false} 
             tickLine={false} 
             tick={{ fontSize: 12, fill: '#71717a' }} 
-            tickFormatter={(value) => `₹${value >= 1000 ? (value / 1000).toFixed(1) + 'k' : value}`}
+            tickFormatter={(value) => `₹${value >= 1000 ? (value / 1000).toFixed(0) + 'k' : value}`}
           />
           <Tooltip 
             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
-            formatter={(value: any) => [`₹${value.toLocaleString()}`, 'Revenue']}
+            formatter={(value: any, name?: any) => [`₹${value.toLocaleString()}`, name === 'revenue' ? 'Revenue' : 'Expenses']}
           />
-          <Area type="monotone" dataKey="revenue" stroke="#18181b" strokeWidth={2} fillOpacity={1} fill="url(#colorRevenue)" />
+          <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorRevenue)" />
+          <Area type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} fillOpacity={1} fill="url(#colorExpenses)" />
         </AreaChart>
       </ResponsiveContainer>
     </div>

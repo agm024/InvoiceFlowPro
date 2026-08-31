@@ -69,15 +69,15 @@ export default function BillingClient({ plans, subscription }: { plans: any[], s
               <ul className="space-y-3 mb-8 flex-1">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>{plan.userLimits > 10000 ? 'Unlimited' : plan.userLimits} Users</span>
+                  <span>{plan.userLimits === null ? 'Unlimited' : `${plan.userLimits} Users`}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>{plan.clientLimits > 10000 ? 'Unlimited' : plan.clientLimits} Clients</span>
+                  <span>{plan.clientLimits === null ? 'Unlimited' : `${plan.clientLimits} Clients`}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>{plan.invoiceLimits > 10000 ? 'Unlimited' : plan.invoiceLimits} Invoices</span>
+                  <span>{plan.invoiceLimits === null ? 'Unlimited' : `${plan.invoiceLimits} Invoices`}</span>
                 </li>
               </ul>
               

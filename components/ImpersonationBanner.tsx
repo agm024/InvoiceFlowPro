@@ -9,7 +9,7 @@ export default async function ImpersonationBanner() {
   if (!isImpersonating) return null
 
   return (
-    <div className="bg-orange-500 text-white px-4 py-2 flex items-center justify-between text-sm font-medium z-50 fixed top-0 w-full">
+    <div className="bg-orange-500 text-white px-4 py-2 flex items-center justify-between text-sm font-medium z-50 sticky top-0 w-full">
       <div className="flex items-center gap-2">
         <AlertCircle size={16} />
         <span>You are currently impersonating a tenant company. All actions are logged.</span>

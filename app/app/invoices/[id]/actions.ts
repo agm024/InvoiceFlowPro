@@ -87,7 +87,9 @@ export async function getInvoiceDetails(id: string) {
       bank: true,
       items: {
         include: { product: true }
-      }
+      },
+      creditNotes: true,
+      debitNotes: true
     }
   })
 }
@@ -155,6 +157,104 @@ export async function convertToInvoice(id: string) {
   } catch (error) {
     console.error('Failed to convert to invoice:', error)
     return { error: 'Failed to convert to invoice' }
+  }
+}
+
+export async function issueCreditNote(invoiceId: string, amount: number, taxAmount: number, reason: string) {
+  const { companyId } = await requireCompany()
+  try {
+    const invoice = await prisma.invoice.findFirst({ where: { id: invoiceId, companyId } })
+    if (!invoice) return { error: 'Invoice not found' }
+    if (invoice.status === 'draft') return { error: 'Cannot issue credit note for draft invoices.' }
+
+    const lastCn = await prisma.creditNote.findFirst({
+      where: { companyId },
+      orderBy: { createdAt: 'desc' }
+    })
+    
+    let noteNumber = 'CN-001'
+    if (lastCn && lastCn.noteNumber.startsWith('CN-')) {
+      const num = parseInt(lastCn.noteNumber.replace('CN-', ''), 10)
+      if (!isNaN(num)) {
+        noteNumber = `CN-${String(num + 1).padStart(3, '0')}`
+      }
+    }
+
+    await prisma.creditNote.create({
+      data: {
+        noteNumber,
+        invoiceId,
+        companyId,
+        amount,
+        taxAmount,
+        reason
+      }
+    })
+
+    revalidatePath(`/app/invoices/${invoiceId}`)
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to issue credit note:', error)
+    return { error: 'Failed to issue credit note' }
+  }
+}
+
+export async function issueDebitNote(invoiceId: string, amount: number, taxAmount: number, reason: string) {
+  const { companyId } = await requireCompany()
+  try {
+    const invoice = await prisma.invoice.findFirst({ where: { id: invoiceId, companyId } })
+    if (!invoice) return { error: 'Invoice not found' }
+    if (invoice.status === 'draft') return { error: 'Cannot issue debit note for draft invoices.' }
+
+    const lastDn = await prisma.debitNote.findFirst({
+      where: { companyId },
+      orderBy: { createdAt: 'desc' }
+    })
+    
+    let noteNumber = 'DN-001'
+    if (lastDn && lastDn.noteNumber.startsWith('DN-')) {
+      const num = parseInt(lastDn.noteNumber.replace('DN-', ''), 10)
+      if (!isNaN(num)) {
+        noteNumber = `DN-${String(num + 1).padStart(3, '0')}`
+      }
+    }
+
+    await prisma.debitNote.create({
+      data: {
+        noteNumber,
+        invoiceId,
+        companyId,
+        amount,
+        taxAmount,
+        reason
+      }
+    })
+
+    revalidatePath(`/app/invoices/${invoiceId}`)
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to issue debit note:', error)
+    return { error: 'Failed to issue debit note' }
+  }
+}
+
+export async function cancelInvoice(invoiceId: string, reason: string) {
+  const { companyId } = await requireCompany()
+  try {
+    const invoice = await prisma.invoice.findFirst({ where: { id: invoiceId, companyId } })
+    if (!invoice) return { error: 'Invoice not found' }
+    if (invoice.status === 'paid') return { error: 'Cannot cancel a paid invoice. Issue a credit note instead.' }
+
+    await prisma.invoice.update({
+      where: { id: invoiceId },
+      data: { status: 'cancelled' }
+    })
+
+    revalidatePath(`/app/invoices/${invoiceId}`)
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to cancel invoice:', error)
+    return { error: 'Failed to cancel invoice' }
   }
 }
 

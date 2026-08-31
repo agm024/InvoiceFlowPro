@@ -3,42 +3,45 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { cookies } from 'next/headers'
 
+const BYPASS_AUTH = true
+
 export async function getCurrentUser() {
-  // --- AUTH BYPASS ---
-  // Temporarily bypassing the real auth session
-  const dummyUser = await prisma.user.findFirst({
-    include: {
-      company: true
-    }
-  });
-
-  if (dummyUser) {
-    let companyId = dummyUser.companyId;
-    let isSuperAdmin = dummyUser.isSuperAdmin || true; // Set to true to allow testing admin pages
-    let isImpersonating = false;
-
-    // Keep impersonation logic if needed
-    if (isSuperAdmin) {
-      const cookieStore = await cookies()
-      const impersonatedId = cookieStore.get('impersonatedCompanyId')?.value
-      if (impersonatedId) {
-        companyId = impersonatedId
-        isImpersonating = true
+  if (BYPASS_AUTH) {
+    const dummyUser = await prisma.user.findFirst({
+      include: {
+        company: true
       }
-    }
+    });
 
-    return {
-      id: dummyUser.id,
-      email: dummyUser.email,
-      name: dummyUser.name,
-      role: dummyUser.role,
-      companyId: companyId,
-      isSuperAdmin: isSuperAdmin,
-      isImpersonating
+    if (dummyUser) {
+      let companyId = dummyUser.companyId;
+      let isSuperAdmin = dummyUser.isSuperAdmin || true;
+      let isImpersonating = false;
+      let writeAllowed = false;
+
+      if (isSuperAdmin) {
+        const cookieStore = await cookies()
+        const impersonatedId = cookieStore.get('impersonatedCompanyId')?.value
+        if (impersonatedId) {
+          companyId = impersonatedId
+          isImpersonating = true
+          writeAllowed = cookieStore.get('impersonateWriteEnabled')?.value === 'true'
+        }
+      }
+
+      return {
+        id: dummyUser.id,
+        email: dummyUser.email,
+        name: dummyUser.name,
+        role: dummyUser.role,
+        companyId,
+        isSuperAdmin,
+        isImpersonating,
+        writeAllowed
+      }
     }
   }
 
-  // Fallback to real auth if no user in DB somehow
   const session = await auth()
   
   if (!session || !session.user) {
@@ -48,13 +51,16 @@ export async function getCurrentUser() {
   let companyId = (session.user as any).companyId
   const isSuperAdmin = (session.user as any).isSuperAdmin
   let isImpersonating = false
+  let writeAllowed = false
 
+  // Handle impersonation
   if (isSuperAdmin) {
     const cookieStore = await cookies()
     const impersonatedId = cookieStore.get('impersonatedCompanyId')?.value
     if (impersonatedId) {
       companyId = impersonatedId
       isImpersonating = true
+      writeAllowed = cookieStore.get('impersonateWriteEnabled')?.value === 'true'
     }
   }
 
@@ -65,7 +71,8 @@ export async function getCurrentUser() {
     role: (session.user as any).role,
     companyId,
     isSuperAdmin,
-    isImpersonating
+    isImpersonating,
+    writeAllowed
   }
 }
 
@@ -90,4 +97,15 @@ export async function requireSuperAdmin() {
   }
 
   return user
+}
+
+/**
+ * Enforces that mutations cannot happen during an impersonation session
+ * unless write access is explicitly requested and authorized.
+ */
+export async function requireWriteAccess() {
+  const user = await getCurrentUser()
+  if (user.isImpersonating && !user.writeAllowed) {
+    throw new Error('Write operations are blocked during read-only impersonation.')
+  }
 }

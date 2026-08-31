@@ -38,6 +38,7 @@ export default function InvoiceForm({
   companySettings?: any
 }) {
   const router = useRouter()
+  const [currentStep, setCurrentStep] = useState(1)
   
   // Local Data State
   const [clients, setClients] = useState(initialClients)
@@ -335,16 +336,60 @@ export default function InvoiceForm({
   }
 
   const selectedClientData = clients.find(c => c.id === clientId)
+  
+  const getStepClass = (stepId: number) => {
+    if (currentStep >= 7) {
+      return "transition-all duration-300";
+    }
+    return `transition-all duration-300 ${
+      currentStep === stepId 
+        ? "ring-2 ring-primary/40 ring-offset-2 bg-primary/5 dark:bg-primary/5 p-4 rounded-xl border border-primary/20" 
+        : "opacity-35 blur-[0.25px] pointer-events-none"
+    }`;
+  }
+
   return (
-    <div className="relative font-sans text-sm flex justify-center items-start w-full min-h-screen bg-zinc-50/50 dark:bg-black/20 p-4 sm:p-8">
+    <div className="relative font-sans text-sm flex flex-col items-center w-full min-h-screen bg-zinc-50/50 dark:bg-black/20 p-4 sm:p-8 gap-6">
       
+      {/* Guided Wizard Steps Header */}
+      <div className="w-full max-w-6xl bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 shadow-sm flex items-center justify-between overflow-x-auto gap-4">
+        {[
+          { id: 1, name: 'Customer' },
+          { id: 2, name: 'Details' },
+          { id: 3, name: 'Items' },
+          { id: 4, name: 'Tax / Disc' },
+          { id: 5, name: 'Payment' },
+          { id: 6, name: 'Notes' },
+          { id: 7, name: 'Preview' },
+          { id: 8, name: 'Issue' }
+        ].map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => {
+              setCurrentStep(s.id);
+            }}
+            className={`flex items-center gap-2 text-xs font-bold whitespace-nowrap px-3 py-2 rounded-lg transition-all ${
+              currentStep === s.id
+                ? 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 shadow-sm'
+                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100'
+            }`}
+          >
+            <span className="w-5 h-5 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[10px]">
+              {s.id}
+            </span>
+            {s.name}
+          </button>
+        ))}
+      </div>
+
       <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-8 text-foreground w-full max-w-6xl">
         
         {/* Main Document Area */}
         <div className="flex-1 bg-white dark:bg-[#0a0a0a] rounded-sm shadow-xl border border-zinc-200 dark:border-zinc-800 p-8 sm:p-12 min-h-[1056px] w-full max-w-4xl mx-auto flex flex-col relative transition-colors duration-200">
           
           {/* Header */}
-          <div className="flex justify-between items-start mb-12">
+          <div className={getStepClass(2) + " flex justify-between items-start mb-12"}>
             <div>
               <input
                 type="text"
@@ -402,7 +447,7 @@ export default function InvoiceForm({
           <hr className="border-zinc-200 dark:border-zinc-800 mb-12" />
 
           {/* Client & Currency */}
-          <div className="flex justify-between items-start mb-12">
+          <div className={getStepClass(1) + " flex justify-between items-start mb-12"}>
             <div className="w-1/2 relative group">
               <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Billed To</h3>
               
@@ -529,7 +574,7 @@ export default function InvoiceForm({
           </div>
 
           {/* Line Items */}
-          <div className="flex-grow">
+          <div className={getStepClass(3) + " flex-grow"}>
             <div className="overflow-x-auto">
             <table className="whitespace-nowrap w-full text-left mb-4">
               <thead>
@@ -594,7 +639,7 @@ export default function InvoiceForm({
           {/* Footer Area of Document (Totals & Notes) */}
           <div className="flex flex-col sm:flex-row justify-between items-end mt-12 gap-8 border-t-2 border-zinc-900 dark:border-white pt-8">
             <div className="w-full sm:w-1/2 flex flex-col gap-6">
-              <div>
+              <div className={getStepClass(6)}>
                 <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Notes / Terms</h3>
                 <textarea 
                   value={notes || ""} onChange={e => setNotes(e.target.value)} rows={3} 
@@ -603,7 +648,7 @@ export default function InvoiceForm({
                 />
               </div>
               
-              <div>
+              <div className={getStepClass(5)}>
                 <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Bank Details</h3>
                 <select 
                   value={paymentMethod === 'BANK' ? bankId : paymentMethod} 
@@ -621,7 +666,7 @@ export default function InvoiceForm({
               </div>
             </div>
 
-            <div className="w-full sm:w-[320px] bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-6">
+            <div className={getStepClass(4) + " w-full sm:w-[320px] bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-6"}>
               <div className="flex justify-between items-center mb-3">
                 <span className="text-zinc-500 text-sm font-medium">Subtotal</span>
                 <span className="font-medium text-sm">{currency} {subTotal.toFixed(2)}</span>
@@ -671,39 +716,116 @@ export default function InvoiceForm({
               )}
             </div>
           </div>
+
+          {/* Step Navigation Controls */}
+          <div className="mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800 flex justify-between items-center print:hidden">
+            <button
+              type="button"
+              disabled={currentStep === 1}
+              onClick={() => setCurrentStep(prev => prev - 1)}
+              className="px-4 py-2 text-xs font-semibold bg-zinc-100 dark:bg-zinc-900 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 disabled:opacity-40 transition-all text-zinc-800 dark:text-zinc-200"
+            >
+              &larr; Back
+            </button>
+            <span className="text-xs text-zinc-500 font-bold">Step {currentStep} of 8</span>
+            {currentStep < 8 ? (
+              <button
+                type="button"
+                onClick={() => {
+                  if (currentStep === 1 && !clientId) {
+                    toast.error("Please select a customer first.");
+                    return;
+                  }
+                  if (currentStep === 3 && items.length === 0) {
+                    toast.error("Please add at least one item first.");
+                    return;
+                  }
+                  setCurrentStep(prev => prev + 1);
+                }}
+                className="px-4 py-2 text-xs font-semibold bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition-all"
+              >
+                Next &rarr;
+              </button>
+            ) : (
+              <span className="text-xs font-bold text-zinc-400">Ready to Save</span>
+            )}
+          </div>
         </div>
 
         {/* Sticky Sidebar Actions */}
         <div className="lg:w-72 lg:sticky lg:top-8 flex flex-col gap-4 self-start w-full">
-          <div className="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-zinc-200 dark:border-zinc-800 p-6">
-            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2">
-              <Eye size={16} className="text-zinc-400" /> Actions
-            </h3>
-            
-            <div className="flex flex-col gap-3">
-              <button type="submit" onClick={() => setSubmitAction('sent_and_print')} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-4 py-3 rounded-lg font-semibold transition-all hover:bg-black dark:hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
-                Save & Print
-              </button>
+          {currentStep >= 7 ? (
+            <div className="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-zinc-200 dark:border-zinc-800 p-6">
+              <h3 className="font-semibold text-sm mb-4 flex items-center gap-2">
+                <Eye size={16} className="text-zinc-400" /> Actions
+              </h3>
               
-              <button type="submit" onClick={() => setSubmitAction('sent')} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm px-4 py-3 rounded-lg font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all active:scale-[0.98]">
-                Save & Issue
-              </button>
+              <div className="flex flex-col gap-3">
+                <button type="submit" onClick={() => setSubmitAction('sent_and_print')} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-4 py-3 rounded-lg font-semibold transition-all hover:bg-black dark:hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
+                  Save & Print
+                </button>
+                
+                <button type="submit" onClick={() => setSubmitAction('sent')} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm px-4 py-3 rounded-lg font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all active:scale-[0.98]">
+                  Save & Issue
+                </button>
 
-              <button type="submit" onClick={() => setSubmitAction('paid')} className="w-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-3 rounded-lg font-semibold hover:bg-emerald-500/20 transition-all active:scale-[0.98]">
-                Mark as Paid
-              </button>
-              
-              <div className="h-px bg-zinc-200 dark:bg-zinc-800 my-1 w-full" />
-              
-              <button type="submit" onClick={() => setSubmitAction('draft')} className="w-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 px-4 py-2.5 rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
-                Save as Draft
-              </button>
-              
-              <button type="button" onClick={() => router.back()} className="w-full text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 py-2 text-sm font-medium transition-colors">
-                Cancel
+                <button type="submit" onClick={() => setSubmitAction('paid')} className="w-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-3 rounded-lg font-semibold hover:bg-emerald-500/20 transition-all active:scale-[0.98]">
+                  Mark as Paid
+                </button>
+                
+                <div className="h-px bg-zinc-200 dark:bg-zinc-800 my-1 w-full" />
+                
+                <button type="submit" onClick={() => setSubmitAction('draft')} className="w-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 px-4 py-2.5 rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
+                  Save as Draft
+                </button>
+                
+                <button type="button" onClick={() => router.back()} className="w-full text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 py-2 text-sm font-medium transition-colors">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-4">
+              <h3 className="font-semibold text-sm flex items-center gap-2">
+                📋 Wizard Progress
+              </h3>
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className={clientId ? "text-emerald-500 font-bold" : "text-zinc-300"}>●</span>
+                  <span className={clientId ? "line-through text-zinc-400" : "text-zinc-600 dark:text-zinc-400"}>Select Client</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={invoiceNumber ? "text-emerald-500 font-bold" : "text-zinc-300"}>●</span>
+                  <span className={invoiceNumber ? "line-through text-zinc-400" : "text-zinc-600 dark:text-zinc-400"}>Invoice Number & Dates</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={items.length > 0 ? "text-emerald-500 font-bold" : "text-zinc-300"}>●</span>
+                  <span className={items.length > 0 ? "line-through text-zinc-400" : "text-zinc-600 dark:text-zinc-400"}>Add Line Items</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={paymentMethod !== "NONE" ? "text-emerald-500 font-bold" : "text-zinc-300"}>●</span>
+                  <span className={paymentMethod !== "NONE" ? "line-through text-zinc-400" : "text-zinc-600 dark:text-zinc-400"}>Payment Details</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (currentStep === 1 && !clientId) {
+                    toast.error("Please select a customer first.");
+                    return;
+                  }
+                  if (currentStep === 3 && items.length === 0) {
+                    toast.error("Please add at least one item first.");
+                    return;
+                  }
+                  setCurrentStep(prev => prev + 1);
+                }}
+                className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm py-2.5 rounded-lg text-xs font-semibold hover:opacity-95"
+              >
+                Next Setup Step
               </button>
             </div>
-          </div>
+          )}
         </div>
       </form>
 

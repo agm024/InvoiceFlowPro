@@ -17,9 +17,19 @@ export async function savePlan(formData: FormData) {
   const trialPeriod = parseInt(formData.get("trialPeriod") as string)
   const displayOrder = parseInt(formData.get("displayOrder") as string)
   
-  const userLimits = parseInt(formData.get("userLimits") as string)
-  const clientLimits = parseInt(formData.get("clientLimits") as string)
-  const invoiceLimits = parseInt(formData.get("invoiceLimits") as string)
+  // Validate annual price discount structure
+  if (yearlyPrice > monthlyPrice * 12) {
+    throw new Error("Annual price cannot exceed 12x the monthly price.")
+  }
+
+  // Parse limits to nullable Int? (null represents Unlimited)
+  const userLimitsRaw = formData.get("userLimits") as string
+  const clientLimitsRaw = formData.get("clientLimits") as string
+  const invoiceLimitsRaw = formData.get("invoiceLimits") as string
+
+  const userLimits = userLimitsRaw === "" ? null : parseInt(userLimitsRaw)
+  const clientLimits = clientLimitsRaw === "" ? null : parseInt(clientLimitsRaw)
+  const invoiceLimits = invoiceLimitsRaw === "" ? null : parseInt(invoiceLimitsRaw)
 
   const data = {
     name,

@@ -47,9 +47,11 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
             clientName={invoice.client.name}
             clientEmail={invoice.client.email}
           />
-          <Link href={`/app/invoices/${invoice.id}/edit`} className="text-sm bg-sidebar-bg border border-sidebar-border px-4 py-2 rounded-md font-medium text-foreground hover:bg-sidebar-border transition-colors">
-            Edit Invoice
-          </Link>
+          {invoice.status === 'draft' && (
+            <Link href={`/app/invoices/${invoice.id}/edit`} className="text-sm bg-sidebar-bg border border-sidebar-border px-4 py-2 rounded-md font-medium text-foreground hover:bg-sidebar-border transition-colors">
+              Edit Invoice
+            </Link>
+          )}
           <InvoiceActionsDropdown 
             invoiceId={invoice.id} 
             invoiceNumber={invoice.invoiceNumber}
@@ -119,9 +121,46 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
               <span className="text-zinc-500">Tax</span>
               <span className="font-medium text-foreground">{getCurrencySymbol(invoice.currency)} {invoice.taxTotal.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between items-center text-lg font-bold border-t border-zinc-200 pt-3 mt-1">
+            <div className="flex justify-between items-center text-base font-bold border-t border-zinc-200 pt-3 mt-1">
               <span className="text-foreground">Total</span>
               <span className="text-foreground">{getCurrencySymbol(invoice.currency)} {invoice.total.toFixed(2)}</span>
+            </div>
+
+            {/* Credit Notes / Debit Notes Adjustments */}
+            {((invoice as any).creditNotes?.length > 0 || (invoice as any).debitNotes?.length > 0) && (
+              <div className="mt-3 pt-3 border-t border-zinc-200/50 space-y-1.5 text-xs">
+                {(invoice as any).creditNotes?.map((cn: any) => (
+                  <div key={cn.id} className="flex justify-between text-red-500">
+                    <span>Credit Note ({cn.noteNumber})</span>
+                    <span>- {getCurrencySymbol(invoice.currency)} {cn.amount.toFixed(2)}</span>
+                  </div>
+                ))}
+                {(invoice as any).debitNotes?.map((dn: any) => (
+                  <div key={dn.id} className="flex justify-between text-blue-500">
+                    <span>Debit Note ({dn.noteNumber})</span>
+                    <span>+ {getCurrencySymbol(invoice.currency)} {dn.amount.toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex justify-between items-center text-sm font-bold border-t border-zinc-200 pt-3 mt-2 text-zinc-950 dark:text-white">
+              <span>Amount Paid</span>
+              <span className="text-emerald-600">{getCurrencySymbol(invoice.currency)} {invoice.amountPaid.toFixed(2)}</span>
+            </div>
+
+            <div className="flex justify-between items-center text-lg font-black mt-1 text-zinc-950 dark:text-white">
+              <span>Net Balance Due</span>
+              <span>
+                {getCurrencySymbol(invoice.currency)}{' '}
+                {Math.max(
+                  0,
+                  invoice.total -
+                    (invoice.amountPaid || 0) -
+                    ((invoice as any).creditNotes?.reduce((sum: number, cn: any) => sum + cn.amount, 0) || 0) +
+                    ((invoice as any).debitNotes?.reduce((sum: number, dn: any) => sum + dn.amount, 0) || 0)
+                ).toFixed(2)}
+              </span>
             </div>
           </div>
         </div>
