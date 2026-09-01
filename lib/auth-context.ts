@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { cookies } from 'next/headers'
 
-const BYPASS_AUTH = true
+const BYPASS_AUTH = process.env.NODE_ENV === 'development' && process.env.BYPASS_AUTH === 'true'
 
 export async function getCurrentUser() {
   if (BYPASS_AUTH) {

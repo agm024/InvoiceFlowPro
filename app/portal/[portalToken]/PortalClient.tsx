@@ -343,8 +343,8 @@ export default function PortalClient({
                       </div>
 
                       {/* Timeline / Stage View */}
-                      <div className="mt-8 mb-4">
-                        <div className="flex justify-between mb-2">
+                      <div className="mt-8 mb-4 overflow-x-auto pb-4 hide-scrollbar">
+                        <div className="flex justify-between mb-2 min-w-[600px] px-2">
                           {['PLANNING', 'DESIGN', 'DEVELOPMENT', 'TESTING', 'REVIEW', 'CLOSED'].map((stage, idx, arr) => {
                             const currentIndex = arr.indexOf(project.stage || 'PLANNING')
                             const isPast = idx < currentIndex
@@ -371,9 +371,8 @@ export default function PortalClient({
                           })}
                         </div>
                       </div>
-
                       {/* Sign-Off Actions */}
-                      <div className="mt-8 flex gap-4 bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700">
+                      <div className="mt-8 flex flex-col md:flex-row gap-4 md:gap-4 bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700">
                         <div className="flex-1">
                           <h4 className="font-semibold text-sm text-zinc-900 dark:text-white mb-1">Contract Approval</h4>
                           <p className="text-xs text-zinc-500 mb-3">Sign off on the initial project scope.</p>
@@ -384,7 +383,7 @@ export default function PortalClient({
                                 Digitally Signed by {project.contractSignedBy || "Client"}
                               </div>
                               <div className="text-[11px] text-green-700/80 font-mono ml-5 border-l-2 border-green-600/20 pl-2">
-                                {format(new Date(project.contractApprovedAt), "MMM dd, yyyy 'at' hh:mm a")} • IP Verified
+                                {format(new Date(project.contractApprovedAt), "MMM dd, yyyy 'at' hh:mm a")}   IP Verified
                               </div>
                             </div>
                           ) : (
@@ -399,7 +398,7 @@ export default function PortalClient({
                             </button>
                           )}
                         </div>
-                        <div className="flex-1 border-l border-zinc-200 dark:border-zinc-700 pl-4">
+                        <div className="flex-1 border-t md:border-t-0 md:border-l border-zinc-200 dark:border-zinc-700 pt-4 md:pt-0 pl-0 md:pl-4">
                           <h4 className="font-semibold text-sm text-zinc-900 dark:text-white mb-1">Project Closure</h4>
                           <p className="text-xs text-zinc-500 mb-3">Sign off on the final deliverables.</p>
                           {project.projectClosedAt ? (

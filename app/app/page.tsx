@@ -68,19 +68,19 @@ export default async function DashboardPage({
   const expensesInTimeframe = allExpenses.filter(e => e.date >= dateLimit)
 
   const revenueTimeframe = paidInvoices.reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
-  const expensesTimeframe = expensesInTimeframe.reduce((sum, e) => sum + e.totalAmount, 0)
+  const expensesTimeframe = expensesInTimeframe.filter(e => e.category !== 'TAX_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
   const profitTimeframe = revenueTimeframe - expensesTimeframe
 
   // GST Calculations
   const gstCollected = paidInvoices.reduce((sum, i) => sum + (i.taxTotal * i.exchangeRate), 0)
   const itcAmount = expensesInTimeframe.filter(e => e.itcEligible).reduce((sum, e) => sum + e.taxAmount, 0)
   const gstLiability = Math.max(0, gstCollected - itcAmount)
-  const gstPaid = expensesInTimeframe.filter(e => e.category === 'TAX_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
+  const gstPaid = allExpenses.filter(e => e.category === 'TAX_PAYMENT' && e.date >= dateLimit).reduce((sum, e) => sum + e.totalAmount, 0)
   const gstBalance = gstLiability - gstPaid
 
   // Historical calculations (for trend percentages)
   const prevPaidInvoices = allInvoices.filter(i => i.status === 'paid' && i.date >= prevDateLimitStart && i.date <= prevDateLimitEnd)
-  const prevExpenses = allExpenses.filter(e => e.date >= prevDateLimitStart && e.date <= prevDateLimitEnd)
+  const prevExpenses = allExpenses.filter(e => e.date >= prevDateLimitStart && e.date <= prevDateLimitEnd && e.category !== 'TAX_PAYMENT')
   
   const prevRevenue = prevPaidInvoices.reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
   const prevExpensesSum = prevExpenses.reduce((sum, e) => sum + e.totalAmount, 0)
@@ -105,7 +105,7 @@ export default async function DashboardPage({
       return {
         name: format(d, 'EEE'),
         revenue: allInvoices.filter(inv => inv.status === 'paid' && inv.date >= dayStart && inv.date <= dayEnd).reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0),
-        expenses: allExpenses.filter(e => e.date >= dayStart && e.date <= dayEnd).reduce((sum, e) => sum + e.totalAmount, 0)
+        expenses: allExpenses.filter(e => e.date >= dayStart && e.date <= dayEnd && e.category !== 'TAX_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
       }
     })
   } else if (timeframe === '30d') {
@@ -116,7 +116,7 @@ export default async function DashboardPage({
       return {
         name: format(d, 'dd MMM'),
         revenue: allInvoices.filter(inv => inv.status === 'paid' && inv.date >= dayStart && inv.date <= dayEnd).reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0),
-        expenses: allExpenses.filter(e => e.date >= dayStart && e.date <= dayEnd).reduce((sum, e) => sum + e.totalAmount, 0)
+        expenses: allExpenses.filter(e => e.date >= dayStart && e.date <= dayEnd && e.category !== 'TAX_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
       }
     })
   } else if (timeframe === '90d') {
@@ -126,7 +126,7 @@ export default async function DashboardPage({
       return {
         name: `Wk ${i + 1}`,
         revenue: allInvoices.filter(inv => inv.status === 'paid' && inv.date >= startW && inv.date <= endW).reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0),
-        expenses: allExpenses.filter(e => e.date >= startW && e.date <= endW).reduce((sum, e) => sum + e.totalAmount, 0)
+        expenses: allExpenses.filter(e => e.date >= startW && e.date <= endW && e.category !== 'TAX_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
       }
     })
   } else {
@@ -138,7 +138,7 @@ export default async function DashboardPage({
       return {
         name: format(d, 'MMM yy'),
         revenue: allInvoices.filter(inv => inv.status === 'paid' && inv.date >= mStart && inv.date <= mEnd).reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0),
-        expenses: allExpenses.filter(e => e.date >= mStart && e.date <= mEnd).reduce((sum, e) => sum + e.totalAmount, 0)
+        expenses: allExpenses.filter(e => e.date >= mStart && e.date <= mEnd && e.category !== 'TAX_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
       }
     })
   }
@@ -292,24 +292,24 @@ export default async function DashboardPage({
       </div>
 
       {/* Tax & GST KPI Subsection */}
-      <div className="bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 space-y-4">
+      <div className="bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 md:p-6 space-y-4">
         <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500">GST & ITC Reconciliation</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           <div>
-            <span className="text-[10px] font-bold text-zinc-400 uppercase">GST Collected (Liability)</span>
-            <p className="text-xl font-bold mt-1">₹{gstCollected.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+            <span className="text-[10px] font-bold text-zinc-400 uppercase line-clamp-1">GST Collected</span>
+            <p className="text-lg md:text-xl font-bold mt-1">₹{gstCollected.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
           </div>
           <div>
-            <span className="text-[10px] font-bold text-zinc-400 uppercase">Input Tax Credit (ITC)</span>
-            <p className="text-xl font-bold mt-1 text-emerald-600">₹{itcAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+            <span className="text-[10px] font-bold text-zinc-400 uppercase line-clamp-1">ITC Claimed</span>
+            <p className="text-lg md:text-xl font-bold mt-1 text-emerald-600">₹{itcAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
           </div>
           <div>
-            <span className="text-[10px] font-bold text-zinc-400 uppercase">GST Paid (To Gov)</span>
-            <p className="text-xl font-bold mt-1">₹{gstPaid.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+            <span className="text-[10px] font-bold text-zinc-400 uppercase line-clamp-1">GST Paid</span>
+            <p className="text-lg md:text-xl font-bold mt-1">₹{gstPaid.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
           </div>
-          <div className="border-t sm:border-t-0 sm:border-l border-zinc-200 dark:border-zinc-800 pt-3 sm:pt-0 sm:pl-4">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase">Remaining Payable</span>
-            <p className="text-xl font-black mt-1 text-zinc-950 dark:text-white">
+          <div className="border-l border-zinc-200 dark:border-zinc-800 pl-4">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase line-clamp-1">Payable</span>
+            <p className="text-lg md:text-xl font-black mt-1 text-zinc-950 dark:text-white">
               ₹{gstBalance.toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </p>
           </div>

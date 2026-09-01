@@ -18,7 +18,7 @@ export default function SupportAccessToggle({ initialGranted }: { initialGranted
 
   return (
     <div className="bg-card-bg border border-card-border rounded-xl p-6 shadow-sm mt-6">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 sm:gap-4">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 bg-indigo-500/10 rounded-full flex items-center justify-center shrink-0">
             <Shield className="text-indigo-500 w-5 h-5" />
@@ -30,15 +30,17 @@ export default function SupportAccessToggle({ initialGranted }: { initialGranted
             </p>
           </div>
         </div>
-        <button
-          onClick={handleToggle}
-          disabled={isPending}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${granted ? 'bg-indigo-600' : 'bg-zinc-300 dark:bg-zinc-700'} ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          <span
-            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${granted ? 'translate-x-6' : 'translate-x-1'}`}
-          />
-        </button>
+        <div className="flex justify-end w-full sm:w-auto">
+          <button
+            onClick={handleToggle}
+            disabled={isPending}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${granted ? 'bg-indigo-600' : 'bg-zinc-300 dark:bg-zinc-700'} ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${granted ? 'translate-x-6' : 'translate-x-1'}`}
+            />
+          </button>
+        </div>
       </div>
     </div>
   )

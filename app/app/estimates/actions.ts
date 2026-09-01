@@ -16,7 +16,7 @@ export async function getEstimates() {
 export async function getEstimateFormData() {
   const { companyId } = await requireCompany()
   const clients = await prisma.client.findMany({ where: { companyId }, orderBy: { name: 'asc' } })
-  const products = await prisma.product.findMany({ where: { companyId }, orderBy: { name: 'asc' } })
+  const products = await prisma.product.findMany({ where: { companyId, isHidden: false }, orderBy: { name: 'asc' } })
   const settings = await prisma.companySettings.findFirst({ where: { companyId } })
   
   const lastEstimate = await prisma.estimate.findFirst({

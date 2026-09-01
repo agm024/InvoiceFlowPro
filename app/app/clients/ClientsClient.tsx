@@ -176,7 +176,7 @@ export default function ClientsClient({ initialClients }: { initialClients: Clie
                     </div>
                   </div>
                   
-                  <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity mt-1 mb-2">
+                  <div className="flex justify-end opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity mt-1 mb-2">
                       <button 
                         onClick={() => {
                           if (!client.portalToken) return toast.error('Token not generated yet.')

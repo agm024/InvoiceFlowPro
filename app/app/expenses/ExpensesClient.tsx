@@ -94,30 +94,30 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto w-full text-foreground">
-      <div className="flex justify-between items-center mb-8">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto w-full text-foreground">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Expenses & Purchases</h1>
-          <p className="text-zinc-500">Track vendor bills, input tax credit (ITC), and GST payments.</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">Expenses & Purchases</h1>
+          <p className="text-sm md:text-base text-zinc-500">Track vendor bills, input tax credit (ITC), and GST payments.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 w-full md:w-auto">
           <button 
             onClick={() => setActiveForm(activeForm === 'GST' ? 'NONE' : 'GST')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm ${activeForm === 'GST' ? 'bg-zinc-200 text-zinc-800' : 'bg-green-600 text-white hover:bg-green-700 shadow-green-500/20'}`}
+            className={`flex-1 md:flex-none justify-center flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm ${activeForm === 'GST' ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200' : 'bg-green-600 text-white hover:bg-green-700 shadow-green-500/20'}`}
           >
-            <Plus size={18} /> {activeForm === 'GST' ? 'Cancel' : 'Log GST Payment'}
+            <Plus size={18} className={activeForm === 'GST' ? 'rotate-45 transition-transform' : 'transition-transform'} /> {activeForm === 'GST' ? 'Cancel' : 'Log GST'}
           </button>
           <button 
             onClick={() => setActiveForm(activeForm === 'EXPENSE' ? 'NONE' : 'EXPENSE')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm ${activeForm === 'EXPENSE' ? 'bg-zinc-200 text-zinc-800' : 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white hover:bg-black dark:hover:bg-zinc-200 shadow-zinc-900/20'}`}
+            className={`flex-1 md:flex-none justify-center flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm ${activeForm === 'EXPENSE' ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200' : 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:bg-black dark:hover:bg-zinc-200 shadow-zinc-900/20'}`}
           >
-            <Plus size={18} /> {activeForm === 'EXPENSE' ? 'Cancel' : 'Add Expense'}
+            <Plus size={18} className={activeForm === 'EXPENSE' ? 'rotate-45 transition-transform' : 'transition-transform'} /> {activeForm === 'EXPENSE' ? 'Cancel' : 'Expense'}
           </button>
         </div>
       </div>
 
       {activeForm === 'EXPENSE' && (
-        <div className="bg-card-bg border border-card-border p-6 rounded-xl shadow-sm mb-8">
+        <div className="bg-card-bg border border-card-border p-4 md:p-6 rounded-xl shadow-sm mb-8">
           <h2 className="text-lg font-bold mb-4">Log New Expense</h2>
           <form onSubmit={handleAdd} className="flex flex-col gap-4">
             
@@ -202,7 +202,7 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
 
             <div className="flex flex-col gap-3 mt-2 bg-orange-50/50 dark:bg-orange-900/10 p-4 rounded-lg border border-orange-100 dark:border-orange-900/30">
               <label className="flex items-start gap-3 cursor-pointer">
-                <input type="checkbox" name="isRcm" className="mt-1 w-4 h-4 text-orange-600 rounded border-gray-300" />
+                <input type="checkbox" name="isRcm" className="mt-1 w-4 h-4 text-orange-600 rounded border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800" />
                 <div>
                   <div className="font-semibold text-orange-900 dark:text-orange-200 flex items-center gap-2">
                     <ShieldAlert size={16} /> Subject to Reverse Charge (RCM)?
@@ -211,7 +211,7 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
                 </div>
               </label>
               <label className="flex items-start gap-3 cursor-pointer mt-2">
-                <input type="checkbox" name="itcEligible" defaultChecked className="mt-1 w-4 h-4 text-zinc-900 dark:text-white rounded border-gray-300" />
+                <input type="checkbox" name="itcEligible" defaultChecked className="mt-1 w-4 h-4 text-zinc-900 dark:text-white rounded border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800" />
                 <div>
                   <div className="font-semibold text-foreground">Eligible for Input Tax Credit (ITC)?</div>
                   <div className="text-xs text-zinc-500 mt-1">Check this if you plan to claim ITC on this purchase in GSTR-3B.</div>
@@ -220,7 +220,7 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
             </div>
 
             <div className="flex justify-end mt-4">
-              <button disabled={isSubmitting} type="submit" className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm disabled:opacity-50">
+              <button disabled={isSubmitting} type="submit" className="w-full md:w-auto bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm disabled:opacity-50">
                 {isSubmitting ? 'Saving...' : 'Save Expense'}
               </button>
             </div>
@@ -229,33 +229,33 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
       )}
 
       {activeForm === 'GST' && (
-        <div className="bg-green-50/30 border border-green-200 p-6 rounded-xl shadow-sm mb-8">
-          <h2 className="text-lg font-bold mb-4 text-green-800">Log GST Payment to Government</h2>
+        <div className="bg-green-50/30 dark:bg-green-900/10 border border-green-200 dark:border-green-900/30 p-4 md:p-6 rounded-xl shadow-sm mb-8">
+          <h2 className="text-lg font-bold mb-4 text-green-800 dark:text-green-300">Log GST Payment to Government</h2>
           <form onSubmit={handleAdd} className="flex flex-col gap-4">
             <input type="hidden" name="category" value="GST_PAYMENT" />
             <input type="hidden" name="taxAmount" value="0" />
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1 text-green-900">Payment Date</label>
-                <input type="date" name="date" required defaultValue={format(new Date(), 'yyyy-MM-dd')} className="w-full rounded-md px-4 py-2 bg-white border border-green-200 focus:border-green-500 focus:ring-green-500" />
+                <label className="block text-sm font-medium mb-1 text-green-900 dark:text-green-100">Payment Date</label>
+                <input type="date" name="date" required defaultValue={format(new Date(), 'yyyy-MM-dd')} className="w-full rounded-md px-4 py-2 bg-white dark:bg-zinc-900 border border-green-200 dark:border-green-900/50 focus:border-green-500 focus:ring-green-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-green-900">Challan / Reference Number (CPIN)</label>
-                <input type="text" name="vendorName" placeholder="e.g. CPIN12345678" required className="w-full rounded-md px-4 py-2 bg-white border border-green-200 focus:border-green-500 focus:ring-green-500" />
+                <label className="block text-sm font-medium mb-1 text-green-900 dark:text-green-100">Challan / Reference Number (CPIN)</label>
+                <input type="text" name="vendorName" placeholder="e.g. CPIN12345678" required className="w-full rounded-md px-4 py-2 bg-white dark:bg-zinc-900 border border-green-200 dark:border-green-900/50 focus:border-green-500 focus:ring-green-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-green-900">Total Amount Paid</label>
-                <input type="number" step="0.01" name="totalAmount" required className="w-full rounded-md px-4 py-2 bg-white border border-green-200 focus:border-green-500 focus:ring-green-500" />
+                <label className="block text-sm font-medium mb-1 text-green-900 dark:text-green-100">Total Amount Paid</label>
+                <input type="number" step="0.01" name="totalAmount" required className="w-full rounded-md px-4 py-2 bg-white dark:bg-zinc-900 border border-green-200 dark:border-green-900/50 focus:border-green-500 focus:ring-green-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-green-900">Notes (Optional)</label>
-                <input type="text" name="description" placeholder="e.g. GST for July 2026" className="w-full rounded-md px-4 py-2 bg-white border border-green-200 focus:border-green-500 focus:ring-green-500" />
+                <label className="block text-sm font-medium mb-1 text-green-900 dark:text-green-100">Notes (Optional)</label>
+                <input type="text" name="description" placeholder="e.g. GST for July 2026" className="w-full rounded-md px-4 py-2 bg-white dark:bg-zinc-900 border border-green-200 dark:border-green-900/50 focus:border-green-500 focus:ring-green-500" />
               </div>
             </div>
 
             <div className="flex justify-end mt-4">
-              <button disabled={isSubmitting} type="submit" className="bg-green-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors shadow-sm disabled:opacity-50">
+              <button disabled={isSubmitting} type="submit" className="w-full md:w-auto bg-green-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors shadow-sm disabled:opacity-50">
                 {isSubmitting ? 'Saving...' : 'Save GST Payment'}
               </button>
             </div>

@@ -504,7 +504,7 @@ export default function InvoiceForm({
                     <h4 className="font-semibold">Quick Add Customer</h4>
                     <button type="button" onClick={() => setIsAddingClient(false)} className="text-zinc-400 hover:text-foreground"><X size={16} /></button>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input type="text" name="name" required placeholder="Customer Name *" defaultValue={clientSearch} className="rounded-md px-3 py-2 text-sm bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:border-primary" />
                     <input type="email" name="email" placeholder="Email Address" className="rounded-md px-3 py-2 text-sm bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:border-primary" />
                     <input type="text" name="phone" placeholder="Phone Number" className="rounded-md px-3 py-2 text-sm bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:border-primary" />

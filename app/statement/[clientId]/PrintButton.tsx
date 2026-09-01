@@ -1,13 +1,58 @@
 'use client'
 
+import { Download } from 'lucide-react'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
+import * as htmlToImage from 'html-to-image'
+import jsPDF from 'jspdf'
+
 export default function PrintButton() {
+  const [isExporting, setIsExporting] = useState(false)
+
+  const handleDownload = async () => {
+    try {
+      setIsExporting(true)
+      const element = document.getElementById('statement-content')
+      if (!element) {
+        toast.error('Could not find statement content')
+        return
+      }
+      
+      const dataUrl = await htmlToImage.toPng(element, {
+        quality: 1,
+        pixelRatio: 2,
+        backgroundColor: '#ffffff'
+      })
+      
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      })
+
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = (element.offsetHeight * pdfWidth) / element.offsetWidth
+      
+      pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight)
+      pdf.save('Account_Statement.pdf')
+      
+    } catch (e) {
+      toast.error('Failed to generate PDF')
+      console.error(e)
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   return (
     <button 
-      onClick={() => window.print()}
-      className="bg-zinc-900 hover:bg-zinc-800 text-white px-8 py-3 rounded-full font-bold shadow-lg transition-all active:scale-95 flex items-center gap-2"
+      type="button" 
+      onClick={handleDownload}
+      disabled={isExporting}
+      className="bg-zinc-900 hover:bg-zinc-800 text-white px-8 py-3 rounded-full font-bold shadow-lg transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-      Print / Save as PDF
+      <Download size={20} />
+      {isExporting ? 'Exporting...' : 'Export as PDF'}
     </button>
   )
 }

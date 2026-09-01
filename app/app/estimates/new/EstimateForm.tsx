@@ -192,53 +192,70 @@ export default function EstimateForm({
             {/* Items */}
             <div>
               <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Items</h3>
-              <div className="space-y-4">
-                {items.map((item, idx) => (
-                  <div key={item.id} className="grid grid-cols-12 gap-3 items-start border-b border-zinc-100 dark:border-zinc-800 pb-4">
-                    <div className="col-span-12 md:col-span-4">
-                      <select 
-                        className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
-                        value={item.productId}
-                        onChange={e => handleItemChange(item.id, 'productId', e.target.value)}
-                        required
-                      >
-                        <option value="">Select Product</option>
-                        {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                      </select>
+              <div className="divide-y border-b border-zinc-100 dark:border-zinc-800 divide-zinc-100 dark:divide-zinc-800">
+                {items.map((item, index) => (
+                  <div key={item.id} className="group py-4 md:py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-0 relative border border-zinc-200 dark:border-zinc-800 md:border-none p-3 md:p-0 rounded-lg md:rounded-none mb-3 md:mb-0">
+                    
+                    <button type="button" onClick={() => removeItem(item.id)} className="absolute top-3 right-3 md:hidden text-zinc-400 opacity-60 hover:opacity-100 hover:text-red-500">
+                      <Trash2 size={16} />
+                    </button>
+
+                    <div className="flex-1 md:pr-4">
+                      <div className="relative">
+                        <select 
+                          className="w-[90%] md:w-full bg-transparent font-semibold md:font-medium text-zinc-900 dark:text-zinc-100 focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded md:-ml-2 md:px-2 md:py-1 transition-colors appearance-none !bg-none"
+                          value={item.productId}
+                          onChange={e => handleItemChange(item.id, 'productId', e.target.value)}
+                          required
+                        >
+                          <option value="">Select Product...</option>
+                          {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-4 md:right-2 flex items-center px-2 text-zinc-400">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                      </div>
                       <input 
                         type="text"
                         placeholder="Description (optional)"
-                        className="w-full mt-2 bg-transparent border-none text-xs text-zinc-500 focus:outline-none"
+                        className="w-[90%] md:w-full mt-1 bg-transparent border-none text-xs text-zinc-500 focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded md:-ml-2 md:px-2 py-0.5 transition-colors"
                         value={item.description || ""}
                         onChange={e => handleItemChange(item.id, 'description', e.target.value)}
                       />
                     </div>
-                    <div className="col-span-4 md:col-span-2">
-                      <input 
-                        type="number"
-                        placeholder="Qty"
-                        className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
-                        value={item.quantity || ""}
-                        onChange={e => handleItemChange(item.id, 'quantity', e.target.value)}
-                        min="0.01" step="0.01" required
-                      />
+                    
+                    <div className="flex items-center text-sm md:text-base text-zinc-500 md:text-zinc-900 dark:md:text-zinc-100 md:contents">
+                      <div className="flex items-center md:w-24">
+                        <input 
+                          type="number" min="0.01" step="0.01" value={item.quantity || ""} 
+                          onChange={e => handleItemChange(item.id, 'quantity', e.target.value)}
+                          className="w-10 md:w-full bg-transparent md:text-center font-medium focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded md:px-2 md:py-1"
+                          placeholder="Qty"
+                          required
+                        />
+                      </div>
+                      <span className="mx-1 md:hidden">×</span>
+                      <div className="flex items-center md:w-32">
+                        <span className="md:hidden mr-1">{formData.currency}</span>
+                        <input 
+                          type="number" min="0" step="0.01" value={item.rate || ""} 
+                          onChange={e => handleItemChange(item.id, 'rate', e.target.value)}
+                          className="w-20 md:w-full bg-transparent md:text-right font-medium focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded md:px-2 md:py-1"
+                          placeholder="Rate"
+                          required
+                        />
+                      </div>
                     </div>
-                    <div className="col-span-4 md:col-span-2">
-                      <input 
-                        type="number"
-                        placeholder="Rate"
-                        className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white"
-                        value={item.rate || ""}
-                        onChange={e => handleItemChange(item.id, 'rate', e.target.value)}
-                        min="0" step="0.01" required
-                      />
+
+                    <div className="flex justify-end items-center mt-1 md:mt-0 md:contents">
+                      <div className="text-sm md:text-base font-bold md:font-medium text-zinc-900 dark:text-zinc-100 md:w-32 md:text-right">
+                        <span className="md:hidden">{formData.currency} </span>{item.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
                     </div>
-                    <div className="col-span-3 md:col-span-3 pt-2 text-right font-medium text-sm text-zinc-900 dark:text-zinc-100">
-                      {formData.currency} {item.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </div>
-                    <div className="col-span-1 pt-1.5 text-right">
-                      <button type="button" onClick={() => removeItem(item.id)} className="text-zinc-400 hover:text-red-500">
-                        <Trash2 size={18} />
+                    
+                    <div className="hidden md:flex w-10 justify-end">
+                      <button type="button" onClick={() => removeItem(item.id)} className="text-zinc-400 opacity-40 hover:opacity-100 group-hover:opacity-100 hover:text-red-500 transition-opacity p-1">
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>

@@ -34,7 +34,6 @@ export default function SettingsTabs({
     { id: 'banks', name: 'Bank Accounts', icon: Landmark },
     { id: 'currency', name: 'Exchange Rates', icon: Currency },
     { id: 'team', name: 'Team Members', icon: Users },
-    { id: 'billing', name: 'Billing', icon: Receipt },
   ]
 
   return (
@@ -139,62 +138,6 @@ export default function SettingsTabs({
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'billing' && (
-          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Billing & Subscription</h2>
-              <p className="text-sm text-zinc-500 mt-1">Manage your plan and billing history.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-card-bg border border-card-border rounded-xl p-6 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-6">
-                  <span className="bg-indigo-500/10 text-indigo-500 text-xs font-bold px-3 py-1 rounded-full border border-indigo-500/20">CURRENT PLAN</span>
-                </div>
-                <h3 className="text-2xl font-bold text-foreground mb-1">Pro Plan</h3>
-                <p className="text-zinc-500 mb-6">₹ 4,999 / year</p>
-                <ul className="space-y-3 mb-8">
-                  {['Unlimited Invoices', 'Custom Branding', 'Up to 5 Team Members', 'Priority Support'].map((feature, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-foreground">
-                      <div className="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center"><Check size={12} strokeWidth={3} /></div>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <button className="w-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-foreground font-semibold py-2.5 rounded-lg transition-colors">
-                  Manage Subscription
-                </button>
-              </div>
-              <div className="bg-card-bg border border-card-border rounded-xl p-6 shadow-sm flex flex-col">
-                <h3 className="font-semibold text-foreground mb-4">Payment Method</h3>
-                <div className="flex items-center gap-4 p-4 border border-card-border rounded-lg mb-6 bg-sidebar-bg/50">
-                  <div className="w-12 h-8 bg-zinc-200 dark:bg-zinc-700 rounded flex items-center justify-center font-bold text-zinc-500 text-xs">
-                    VISA
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">Visa ending in 4242</p>
-                    <p className="text-xs text-zinc-500">Expires 12/28</p>
-                  </div>
-                </div>
-                <div className="mt-auto">
-                  <h3 className="font-semibold text-foreground mb-4">Billing History</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-sm py-2 border-b border-card-border">
-                      <span className="text-zinc-500">Jan 1, 2026</span>
-                      <span className="text-foreground font-medium">₹ 4,999</span>
-                      <a href="#" className="text-indigo-500 hover:underline">Download</a>
-                    </div>
-                    <div className="flex justify-between text-sm py-2">
-                      <span className="text-zinc-500">Jan 1, 2025</span>
-                      <span className="text-foreground font-medium">₹ 4,999</span>
-                      <a href="#" className="text-indigo-500 hover:underline">Download</a>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

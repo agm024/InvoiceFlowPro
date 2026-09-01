@@ -90,52 +90,52 @@ GSTIN: 27ABCFG1029Q1Z6
 Email: support@siteradiant.co.in | Website: www.siteradiant.co.in
 
 CLIENT: 
-Company Name: ${vars.companyName || "[Client’s Company Name or Individual Name]"} 
-Registered Address: ${vars.companyAddress || "[Client’s Full Physical Address]"} 
-Primary Email: ${vars.primaryEmail || "[Client’s Primary Email]"}
+Company Name: <b>${vars.companyName || "[Client's Company Name or Individual Name]"}</b> 
+Registered Address: <b>${vars.companyAddress || "[Client's Full Physical Address]"}</b> 
+Primary Email: <b>${vars.primaryEmail || "[Client's Primary Email]"}</b>
 
 The Service Provider and the Client are collectively referred to as the "Parties."
 
 1. SCOPE OF WORK & DELIVERABLES
-The Service Provider, operating through its digital division SiteRadiant, agrees to perform design and development services as specified below for the project "${project.name}":
-- Setup and design of a ${vars.pages || "[Number]"}-page website (Pages: Home, About, Services, etc.).
+The Service Provider, operating through its digital division SiteRadiant, agrees to perform design and development services as specified below for the project "<b>${project.name}</b>":
+- Setup and design of a <b>${vars.pages || "[Number]"}</b>-page website (Pages: Home, About, Services, etc.).
 - Mobile responsive layout and cross-device optimization.
 - Integration of standard contact forms and corporate social media links.
-- ${vars.seoTier || "[Basic / Standard / Advanced]"} search engine optimization (SEO) implementation.
+- <b>${vars.seoTier || "[Basic / Standard / Advanced]"}</b> search engine optimization (SEO) implementation.
 - Payment gateway integration (applicable only if an e-commerce plan is selected).
 
 Any work, assets, custom functionalities, or feature requests not explicitly listed in this section or in an attached annexure shall be considered out-of-scope and subject to a separate fee estimate.
 
 2. COMPENSATION & PAYMENT TERMS
-The total fee for the project is fixed at ${vars.totalFee || "[₹₹₹ / $$$]"}. Payments shall be processed under the corporate entity "Global One Logistics and Distribution" via ${vars.paymentRails || "[Razorpay MoneySaver / Bank Transfer / UPI]"} according to the following strict milestones:
+The total fee for the project is fixed at <b>${vars.totalFee || "[??? / $$$]"}</b>. Payments shall be processed under the corporate entity "Global One Logistics and Distribution" via <b>${vars.paymentRails || "[Razorpay MoneySaver / Bank Transfer / UPI]"}</b> according to the following strict milestones:
 - Milestone 1: 25% non-refundable deposit due immediately upon signing, before any design or development work commences.
 - Milestone 2: 25% progress payment due upon the Client's structural approval of the visual website layout, wireframe, or design prototype.
 - Milestone 3: 50% final balance payment due immediately upon completion of functional development and staging testing. This final payment must be settled in full prior to live server deployment or the handover of administrative credentials.
 
 3. REVISIONS, CHANGE ORDERS, AND ADD-ONS
-The Client is entitled to a maximum of ${vars.revisions || "[Number]"} rounds of consolidated revisions during the design prototype stage.
-Any major structural modifications requested after design approval, or any requests beyond the allotted rounds, will be billed on a flat "Per-Change" basis in accordance with the Service Provider's standard Add-On Rate Menu (Annexure A). No additional work will be performed or billed without the Client’s explicit, written approval of a specific fixed-price quote before the work begins.
+The Client is entitled to a maximum of <b>${vars.revisions || "[Number]"}</b> rounds of consolidated revisions during the design prototype stage.
+Any major structural modifications requested after design approval, or any requests beyond the allotted rounds, will be billed on a flat "Per-Change" basis in accordance with the Service Provider's standard Add-On Rate Menu (Annexure A). No additional work will be performed or billed without the Client's explicit, written approval of a specific fixed-price quote before the work begins.
 
 4. CLIENT RESPONSIBILITIES & PROJECT ABANDONMENT
-Asset Delivery: The Client agrees to provide all text copy, high-resolution images, corporate logos, and required administrative login credentials within ${vars.assetDays || "[Number]"} business days of signing this contract. The Service Provider is not responsible for project delays caused by the Client’s failure to provide assets or feedback in a timely manner.
-Project Abandonment (Ghosting Clause): If the Client fails to provide necessary assets, feedback, or communication for a period exceeding 30 consecutive calendar days, the project will be deemed "Abandoned." In such an event, all work will be paused, all fees paid up to that date will be forfeited to the service provider, and a flat reactivation fee of ${vars.reactivationFee || "[₹₹₹ / $$$]"} will apply to resume the project at a later date.
+Asset Delivery: The Client agrees to provide all text copy, high-resolution images, corporate logos, and required administrative login credentials within <b>${vars.assetDays || "[Number]"}</b> business days of signing this contract. The Service Provider is not responsible for project delays caused by the Client's failure to provide assets or feedback in a timely manner.
+Project Abandonment (Ghosting Clause): If the Client fails to provide necessary assets, feedback, or communication for a period exceeding 30 consecutive calendar days, the project will be deemed "Abandoned." In such an event, all work will be paused, all fees paid up to that date will be forfeited to the service provider, and a flat reactivation fee of <b>${vars.reactivationFee || "[??? / $$$]"}</b> will apply to resume the project at a later date.
 
 5. INTELLECTUAL PROPERTY & OWNERSHIP TRANSFER
 All intellectual property rights, source code, graphics, and design assets developed under this Agreement remain the sole property of the Service Provider until the final Milestone 3 payment is received and cleared in full.
 Upon receipt of the final milestone payment, full legal ownership, rights, and titles shall automatically transfer to the Client. The Service Provider retains the permanent right to display screenshots and links of the completed website in their professional portfolio under the brand name SiteRadiant.
 
 6. TERMINATION & CANCELLATION
-Either party may terminate this Agreement at any time with ${vars.noticeDays || "[Number]"} days written notice.
+Either party may terminate this Agreement at any time with <b>${vars.noticeDays || "[Number]"}</b> days written notice.
 If the Client terminates the project before final deployment, the initial 25% deposit (Milestone 1) remains entirely non-refundable. Additionally, the Client shall pay a prorated fee corresponding to the percentage of work completed up to the date of termination (e.g., if a milestone is in-progress but not yet fully approved, the Service Provider will assess a fair percentage of completion), as documented by the Service Provider.
 
 7. POST-LAUNCH WARRANTY & SUPPORT
-Upon successful live deployment, the Service Provider provides a ${vars.warrantyDays || "[Number]"}-day complimentary warranty period. This warranty strictly covers the fixing of unexpected bugs, broken links, or structural alignment issues that deviate from the approved staging version. It does not cover new feature additions, layout redesigns, or content changes, which will be billed separately under Annexure A.
+Upon successful live deployment, the Service Provider provides a <b>${vars.warrantyDays || "[Number]"}</b>-day complimentary warranty period. This warranty strictly covers the fixing of unexpected bugs, broken links, or structural alignment issues that deviate from the approved staging version. It does not cover new feature additions, layout redesigns, or content changes, which will be billed separately under Annexure A.
 
 8. LIMITATION OF LIABILITY
-The Service Provider shall not be liable for any lost profits, lost revenue, data loss, server downtime, security breaches, or indirect consequential damages arising from the use or inability to use the website. In no event shall the Service Provider’s total liability exceed the total exact amount actually paid by the Client under this Agreement.
+The Service Provider shall not be liable for any lost profits, lost revenue, data loss, server downtime, security breaches, or indirect consequential damages arising from the use or inability to use the website. In no event shall the Service Provider's total liability exceed the total exact amount actually paid by the Client under this Agreement.
 
 9. GOVERNING LAW AND JURISDICTION
-This Agreement shall be governed by the laws of India. Any disputes arising out of this contract shall be subject to the exclusive jurisdiction of the courts located in ${vars.jurisdiction || "[Your City/State, India]"}.
+This Agreement shall be governed by the laws of India. Any disputes arising out of this contract shall be subject to the exclusive jurisdiction of the courts located in <b>${vars.jurisdiction || "[Your City/State, India]"}</b>.
 
 IN WITNESS WHEREOF, the Parties have executed this Agreement by digital signature below.
 
@@ -159,9 +159,10 @@ ANNEXURE A: ADDITIONAL SITE CHANGES & ADD-ON MENU (All prices are fixed and bill
         </div>
 
         {/* Contract Body */}
-        <div className="whitespace-pre-wrap leading-relaxed text-sm">
-          {finalContractText.trim()}
-        </div>
+        <div 
+          className="whitespace-pre-wrap leading-relaxed text-sm"
+          dangerouslySetInnerHTML={{ __html: finalContractText.trim() }}
+        />
 
         {/* Signatures */}
         <div className="mt-16 pt-8 border-t border-zinc-200 grid grid-cols-2 gap-16 font-sans">

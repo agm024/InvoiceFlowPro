@@ -71,14 +71,17 @@ export default async function StatementPage({ params }: { params: Promise<{ clie
   const currency = client.invoices[0]?.currency || 'INR'
 
   return (
-    <div className="bg-white min-h-screen p-8 text-black font-sans print:p-0">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-start border-b-2 border-zinc-900 pb-8 mb-8">
+    <div className="bg-white min-h-screen p-4 md:p-8 text-black font-sans print:p-0 relative">
+      <div className="hidden md:block absolute top-8 right-8 print:hidden">
+        <PrintButton />
+      </div>
+      <div id="statement-content" className="max-w-4xl mx-auto bg-white p-4 md:p-8">
+        <div className="flex flex-col md:flex-row justify-between items-start border-b-2 border-zinc-900 pb-8 mb-8 gap-6">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight mb-2">STATEMENT OF ACCOUNT</h1>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">STATEMENT OF ACCOUNT</h1>
             <p className="text-zinc-600">Generated on {format(new Date(), 'MMM dd, yyyy')}</p>
           </div>
-          <div className="text-right">
+          <div className="text-left md:text-right">
             <h2 className="text-xl font-bold">{companySettings?.companyName || 'Your Company'}</h2>
             {companySettings?.email && <p className="text-sm text-zinc-600 mt-1">{companySettings.email}</p>}
             {companySettings?.phone && <p className="text-sm text-zinc-600">{companySettings.phone}</p>}
@@ -86,7 +89,7 @@ export default async function StatementPage({ params }: { params: Promise<{ clie
           </div>
         </div>
 
-        <div className="flex justify-between mb-12">
+        <div className="flex flex-col md:flex-row justify-between mb-12 gap-8">
           <div>
             <p className="text-sm font-bold text-zinc-500 mb-1">TO:</p>
             <h3 className="text-lg font-bold">{client.name}</h3>
@@ -94,7 +97,7 @@ export default async function StatementPage({ params }: { params: Promise<{ clie
             {client.gstin && <p className="text-sm mt-1">GSTIN: {client.gstin}</p>}
             {client.email && <p className="text-sm mt-1">{client.email}</p>}
           </div>
-          <div className="bg-zinc-50 p-6 rounded-lg text-right min-w-[250px]">
+          <div className="bg-zinc-50 p-6 rounded-lg text-left md:text-right w-full md:w-auto md:min-w-[250px]">
             <p className="text-sm font-bold text-zinc-500 mb-1">TOTAL OUTSTANDING</p>
             <h2 className="text-3xl font-bold text-zinc-900 dark:text-white">
               {currency} {finalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

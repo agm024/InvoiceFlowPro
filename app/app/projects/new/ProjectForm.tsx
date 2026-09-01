@@ -114,7 +114,7 @@ export default function ProjectForm({ clients, initialClientId = '' }: { clients
             <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Contract Overview</h2>
           </div>
           
-          <div className="grid grid-cols-2 gap-6">
+          <div className="flex flex-col gap-6">
             <div className="space-y-2">
               <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Client Link</label>
               <div className="relative">
@@ -193,12 +193,11 @@ export default function ProjectForm({ clients, initialClientId = '' }: { clients
               Add Phase
             </button>
           </div>
-          
           <div className="space-y-4">
             {milestones.map((m, index) => {
               const calc = calculatedMilestones[index]
               return (
-                <div key={m.id} className="flex gap-4 items-center p-4 bg-zinc-50 dark:bg-sidebar-bg rounded-2xl border border-zinc-100 dark:border-sidebar-border group relative transition-all hover:shadow-md">
+                <div key={m.id} className="flex flex-col md:flex-row gap-4 items-stretch md:items-center p-4 bg-zinc-50 dark:bg-sidebar-bg rounded-2xl border border-zinc-100 dark:border-sidebar-border group relative transition-all hover:shadow-md">
                   
                   <div className="flex-1 relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-bold text-xs uppercase tracking-wider">{index + 1}.</span>
@@ -211,34 +210,36 @@ export default function ProjectForm({ clients, initialClientId = '' }: { clients
                     />
                   </div>
                   
-                  <div className="flex gap-1.5 items-center bg-white dark:bg-card-bg border border-zinc-200 dark:border-sidebar-border rounded-xl p-1 shadow-sm">
-                    <input 
-                      type="number"
-                      className="w-24 bg-transparent px-3 text-right text-sm font-bold text-zinc-900 dark:text-white focus:outline-none tabular-nums"
-                      value={m.value || ''}
-                      onChange={(e) => updateMilestone(m.id, 'value', parseFloat(e.target.value) || 0)}
-                    />
-                    <div className="flex bg-zinc-100 dark:bg-sidebar-bg rounded-lg border border-zinc-200 dark:border-sidebar-border text-xs font-bold overflow-hidden p-0.5 gap-0.5">
-                      <button 
-                        onClick={() => updateMilestone(m.id, 'isPercentage', false)}
-                        className={`px-3 py-1.5 rounded-md transition-colors ${!m.isPercentage ? 'bg-white dark:bg-card-bg text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'}`}
-                      >{currencySymbol}</button>
-                      <button 
-                        onClick={() => updateMilestone(m.id, 'isPercentage', true)}
-                        className={`px-3 py-1.5 rounded-md transition-colors ${m.isPercentage ? 'bg-white dark:bg-card-bg text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'}`}
-                      >%</button>
+                  <div className="flex items-center gap-2 justify-between md:justify-start">
+                    <div className="flex gap-1.5 items-center bg-white dark:bg-card-bg border border-zinc-200 dark:border-sidebar-border rounded-xl p-1 shadow-sm flex-1 md:flex-none">
+                      <input 
+                        type="number"
+                        className="w-full md:w-24 bg-transparent px-3 text-right text-sm font-bold text-zinc-900 dark:text-white focus:outline-none tabular-nums"
+                        value={m.value || ''}
+                        onChange={(e) => updateMilestone(m.id, 'value', parseFloat(e.target.value) || 0)}
+                      />
+                      <div className="flex bg-zinc-100 dark:bg-sidebar-bg rounded-lg border border-zinc-200 dark:border-sidebar-border text-xs font-bold overflow-hidden p-0.5 gap-0.5">
+                        <button 
+                          onClick={() => updateMilestone(m.id, 'isPercentage', false)}
+                          className={`px-3 py-1.5 rounded-md transition-colors ${!m.isPercentage ? 'bg-white dark:bg-card-bg text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'}`}
+                        >{currencySymbol}</button>
+                        <button 
+                          onClick={() => updateMilestone(m.id, 'isPercentage', true)}
+                          className={`px-3 py-1.5 rounded-md transition-colors ${m.isPercentage ? 'bg-white dark:bg-card-bg text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'}`}
+                        >%</button>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="w-28 text-right font-bold text-zinc-900 dark:text-white text-sm tabular-nums bg-zinc-100 dark:bg-zinc-800 px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700">
-                    {currencySymbol} {calc.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    
+                    <div className="w-28 text-right font-bold text-zinc-900 dark:text-white text-sm tabular-nums bg-zinc-100 dark:bg-zinc-800 px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                      {currencySymbol} {calc.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    </div>
                   </div>
 
                   <button 
                     onClick={() => removeMilestone(m.id)}
-                    className="absolute -right-3 -top-3 bg-red-100 text-red-600 hover:bg-red-500 hover:text-white border border-red-200 rounded-full w-7 h-7 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-lg shadow-sm scale-90 group-hover:scale-100"
+                    className="absolute -right-2 -top-2 md:-right-3 md:-top-3 bg-red-100 text-red-600 hover:bg-red-500 hover:text-white border border-red-200 rounded-full w-7 h-7 flex items-center justify-center opacity-100 md:opacity-0 group-hover:opacity-100 transition-all text-lg shadow-sm scale-90 group-hover:scale-100"
                   >
-                    ×
+                    x
                   </button>
                 </div>
               )
@@ -320,7 +321,7 @@ export default function ProjectForm({ clients, initialClientId = '' }: { clients
 
           <div className="relative z-10">
             <h3 className="font-serif text-2xl border-b-2 border-zinc-100 pb-4 mb-6 text-zinc-800 tracking-tight">Milestone Schedule</h3>
-            <div className="space-y-4">
+          <div className="space-y-4">
               {calculatedMilestones.map((m, i) => (
                 <div key={i} className="flex justify-between text-sm border-b border-zinc-100 pb-2">
                   <span className="font-medium text-zinc-600">{m.name || `Phase ${i+1}`}</span>
