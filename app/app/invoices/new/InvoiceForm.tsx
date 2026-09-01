@@ -8,6 +8,7 @@ import { createProduct } from '../../products/actions'
 import { Search, Plus, X, Trash2, Edit2, FileText, Banknote, Eye } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
+import CustomDatePicker from '@/components/CustomDatePicker'
 
 type Client = { id: string, name: string, email?: string | null, phone?: string | null, gstin?: string | null, panNo?: string | null, address?: string | null }
 type Product = { id: string, name: string, price: number, gstRate: number, hsn?: string | null, taxInclusive?: boolean }
@@ -38,7 +39,6 @@ export default function InvoiceForm({
   companySettings?: any
 }) {
   const router = useRouter()
-  const [currentStep, setCurrentStep] = useState(1)
   
   // Local Data State
   const [clients, setClients] = useState(initialClients)
@@ -54,7 +54,7 @@ export default function InvoiceForm({
 
   const [notes, setNotes] = useState(existingInvoice?.notes || '')
   const [invoiceType, setInvoiceType] = useState(existingInvoice?.invoiceType || defaultInvoiceType || 'REGULAR') // REGULAR, EXPORT, QUOTATION
-  const [currency, setCurrency] = useState(existingInvoice?.currency || adHocMilestoneDetails?.currency || 'INR')
+  const [currency, setCurrency] = useState(existingInvoice?.currency || adHocMilestoneDetails?.currency || companySettings?.defaultCurrency || 'INR')
   const [exchangeRate, setExchangeRate] = useState(existingInvoice?.exchangeRate || 1.0)
   const [isFetchingRate, setIsFetchingRate] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState(existingInvoice?.paymentMethod || 'UPI')
@@ -119,6 +119,27 @@ export default function InvoiceForm({
   
   // Submit Action State
   const [submitAction, setSubmitAction] = useState<'sent' | 'draft' | 'sent_and_print' | 'paid'>('draft')
+
+
+
+  // Auto-change to EXPORT if currency is not INR
+  useEffect(() => {
+    const defaultCurrency = companySettings?.defaultCurrency || 'INR';
+    if (currency !== defaultCurrency && currency !== 'INR') {
+      setInvoiceType('EXPORT');
+      const rate = exchangeRates.find(r => r.currency === currency);
+      if (rate) setExchangeRate(rate.rate);
+    }
+  }, [currency, companySettings?.defaultCurrency]);
+
+  // When invoiceType changes to REGULAR, reset currency to default
+  useEffect(() => {
+    if (invoiceType === 'REGULAR') {
+      const defaultCurrency = companySettings?.defaultCurrency || 'INR';
+      setCurrency(defaultCurrency);
+      setExchangeRate(1.0);
+    }
+  }, [invoiceType, companySettings?.defaultCurrency]);
 
   // Auto-fill client search if we have a clientId
   useEffect(() => {
@@ -337,138 +358,106 @@ export default function InvoiceForm({
 
   const selectedClientData = clients.find(c => c.id === clientId)
   
-  const getStepClass = (stepId: number) => {
-    if (currentStep >= 7) {
-      return "transition-all duration-300";
-    }
-    return `transition-all duration-300 ${
-      currentStep === stepId 
-        ? "ring-2 ring-primary/40 ring-offset-2 bg-primary/5 dark:bg-primary/5 p-4 rounded-xl border border-primary/20" 
-        : "opacity-35 blur-[0.25px] pointer-events-none"
-    }`;
-  }
-
   return (
-    <div className="relative font-sans text-sm flex flex-col items-center w-full min-h-screen bg-zinc-50/50 dark:bg-black/20 p-4 sm:p-8 gap-6">
-      
-      {/* Guided Wizard Steps Header */}
-      <div className="w-full max-w-6xl bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 shadow-sm flex items-center justify-between overflow-x-auto gap-4">
-        {[
-          { id: 1, name: 'Customer' },
-          { id: 2, name: 'Details' },
-          { id: 3, name: 'Items' },
-          { id: 4, name: 'Tax / Disc' },
-          { id: 5, name: 'Payment' },
-          { id: 6, name: 'Notes' },
-          { id: 7, name: 'Preview' },
-          { id: 8, name: 'Issue' }
-        ].map((s) => (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => {
-              setCurrentStep(s.id);
-            }}
-            className={`flex items-center gap-2 text-xs font-bold whitespace-nowrap px-3 py-2 rounded-lg transition-all ${
-              currentStep === s.id
-                ? 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 shadow-sm'
-                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100'
-            }`}
-          >
-            <span className="w-5 h-5 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[10px]">
-              {s.id}
-            </span>
-            {s.name}
-          </button>
-        ))}
-      </div>
+    <div className="relative font-sans text-sm flex flex-col items-center w-full min-h-screen bg-zinc-50/50 dark:bg-black/20 p-2 sm:p-8 gap-6">
 
-      <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-8 text-foreground w-full max-w-6xl">
+      <form onSubmit={handleSubmit} className="flex flex-col xl:flex-row gap-4 xl:gap-8 text-foreground w-full max-w-[1200px] mx-auto">
         
         {/* Main Document Area */}
-        <div className="flex-1 bg-white dark:bg-[#0a0a0a] rounded-sm shadow-xl border border-zinc-200 dark:border-zinc-800 p-8 sm:p-12 min-h-[1056px] w-full max-w-4xl mx-auto flex flex-col relative transition-colors duration-200">
+        <div className="flex-1 bg-white dark:bg-[#0a0a0a] rounded-xl shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 sm:p-6 md:p-12 min-h-[1056px] w-full max-w-4xl mx-auto flex flex-col relative transition-colors duration-200">
           
           {/* Header */}
-          <div className={getStepClass(2) + " flex justify-between items-start mb-12"}>
-            <div>
+          <div className="flex flex-col md:flex-row justify-between items-start gap-6 md:gap-0 mb-8 md:mb-12">
+            <div className="w-full md:w-auto">
               <input
                 type="text"
                 value={invoiceType === 'QUOTATION' ? 'QUOTATION' : invoiceType === 'EXPORT' ? 'EXPORT INVOICE' : 'TAX INVOICE'}
                 readOnly
-                className="text-4xl font-bold tracking-tighter text-zinc-900 dark:text-zinc-100 bg-transparent focus:outline-none mb-2 w-full max-w-[300px]"
+                className="text-3xl md:text-4xl font-bold tracking-tighter text-zinc-900 dark:text-zinc-100 bg-transparent focus:outline-none mb-2 w-full md:max-w-[300px]"
               />
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-sm text-zinc-500 font-medium">Type:</span>
-                <select 
-                  value={invoiceType} 
-                  onChange={e => setInvoiceType(e.target.value)}
-                  className="bg-transparent text-primary font-medium hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none cursor-pointer rounded px-2 py-1 transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800"
-                >
-                  <option value="REGULAR">Regular</option>
-                  <option value="EXPORT">Export</option>
-                  <option value="QUOTATION">Quotation</option>
-                </select>
+                <div className="relative">
+                  <select 
+                    value={invoiceType} 
+                    onChange={e => setInvoiceType(e.target.value)}
+                    className="!bg-none appearance-none bg-zinc-50 dark:bg-zinc-900/50 text-primary font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer rounded-lg px-3 py-1.5 pr-8 transition-colors border border-zinc-200 dark:border-zinc-800 shadow-sm"
+                  >
+                    <option value="REGULAR">Regular</option>
+                    <option value="EXPORT">Export</option>
+                    <option value="QUOTATION">Quotation</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center px-1 text-primary">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="text-right flex flex-col items-end">
-              <div className="group relative flex items-center justify-end">
+            <div className="flex flex-col items-start md:items-end w-full md:w-auto">
+              <div className="group relative flex items-center justify-start md:justify-end w-full md:w-auto">
                 <span className="text-zinc-500 font-medium mr-2">#</span>
                 <input 
                   value={invoiceNumber || ""} onChange={e => setInvoiceNumber(e.target.value)} required 
-                  className="w-32 text-right text-xl font-semibold bg-transparent border-b border-transparent hover:border-zinc-300 dark:hover:border-zinc-700 focus:border-primary focus:outline-none transition-colors" 
+                  className="w-48 text-left md:text-right text-xl font-semibold bg-transparent border-b border-transparent hover:border-zinc-300 dark:hover:border-zinc-700 focus:border-primary focus:outline-none transition-colors" 
                   placeholder="INV-001"
                 />
               </div>
-              <div className="flex items-center justify-end gap-2 mt-4">
-                <span className="text-zinc-500 text-sm w-12 text-right">Date</span>
-                <input 
-                  type="date" value={date} onChange={e => setDate(e.target.value)} required 
-                  className="w-36 text-right rounded px-2 py-1 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors text-sm font-medium" 
-                />
+              <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-3 mt-4">
+                <span className="text-zinc-500 text-sm w-12 text-left md:text-right font-medium">Date</span>
+                <CustomDatePicker value={date} onChange={setDate} />
               </div>
-              <div className="flex items-center justify-end gap-2 mt-2">
-                <span className="text-zinc-500 text-sm w-12 text-right">Due</span>
-                <input 
-                  type="date" value={dueDate || ""} onChange={e => setDueDate(e.target.value)} 
-                  className="w-36 text-right rounded px-2 py-1 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors text-sm font-medium" 
-                />
+              <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-3 mt-2">
+                <span className="text-zinc-500 text-sm w-12 text-left md:text-right font-medium">Due</span>
+                <CustomDatePicker value={dueDate || ""} onChange={setDueDate} minDate={date} showPresets={true} />
               </div>
-              <div className="flex items-center justify-end gap-2 mt-2">
-                <span className="text-zinc-500 text-sm w-12 text-right">Ref</span>
+              <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-3 mt-2">
+                <span className="text-zinc-500 text-sm w-12 text-left md:text-right font-medium">Ref</span>
                 <input 
                   value={reference || ""} onChange={e => setReference(e.target.value)} placeholder="PO-1234"
-                  className="w-36 text-right rounded px-2 py-1 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors text-sm font-medium" 
+                  className="w-44 h-10 px-3 text-right rounded-md bg-transparent border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 focus:border-zinc-300 dark:focus:border-zinc-700 focus:outline-none transition-colors text-sm font-medium" 
                 />
               </div>
             </div>
           </div>
 
           <hr className="border-zinc-200 dark:border-zinc-800 mb-12" />
-
           {/* Client & Currency */}
-          <div className={getStepClass(1) + " flex justify-between items-start mb-12"}>
-            <div className="w-1/2 relative group">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-0 mb-12">
+            <div className="w-full md:w-1/2 relative group">
               <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Billed To</h3>
               
               {!clientId ? (
                 <div className="relative">
-                  <input 
-                    type="text"
-                    placeholder="Click to select customer..."
-                    value={clientSearch}
-                    onChange={e => {
-                      setClientSearch(e.target.value)
-                      setShowClientDropdown(true)
-                      if (!e.target.value) setClientId('')
-                    }}
-                    onFocus={() => setShowClientDropdown(true)}
-                    className="w-full text-lg font-medium text-zinc-900 dark:text-zinc-100 bg-transparent border-b border-dashed border-zinc-300 dark:border-zinc-700 focus:border-primary focus:outline-none pb-1 transition-colors"
-                  />
+                  <div className="flex items-center justify-between bg-[#F4F7F9] dark:bg-zinc-800/60 px-4 py-3 rounded-lg cursor-text border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors"
+                       onClick={() => { setShowClientDropdown(true); document.getElementById('client-search-input')?.focus() }}>
+                    <div className="flex items-center flex-1">
+                      <input 
+                        id="client-search-input"
+                        type="text"
+                        placeholder="Select Customer"
+                        value={clientSearch}
+                        onChange={e => {
+                          setClientSearch(e.target.value)
+                          setShowClientDropdown(true)
+                          if (!e.target.value) setClientId('')
+                        }}
+                        onFocus={() => setShowClientDropdown(true)}
+                        className="w-full bg-transparent font-bold text-zinc-700 dark:text-zinc-200 placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none"
+                      />
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setIsAddingClient(true); setShowClientDropdown(false) }}
+                      className="whitespace-nowrap text-sm font-bold text-zinc-600 dark:text-zinc-300 hover:text-black dark:hover:text-white transition-colors ml-2"
+                    >
+                      + Create Customer
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div 
-                  className="cursor-pointer group-hover:bg-zinc-50 dark:group-hover:bg-zinc-900 p-2 -ml-2 rounded transition-colors"
+                  className="cursor-pointer group-hover:bg-zinc-50 dark:group-hover:bg-zinc-900 p-3 -ml-3 rounded-lg transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800"
                   onClick={() => setClientId('')}
                 >
                   <div className="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
@@ -481,25 +470,25 @@ export default function InvoiceForm({
               )}
 
               {/* Client Dropdown */}
-              {showClientDropdown && clientSearch && !clientId && (
-                <div className="absolute z-20 w-full mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl max-h-60 overflow-y-auto">
+              {showClientDropdown && !clientId && (
+                <div className="absolute z-20 w-full mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl max-h-60 overflow-y-auto">
                   {filteredClients.map(c => (
                     <div 
                       key={c.id} 
-                      className="px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer border-b border-zinc-100 dark:border-zinc-800 last:border-0"
+                      className="px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer border-b border-zinc-100 dark:border-zinc-800 last:border-0 transition-colors"
                       onClick={() => {
                         setClientId(c.id)
                         setClientSearch(c.name)
                         setShowClientDropdown(false)
                       }}
                     >
-                      <div className="font-medium">{c.name}</div>
-                      {(c.email || c.phone) && <div className="text-xs text-zinc-500 mt-0.5">{c.email} {c.phone}</div>}
+                      <div className="font-medium text-zinc-900 dark:text-white">{c.name}</div>
+                      {c.email && <div className="text-xs text-zinc-500">{c.email}</div>}
                     </div>
                   ))}
                   {filteredClients.length === 0 && (
                     <div 
-                      className="px-4 py-3 text-sm text-primary font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer flex items-center gap-2"
+                      className="px-4 py-4 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/20 cursor-pointer flex items-center gap-2 text-sm font-medium transition-colors"
                       onClick={() => setIsAddingClient(true)}
                     >
                       <Plus size={16} /> Add "{clientSearch}" as new customer
@@ -507,9 +496,10 @@ export default function InvoiceForm({
                   )}
                 </div>
               )}
-              
+
+              {/* Quick Add Client Form */}
               {isAddingClient && (
-                <div className="quick-client-container absolute z-30 w-[150%] mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl p-5">
+                <div className="quick-client-container absolute z-30 w-full md:w-[150%] mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl p-5">
                   <div className="flex justify-between items-center mb-4">
                     <h4 className="font-semibold">Quick Add Customer</h4>
                     <button type="button" onClick={() => setIsAddingClient(false)} className="text-zinc-400 hover:text-foreground"><X size={16} /></button>
@@ -528,22 +518,13 @@ export default function InvoiceForm({
               )}
             </div>
 
-            <div className="w-1/3 flex flex-col items-end">
+            <div className="w-full md:w-1/3 flex flex-col items-end">
               <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Currency</h3>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 relative">
                 <select 
                   value={currency} 
-                  onChange={e => {
-                    const newCurrency = e.target.value;
-                    setCurrency(newCurrency);
-                    if (newCurrency === 'INR') {
-                      setExchangeRate(1.0);
-                    } else {
-                      const rate = exchangeRates.find(r => r.currency === newCurrency);
-                      if (rate) setExchangeRate(rate.rate);
-                    }
-                  }}
-                  className="bg-transparent text-lg font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none rounded px-2 py-1 transition-colors cursor-pointer text-right"
+                  onChange={e => setCurrency(e.target.value)}
+                  className="!bg-none appearance-none bg-zinc-50 dark:bg-zinc-900/50 text-lg font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer rounded-lg px-3 py-1.5 pr-8 transition-colors text-right border border-zinc-200 dark:border-zinc-800 shadow-sm"
                 >
                   <option value="INR">INR - Indian Rupee</option>
                   <option value="USD">USD - US Dollar</option>
@@ -551,6 +532,9 @@ export default function InvoiceForm({
                   <option value="GBP">GBP - British Pound</option>
                   <option value="AUD">AUD - Australian Dollar</option>
                 </select>
+                <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center px-1 text-zinc-500">
+                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
               </div>
               {currency !== 'INR' && (
                 <div className="flex items-center gap-2 mt-2 group relative">
@@ -574,64 +558,85 @@ export default function InvoiceForm({
           </div>
 
           {/* Line Items */}
-          <div className={getStepClass(3) + " flex-grow"}>
-            <div className="overflow-x-auto">
-            <table className="whitespace-nowrap w-full text-left mb-4">
-              <thead>
-                <tr className="border-b-2 border-zinc-900 dark:border-white">
-                  <th className="py-3 font-bold text-xs uppercase tracking-widest text-zinc-500">Item Description</th>
-                  <th className="py-3 font-bold text-xs uppercase tracking-widest text-zinc-500 text-center w-24">Qty</th>
-                  <th className="py-3 font-bold text-xs uppercase tracking-widest text-zinc-500 text-right w-32">Rate</th>
-                  {invoiceType === 'REGULAR' && <th className="py-3 font-bold text-xs uppercase tracking-widest text-zinc-500 text-right w-24">Tax</th>}
-                  <th className="py-3 font-bold text-xs uppercase tracking-widest text-zinc-500 text-right w-32">Amount</th>
-                  <th className="py-3 w-8"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
-                {items.map((item, index) => (
-                  <tr key={index} className="group">
-                    <td className="py-3 pr-4">
-                      <input 
-                        type="text"
-                        value={item.name}
-                        onChange={e => updateItem(index, 'name', e.target.value)}
-                        className="w-full bg-transparent font-medium text-zinc-900 dark:text-zinc-100 focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded px-2 py-1 -ml-2 transition-colors"
-                      />
-                    </td>
-                    <td className="py-3">
+          {/* Line Items Container */}
+          <div className="flex-grow">
+            
+            {/* Header (Desktop only) */}
+            <div className="hidden md:flex border-b-2 border-zinc-900 dark:border-white py-3">
+              <div className="flex-1 font-bold text-xs uppercase tracking-widest text-zinc-500">Item Description</div>
+              <div className="w-24 font-bold text-xs uppercase tracking-widest text-zinc-500 text-center">Qty</div>
+              <div className="w-32 font-bold text-xs uppercase tracking-widest text-zinc-500 text-right">Rate</div>
+              {invoiceType === 'REGULAR' && <div className="w-24 font-bold text-xs uppercase tracking-widest text-zinc-500 text-right">Tax</div>}
+              <div className="w-32 font-bold text-xs uppercase tracking-widest text-zinc-500 text-right">Amount</div>
+              <div className="w-10"></div>
+            </div>
+
+            {/* Items */}
+            <div className="divide-y border-b border-zinc-100 dark:border-zinc-800 divide-zinc-100 dark:divide-zinc-800">
+              {items.map((item, index) => (
+                <div key={index} className="group py-4 md:py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-0 relative border border-zinc-200 dark:border-zinc-800 md:border-none p-3 md:p-0 rounded-lg md:rounded-none mb-3 md:mb-0">
+                  
+                  {/* Delete button (absolute on mobile, normal on desktop) */}
+                  <button type="button" onClick={() => removeItem(index)} className="absolute top-3 right-3 md:hidden text-zinc-400 opacity-60 hover:opacity-100 hover:text-red-500">
+                    <Trash2 size={16} />
+                  </button>
+
+                  <div className="flex-1 md:pr-4">
+                    <input 
+                      type="text"
+                      value={item.name}
+                      placeholder="Item Description"
+                      onChange={e => updateItem(index, 'name', e.target.value)}
+                      className="w-[90%] md:w-full bg-transparent font-semibold md:font-medium text-zinc-900 dark:text-zinc-100 focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded md:-ml-2 md:px-2 md:py-1 transition-colors"
+                    />
+                  </div>
+                  
+                  {/* QTY x PRICE row on mobile */}
+                  <div className="flex items-center text-sm md:text-base text-zinc-500 md:text-zinc-900 dark:md:text-zinc-100 md:contents">
+                    <div className="flex items-center md:w-24">
                       <input 
                         type="number" min="1" value={item.quantity || ""} 
                         onChange={e => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
-                        className="w-full bg-transparent text-center focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded px-2 py-1 transition-colors"
+                        className="w-10 md:w-full bg-transparent md:text-center font-medium focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded md:px-2 md:py-1"
                       />
-                    </td>
-                    <td className="py-3">
+                    </div>
+                    <span className="mx-1 md:hidden">×</span>
+                    <div className="flex items-center md:w-32">
+                      <span className="md:hidden mr-1">{currency}</span>
                       <input 
                         type="number" step="0.01" value={item.price || ""} 
                         onChange={e => updateItem(index, 'price', e.target.value === '' ? '' : parseFloat(e.target.value))}
-                        className="w-full bg-transparent text-right focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded px-2 py-1 transition-colors"
+                        className="w-20 md:w-full bg-transparent md:text-right font-medium focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded md:px-2 md:py-1"
                       />
-                    </td>
-                    {invoiceType === 'REGULAR' && (
-                      <td className="py-3 text-right text-zinc-500 text-sm pr-2">
-                        {calculatedItems[index].gstRate}%
-                      </td>
+                    </div>
+                  </div>
+
+                  {/* GST & Total row on mobile */}
+                  <div className="flex justify-between items-center mt-1 md:mt-0 md:contents">
+                    {invoiceType === 'REGULAR' ? (
+                      <div className="text-sm text-zinc-500 md:w-24 md:text-right md:pr-2">
+                        <span className="md:hidden">GST </span>{calculatedItems[index].gstRate}%
+                      </div>
+                    ) : (
+                      <div className="text-sm md:hidden" />
                     )}
-                    <td className="py-3 text-right font-medium text-zinc-900 dark:text-zinc-100">
-                      {calculatedItems[index].totalWithTax.toFixed(2)}
-                    </td>
-                    <td className="py-3 text-right">
-                      <button type="button" onClick={() => removeItem(index)} className="text-zinc-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1">
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+                    <div className="text-sm md:text-base font-bold md:font-medium text-zinc-900 dark:text-zinc-100 md:w-32 md:text-right">
+                      <span className="md:hidden">{currency} </span>{calculatedItems[index].totalWithTax.toFixed(2)}
+                    </div>
+                  </div>
+                  
+                  {/* Delete button on desktop */}
+                  <div className="hidden md:flex w-10 justify-end">
+                    <button type="button" onClick={() => removeItem(index)} className="text-zinc-400 opacity-40 hover:opacity-100 group-hover:opacity-100 hover:text-red-500 transition-opacity p-1">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            <button type="button" onClick={() => setIsProductModalOpen(true)} className="text-primary hover:text-primary/80 font-medium text-sm flex items-center gap-1 py-2 transition-colors">
+            <button type="button" onClick={() => setIsProductModalOpen(true)} className="mt-4 text-primary hover:text-primary/80 font-medium text-sm flex items-center gap-1 py-2 transition-colors">
               <Plus size={16} /> Add Line Item
             </button>
           </div>
@@ -639,7 +644,7 @@ export default function InvoiceForm({
           {/* Footer Area of Document (Totals & Notes) */}
           <div className="flex flex-col sm:flex-row justify-between items-end mt-12 gap-8 border-t-2 border-zinc-900 dark:border-white pt-8">
             <div className="w-full sm:w-1/2 flex flex-col gap-6">
-              <div className={getStepClass(6)}>
+              <div>
                 <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Notes / Terms</h3>
                 <textarea 
                   value={notes || ""} onChange={e => setNotes(e.target.value)} rows={3} 
@@ -647,26 +652,50 @@ export default function InvoiceForm({
                   className="w-full bg-transparent resize-none focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded p-2 -ml-2 text-sm text-zinc-600 dark:text-zinc-400 transition-colors"
                 />
               </div>
-              
-              <div className={getStepClass(5)}>
+                        <div>
+                <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Currency</h3>
+                <div className="relative">
+                  <select 
+                    value={currency} 
+                    onChange={e => setCurrency(e.target.value)}
+                    className="!bg-none appearance-none w-full bg-zinc-50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-lg p-2.5 pr-8 text-sm font-semibold transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-800 shadow-sm"
+                  >
+                    <option value="INR">INR - Indian Rupee</option>
+                    <option value="USD">USD - US Dollar</option>
+                    <option value="EUR">EUR - Euro</option>
+                    <option value="GBP">GBP - British Pound</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center px-2 text-zinc-500">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div>
                 <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Bank Details</h3>
-                <select 
-                  value={paymentMethod === 'BANK' ? bankId : paymentMethod} 
-                  onChange={e => {
-                    const val = e.target.value;
-                    if (val === 'UPI' || val === 'NONE') { setPaymentMethod(val); setBankId(''); } 
-                    else { setPaymentMethod('BANK'); setBankId(val); }
-                  }}
-                  className="w-full bg-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900 focus:outline-none rounded p-2 -ml-2 text-sm font-medium transition-colors cursor-pointer appearance-none"
-                >
-                  <option value="NONE">No Payment Details</option>
-                  <option value="UPI">UPI Payment</option>
-                  {banks.map(b => <option key={b.id} value={b.id}>{b.bankName} (Acc: {b.accountNumber})</option>)}
-                </select>
+                <div className="relative">
+                  <select 
+                    value={paymentMethod === 'BANK' ? bankId : paymentMethod} 
+                    onChange={e => {
+                      const val = e.target.value;
+                      if (val === 'UPI' || val === 'NONE' || val === 'CASH') { setPaymentMethod(val); setBankId(''); } 
+                      else { setPaymentMethod('BANK'); setBankId(val); }
+                    }}
+                    className="!bg-none appearance-none w-full bg-zinc-50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-lg p-2.5 pr-8 text-sm font-semibold transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-800 shadow-sm"
+                  >
+                    <option value="NONE">No Payment Details</option>
+                    <option value="UPI">UPI Payment</option>
+                    <option value="CASH">Cash Payment</option>
+                    {banks.map(b => <option key={b.id} value={b.id}>{b.bankName} (Acc: {b.accountNumber})</option>)}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center px-2 text-zinc-500">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className={getStepClass(4) + " w-full sm:w-[320px] bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-6"}>
+            <div className="w-full sm:w-[320px] bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-6">
               <div className="flex justify-between items-center mb-3">
                 <span className="text-zinc-500 text-sm font-medium">Subtotal</span>
                 <span className="font-medium text-sm">{currency} {subTotal.toFixed(2)}</span>
@@ -682,13 +711,18 @@ export default function InvoiceForm({
               <div className="flex justify-between items-center mb-3 group">
                 <div className="flex items-center gap-2">
                   <span className="text-zinc-500 text-sm font-medium">Discount</span>
-                  <select 
-                    value={discountType} onChange={e => setDiscountType(e.target.value)}
-                    className="bg-transparent text-xs text-zinc-400 hover:text-zinc-700 cursor-pointer focus:outline-none"
-                  >
-                    <option value="FLAT">{currency}</option>
-                    <option value="PERCENTAGE">%</option>
-                  </select>
+                  <div className="relative">
+                    <select 
+                      value={discountType} onChange={e => setDiscountType(e.target.value)}
+                      className="!bg-none appearance-none bg-zinc-50 dark:bg-zinc-900/50 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 pr-6 rounded-md border border-zinc-200 dark:border-zinc-800 shadow-sm px-2 py-1"
+                    >
+                      <option value="FLAT">{currency}</option>
+                      <option value="PERCENTAGE">%</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center text-zinc-400">
+                      <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    </div>
+                  </div>
                 </div>
                 <input 
                   type="number" step="0.01" value={discountValue || ""} onChange={e => setDiscountValue(parseFloat(e.target.value) || 0)} placeholder="0.00"
@@ -716,116 +750,39 @@ export default function InvoiceForm({
               )}
             </div>
           </div>
-
-          {/* Step Navigation Controls */}
-          <div className="mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800 flex justify-between items-center print:hidden">
-            <button
-              type="button"
-              disabled={currentStep === 1}
-              onClick={() => setCurrentStep(prev => prev - 1)}
-              className="px-4 py-2 text-xs font-semibold bg-zinc-100 dark:bg-zinc-900 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 disabled:opacity-40 transition-all text-zinc-800 dark:text-zinc-200"
-            >
-              &larr; Back
-            </button>
-            <span className="text-xs text-zinc-500 font-bold">Step {currentStep} of 8</span>
-            {currentStep < 8 ? (
-              <button
-                type="button"
-                onClick={() => {
-                  if (currentStep === 1 && !clientId) {
-                    toast.error("Please select a customer first.");
-                    return;
-                  }
-                  if (currentStep === 3 && items.length === 0) {
-                    toast.error("Please add at least one item first.");
-                    return;
-                  }
-                  setCurrentStep(prev => prev + 1);
-                }}
-                className="px-4 py-2 text-xs font-semibold bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition-all"
-              >
-                Next &rarr;
-              </button>
-            ) : (
-              <span className="text-xs font-bold text-zinc-400">Ready to Save</span>
-            )}
-          </div>
         </div>
 
-        {/* Sticky Sidebar Actions */}
-        <div className="lg:w-72 lg:sticky lg:top-8 flex flex-col gap-4 self-start w-full">
-          {currentStep >= 7 ? (
-            <div className="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-zinc-200 dark:border-zinc-800 p-6">
-              <h3 className="font-semibold text-sm mb-4 flex items-center gap-2">
-                <Eye size={16} className="text-zinc-400" /> Actions
-              </h3>
+        {/* Action Buttons */}
+        <div className="w-full xl:w-72 xl:sticky xl:top-8 flex flex-col gap-4 self-start order-last">
+          <div className="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-zinc-200 dark:border-zinc-800 p-5 sm:p-6">
+            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2">
+              <Eye size={16} className="text-zinc-400" /> Actions
+            </h3>
+            
+            <div className="flex flex-col gap-3">
+              <button type="submit" onClick={() => setSubmitAction('sent_and_print')} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-4 py-3 rounded-xl font-bold transition-all hover:bg-black dark:hover:bg-zinc-200 active:scale-[0.98] flex items-center justify-center gap-2">
+                Save & Print
+              </button>
               
-              <div className="flex flex-col gap-3">
-                <button type="submit" onClick={() => setSubmitAction('sent_and_print')} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-4 py-3 rounded-lg font-semibold transition-all hover:bg-black dark:hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
-                  Save & Print
-                </button>
-                
-                <button type="submit" onClick={() => setSubmitAction('sent')} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm px-4 py-3 rounded-lg font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all active:scale-[0.98]">
-                  Save & Issue
-                </button>
+              <button type="submit" onClick={() => setSubmitAction('sent')} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm px-4 py-3 rounded-xl font-bold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all active:scale-[0.98]">
+                Save & Issue
+              </button>
 
-                <button type="submit" onClick={() => setSubmitAction('paid')} className="w-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-3 rounded-lg font-semibold hover:bg-emerald-500/20 transition-all active:scale-[0.98]">
-                  Mark as Paid
-                </button>
-                
-                <div className="h-px bg-zinc-200 dark:bg-zinc-800 my-1 w-full" />
-                
-                <button type="submit" onClick={() => setSubmitAction('draft')} className="w-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 px-4 py-2.5 rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
-                  Save as Draft
-                </button>
-                
-                <button type="button" onClick={() => router.back()} className="w-full text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 py-2 text-sm font-medium transition-colors">
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-4">
-              <h3 className="font-semibold text-sm flex items-center gap-2">
-                📋 Wizard Progress
-              </h3>
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className={clientId ? "text-emerald-500 font-bold" : "text-zinc-300"}>●</span>
-                  <span className={clientId ? "line-through text-zinc-400" : "text-zinc-600 dark:text-zinc-400"}>Select Client</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={invoiceNumber ? "text-emerald-500 font-bold" : "text-zinc-300"}>●</span>
-                  <span className={invoiceNumber ? "line-through text-zinc-400" : "text-zinc-600 dark:text-zinc-400"}>Invoice Number & Dates</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={items.length > 0 ? "text-emerald-500 font-bold" : "text-zinc-300"}>●</span>
-                  <span className={items.length > 0 ? "line-through text-zinc-400" : "text-zinc-600 dark:text-zinc-400"}>Add Line Items</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={paymentMethod !== "NONE" ? "text-emerald-500 font-bold" : "text-zinc-300"}>●</span>
-                  <span className={paymentMethod !== "NONE" ? "line-through text-zinc-400" : "text-zinc-600 dark:text-zinc-400"}>Payment Details</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  if (currentStep === 1 && !clientId) {
-                    toast.error("Please select a customer first.");
-                    return;
-                  }
-                  if (currentStep === 3 && items.length === 0) {
-                    toast.error("Please add at least one item first.");
-                    return;
-                  }
-                  setCurrentStep(prev => prev + 1);
-                }}
-                className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm py-2.5 rounded-lg text-xs font-semibold hover:opacity-95"
-              >
-                Next Setup Step
+              <button type="submit" onClick={() => setSubmitAction('paid')} className="w-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-3 rounded-xl font-bold hover:bg-emerald-500/20 transition-all active:scale-[0.98]">
+                Mark as Paid
+              </button>
+              
+              <div className="h-px bg-zinc-200 dark:bg-zinc-800 my-2 w-full" />
+              
+              <button type="submit" onClick={() => setSubmitAction('draft')} className="w-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 px-4 py-2.5 rounded-xl font-semibold hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
+                Save as Draft
+              </button>
+              
+              <button type="button" onClick={() => router.back()} className="w-full text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 py-2.5 text-sm font-semibold transition-colors rounded-xl">
+                Cancel
               </button>
             </div>
-          )}
+          </div>
         </div>
       </form>
 

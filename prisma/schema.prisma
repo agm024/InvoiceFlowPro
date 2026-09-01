@@ -158,6 +158,7 @@ model CompanySettings {
   phone        String?
   website      String?
   stateCode    String?  @default("27")
+  defaultCurrency String? @default("INR")
 }
 
 model ExchangeRate {

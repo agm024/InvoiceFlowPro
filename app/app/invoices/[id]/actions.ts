@@ -22,7 +22,7 @@ export async function updateInvoiceStatus(id: string, status: string) {
   }
 }
 
-export async function recordPayment(id: string, amountReceived: number) {
+export async function recordPayment(id: string, amountReceived: number, paymentId?: string) {
   const { companyId } = await requireCompany()
   try {
     const invoice = await prisma.invoice.findFirst({ 
@@ -39,7 +39,8 @@ export async function recordPayment(id: string, amountReceived: number) {
       where: { id },
       data: {
         amountPaid: newAmountPaid,
-        status: isFullyPaid ? 'paid' : 'partially_paid'
+        status: isFullyPaid ? 'paid' : 'partially_paid',
+        ...(paymentId ? { paymentId } : {})
       }
     })
 

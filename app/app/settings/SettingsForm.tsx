@@ -181,6 +181,23 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           />
         </div>
 
+        {/* Default Currency */}
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
+            <span className="text-red-500">*</span>Default Currency :
+          </label>
+          <select 
+            name="defaultCurrency" defaultValue={initialSettings?.defaultCurrency || 'INR'} required
+            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors cursor-pointer"
+          >
+            <option value="INR">INR - Indian Rupee</option>
+            <option value="USD">USD - US Dollar</option>
+            <option value="EUR">EUR - Euro</option>
+            <option value="GBP">GBP - British Pound</option>
+            <option value="AUD">AUD - Australian Dollar</option>
+          </select>
+        </div>
+
         {/* Business Type */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">

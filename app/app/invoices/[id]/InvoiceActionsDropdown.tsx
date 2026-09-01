@@ -46,13 +46,16 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
     e.preventDefault()
     setIsSubmitting(true)
     const amount = parseFloat(paymentAmount)
+    const form = e.target as HTMLFormElement
+    const paymentId = (form.elements.namedItem('paymentId') as HTMLInputElement).value
+
     if (isNaN(amount) || amount <= 0) {
       toast.error('Please enter a valid amount')
       setIsSubmitting(false)
       return
     }
 
-    const res = await recordPayment(invoiceId, amount)
+    const res = await recordPayment(invoiceId, amount, paymentId)
     if (res.error) {
       toast.error(res.error)
     } else {
@@ -227,6 +230,16 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
                     required
                   />
                 </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-foreground mb-1">Transaction ID (Optional)</label>
+                <input
+                  type="text"
+                  name="paymentId"
+                  placeholder="e.g. TXN123456789"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:outline-none"
+                />
               </div>
               <div className="flex gap-3 justify-end">
                 <button

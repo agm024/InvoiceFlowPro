@@ -40,12 +40,46 @@ export async function updateCompanySettings(formData: FormData) {
   const upiId = formData.get('upiId') as string
   const lutNo = formData.get('lutNo') as string
   const stateCode = formData.get('stateCode') as string
+  const defaultCurrency = formData.get('defaultCurrency') as string || 'INR'
 
   try {
     await prisma.companySettings.upsert({
       where: { companyId },
-      update: { companyName, brandName, phone, email, address, gstin, businessType, altPhone, website, panNo, logoUrl, upiId, lutNo, stateCode },
-      create: { companyId, companyName, brandName, phone, email, address, gstin, businessType, altPhone, website, panNo, logoUrl, upiId, lutNo, stateCode }
+      update: {
+        companyName,
+        brandName,
+        phone,
+        email,
+        address,
+        gstin,
+        businessType,
+        altPhone,
+        website,
+        panNo,
+        logoUrl,
+        upiId,
+        lutNo,
+        stateCode,
+        defaultCurrency
+      },
+      create: {
+        companyId,
+        companyName,
+        brandName,
+        phone,
+        email,
+        address,
+        gstin,
+        businessType,
+        altPhone,
+        website,
+        panNo,
+        logoUrl,
+        upiId,
+        lutNo,
+        stateCode,
+        defaultCurrency
+      }
     })
     
     revalidatePath('/app/settings')

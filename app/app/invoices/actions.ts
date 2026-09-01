@@ -150,9 +150,16 @@ export async function deleteInvoice(id: string) {
   try {
     const invoice = await prisma.invoice.findFirst({ where: { id, companyId } })
     if (!invoice) return { error: 'Invoice not found' }
-    if (invoice.status !== 'draft') {
-      return { error: 'Issued or paid invoices cannot be deleted. You can cancel or void them instead.' }
-    }
+    // if (invoice.status !== 'draft') {
+    //   return { error: 'Issued or paid invoices cannot be deleted. You can cancel or void them instead.' }
+    // }
+    
+    // Unlink any milestones to prevent foreign key constraint violations
+    await prisma.milestone.updateMany({
+      where: { invoiceId: id },
+      data: { invoiceId: null, status: 'UNBILLED' }
+    })
+
     await prisma.invoice.delete({ where: { id } })
     revalidatePath('/app/invoices')
     return { success: true }
