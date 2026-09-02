@@ -97,7 +97,11 @@ export default function ProjectForm({ clients, initialClientId = '' }: { clients
       toast.error(res.error, { id: 'save_project' })
     } else {
       toast.success('Project finalized & locked!', { id: 'save_project' })
-      router.push(`/app/clients`)
+      if (res.project) {
+        router.push(`/app/projects/${res.project.id}`)
+      } else {
+        router.push(`/app/clients`)
+      }
     }
   }
 

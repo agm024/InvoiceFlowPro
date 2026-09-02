@@ -134,6 +134,7 @@ model Product {
   unit          String?
   taxInclusive  Boolean        @default(false)
   isHidden      Boolean        @default(false)
+  category      String?
   invoiceItems  InvoiceItem[]
   estimateItems EstimateItem[]
 }

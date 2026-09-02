@@ -68,19 +68,19 @@ export default async function DashboardPage({
   const expensesInTimeframe = allExpenses.filter(e => e.date >= dateLimit)
 
   const revenueTimeframe = paidInvoices.reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
-  const expensesTimeframe = expensesInTimeframe.filter(e => e.category !== 'TAX_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
+  const expensesTimeframe = expensesInTimeframe.filter(e => e.category !== 'GST_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
   const profitTimeframe = revenueTimeframe - expensesTimeframe
 
   // GST Calculations
   const gstCollected = paidInvoices.reduce((sum, i) => sum + (i.taxTotal * i.exchangeRate), 0)
   const itcAmount = expensesInTimeframe.filter(e => e.itcEligible).reduce((sum, e) => sum + e.taxAmount, 0)
   const gstLiability = Math.max(0, gstCollected - itcAmount)
-  const gstPaid = allExpenses.filter(e => e.category === 'TAX_PAYMENT' && e.date >= dateLimit).reduce((sum, e) => sum + e.totalAmount, 0)
+  const gstPaid = allExpenses.filter(e => e.category === 'GST_PAYMENT' && e.date >= dateLimit).reduce((sum, e) => sum + e.totalAmount, 0)
   const gstBalance = gstLiability - gstPaid
 
   // Historical calculations (for trend percentages)
   const prevPaidInvoices = allInvoices.filter(i => i.status === 'paid' && i.date >= prevDateLimitStart && i.date <= prevDateLimitEnd)
-  const prevExpenses = allExpenses.filter(e => e.date >= prevDateLimitStart && e.date <= prevDateLimitEnd && e.category !== 'TAX_PAYMENT')
+  const prevExpenses = allExpenses.filter(e => e.date >= prevDateLimitStart && e.date <= prevDateLimitEnd && e.category !== 'GST_PAYMENT')
   
   const prevRevenue = prevPaidInvoices.reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
   const prevExpensesSum = prevExpenses.reduce((sum, e) => sum + e.totalAmount, 0)
@@ -105,7 +105,7 @@ export default async function DashboardPage({
       return {
         name: format(d, 'EEE'),
         revenue: allInvoices.filter(inv => inv.status === 'paid' && inv.date >= dayStart && inv.date <= dayEnd).reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0),
-        expenses: allExpenses.filter(e => e.date >= dayStart && e.date <= dayEnd && e.category !== 'TAX_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
+        expenses: allExpenses.filter(e => e.date >= dayStart && e.date <= dayEnd && e.category !== 'GST_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
       }
     })
   } else if (timeframe === '30d') {
@@ -116,7 +116,7 @@ export default async function DashboardPage({
       return {
         name: format(d, 'dd MMM'),
         revenue: allInvoices.filter(inv => inv.status === 'paid' && inv.date >= dayStart && inv.date <= dayEnd).reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0),
-        expenses: allExpenses.filter(e => e.date >= dayStart && e.date <= dayEnd && e.category !== 'TAX_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
+        expenses: allExpenses.filter(e => e.date >= dayStart && e.date <= dayEnd && e.category !== 'GST_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
       }
     })
   } else if (timeframe === '90d') {
@@ -126,7 +126,7 @@ export default async function DashboardPage({
       return {
         name: `Wk ${i + 1}`,
         revenue: allInvoices.filter(inv => inv.status === 'paid' && inv.date >= startW && inv.date <= endW).reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0),
-        expenses: allExpenses.filter(e => e.date >= startW && e.date <= endW && e.category !== 'TAX_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
+        expenses: allExpenses.filter(e => e.date >= startW && e.date <= endW && e.category !== 'GST_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
       }
     })
   } else {
@@ -138,7 +138,7 @@ export default async function DashboardPage({
       return {
         name: format(d, 'MMM yy'),
         revenue: allInvoices.filter(inv => inv.status === 'paid' && inv.date >= mStart && inv.date <= mEnd).reduce((sum, inv) => sum + (inv.total * inv.exchangeRate), 0),
-        expenses: allExpenses.filter(e => e.date >= mStart && e.date <= mEnd && e.category !== 'TAX_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
+        expenses: allExpenses.filter(e => e.date >= mStart && e.date <= mEnd && e.category !== 'GST_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
       }
     })
   }
@@ -257,7 +257,7 @@ export default async function DashboardPage({
         </div>
 
         {/* KPI: Outstanding */}
-        <div className="bg-white dark:bg-zinc-955 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+        <div className="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
           <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Total Outstanding</span>
           <h2 className="text-3xl font-black mt-2 text-zinc-900 dark:text-white">₹{totalOutstanding.toLocaleString(undefined, { maximumFractionDigits: 0 })}</h2>
           <div className="mt-4 flex items-center gap-1 text-[10px] font-bold">
@@ -268,7 +268,7 @@ export default async function DashboardPage({
         </div>
 
         {/* KPI: Overdue */}
-        <div className="bg-white dark:bg-zinc-955 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+        <div className="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
           <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Total Overdue</span>
           <h2 className="text-3xl font-black mt-2 text-red-500">₹{totalOverdue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</h2>
           <div className="mt-4 flex items-center gap-1 text-[10px] font-bold">
@@ -279,7 +279,7 @@ export default async function DashboardPage({
         </div>
 
         {/* KPI: Expenses */}
-        <div className="bg-white dark:bg-zinc-955 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+        <div className="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
           <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Total Expenses</span>
           <h2 className="text-3xl font-black mt-2 text-zinc-900 dark:text-white">₹{expensesTimeframe.toLocaleString(undefined, { maximumFractionDigits: 0 })}</h2>
           <div className="mt-4 flex items-center gap-1 text-[10px] font-bold">
@@ -383,7 +383,7 @@ export default async function DashboardPage({
         </div>
 
         {/* Project performance */}
-        <div className="bg-white dark:bg-zinc-955 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
             <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-500">Active Project Performance</h2>
           </div>

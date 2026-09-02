@@ -177,7 +177,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Grid of Metric Rows */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
         
         {/* Row 1: ARR */}
         <div className="bg-white dark:bg-zinc-950 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
@@ -229,7 +229,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Row 2: Secondary operational telemetry metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="bg-white dark:bg-zinc-950 p-4 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm">
           <p className="text-xs text-zinc-500 font-medium">Taxes (18% Est.) / Gateway Fees (2% Est.)</p>
           <p className="text-lg font-bold mt-1">₹{estimatedTaxes.toLocaleString("en-IN", { maximumFractionDigits: 0 })} / ₹{gatewayFees.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</p>

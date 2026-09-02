@@ -1,13 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { deleteProject } from './actions'
 import { Trash2, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-export default function DeleteProjectButton({ projectId, projectName }: { projectId: string, projectName: string }) {
+export default function DeleteProjectButton({ projectId, projectName, redirectTo }: { projectId: string, projectName: string, redirectTo?: string }) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+  const router = useRouter()
 
   const handleDelete = async () => {
     setIsDeleting(true)
@@ -18,7 +20,9 @@ export default function DeleteProjectButton({ projectId, projectName }: { projec
       setShowConfirm(false)
     } else {
       toast.success('Project deleted successfully')
-      // Let the page revalidate naturally
+      if (redirectTo) {
+        router.push(redirectTo)
+      }
     }
   }
 

@@ -48,26 +48,58 @@ export default async function ProductsPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((product) => {
-            const uniqueClients = Array.from(new Set(product.invoiceItems.map(item => item.invoice.client.name)))
+        <div className="space-y-12">
+          {Object.keys(
+            products.reduce((acc, p) => {
+              const cat = p.category || 'Uncategorized'
+              if (!acc[cat]) acc[cat] = []
+              acc[cat].push(p)
+              return acc
+            }, {} as Record<string, typeof products>)
+          ).sort((a, b) => {
+            if (a === 'Uncategorized') return 1;
+            if (b === 'Uncategorized') return -1;
+            return a.localeCompare(b);
+          }).map(category => {
+            const categoryProducts = products.filter(p => (p.category || 'Uncategorized') === category)
             
             return (
-              <div 
-                key={product.id} 
-                className="group relative bg-white dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col backdrop-blur-xl"
-              >
-                {/* Decorative Gradient Background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent to-zinc-50/50 dark:to-zinc-800/10 rounded-2xl pointer-events-none"></div>
-
-                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                  <DeleteProductButton id={product.id} />
+              <div key={category} className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                    {category === 'Uncategorized' ? (
+                      <span className="p-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-md text-zinc-500"><Package size={16} /></span>
+                    ) : (
+                      <span className="p-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-md text-blue-600 dark:text-blue-400"><Tag size={16} /></span>
+                    )}
+                    {category}
+                  </h2>
+                  <div className="h-px bg-zinc-200 dark:bg-zinc-800 flex-1"></div>
+                  <span className="text-xs font-semibold text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2.5 py-1 rounded-full">
+                    {categoryProducts.length} item{categoryProducts.length !== 1 && 's'}
+                  </span>
                 </div>
                 
-                <div className="flex-1 relative z-10">
-                  <div className="mb-4">
-                    <Link href={`/app/products/${product.slug}`} className="inline-block">
-                      <h3 className="text-lg font-bold text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">{product.name}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {categoryProducts.map((product) => {
+                    const uniqueClients = Array.from(new Set(product.invoiceItems.map(item => item.invoice.client.name)))
+                    
+                    return (
+                      <div 
+                        key={product.id} 
+                        className="group relative bg-white dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col backdrop-blur-xl"
+                      >
+                        {/* Decorative Gradient Background */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-zinc-50/50 dark:to-zinc-800/10 rounded-2xl pointer-events-none"></div>
+
+                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                          <DeleteProductButton id={product.id} />
+                        </div>
+                        
+                        <div className="flex-1 relative z-10">
+                          <div className="mb-4">
+                            <Link href={`/app/products/${product.slug}`} className="inline-block">
+                              <h3 className="text-lg font-bold text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">{product.name}</h3>
                     </Link>
                     {product.description && (
                       <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-1.5 font-medium leading-relaxed">{product.description}</p>
@@ -107,6 +139,10 @@ export default async function ProductsPage() {
                       )}
                     </div>
                   </div>
+                </div>
+              </div>
+            )
+          })}
                 </div>
               </div>
             )

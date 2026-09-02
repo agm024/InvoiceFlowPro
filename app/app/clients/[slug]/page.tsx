@@ -149,12 +149,14 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
             return (
               <div key={project.id} className="bg-card-bg border border-card-border rounded-xl shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-sidebar-border bg-sidebar-bg/30">
-                  <div className="flex justify-between items-start mb-4">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-foreground">{project.name}</h3>
+                      <Link href={`/app/projects/${project.id}`} className="hover:underline">
+                        <h3 className="text-lg font-bold text-foreground">{project.name}</h3>
+                      </Link>
                       <p className="text-sm text-zinc-500">Total Ceiling: ₹ {project.totalValue.toLocaleString()}</p>
                     </div>
-                    <div className="flex items-center gap-4 text-right">
+                    <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4">
                       <span className="text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 px-3 py-1 rounded-full">
                         {project.status}
                       </span>

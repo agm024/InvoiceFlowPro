@@ -9,23 +9,23 @@ export default function BillingClient({ plans, subscription }: { plans: any[], s
   const [isPending, startTransition] = useTransition()
 
   return (
-    <div>
+    <div className="dark:text-white">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Available Plans</h2>
         
-        <div className="bg-zinc-100 p-1 rounded-xl inline-flex items-center">
+        <div className="bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl inline-flex items-center">
           <button 
             onClick={() => setIsAnnual(false)}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${!isAnnual ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500 hover:text-zinc-900'}`}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${!isAnnual ? 'bg-white dark:bg-zinc-700 shadow-sm text-zinc-900 dark:text-white' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'}`}
           >
             Monthly
           </button>
           <button 
             onClick={() => setIsAnnual(true)}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${isAnnual ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500 hover:text-zinc-900'}`}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${isAnnual ? 'bg-white dark:bg-zinc-700 shadow-sm text-zinc-900 dark:text-white' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'}`}
           >
             Annually
-            <span className="bg-blue-100 text-blue-700 text-[10px] uppercase px-2 py-0.5 rounded-full font-bold">Save 20%</span>
+            <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-[10px] uppercase px-2 py-0.5 rounded-full font-bold">Save 20%</span>
           </button>
         </div>
       </div>
@@ -41,9 +41,9 @@ export default function BillingClient({ plans, subscription }: { plans: any[], s
           const isCurrentPlan = subscription?.planId === plan.id
 
           return (
-            <div key={plan.id} className={`border rounded-2xl p-6 flex flex-col bg-white shadow-sm transition-shadow relative ${plan.isPopular && !isCurrentPlan ? 'border-blue-500 border-2' : ''}`}>
+            <div key={plan.id} className={`border dark:border-zinc-700 rounded-2xl p-6 flex flex-col bg-white dark:bg-zinc-900 shadow-sm transition-shadow relative ${plan.isPopular && !isCurrentPlan ? 'border-blue-500 border-2' : ''}`}>
               {isCurrentPlan && (
-                <div className="absolute top-0 right-0 bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-bl-lg rounded-tr-2xl">
+                <div className="absolute top-0 right-0 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-semibold px-3 py-1 rounded-bl-lg rounded-tr-2xl">
                   Current Plan
                 </div>
               )}
@@ -58,7 +58,7 @@ export default function BillingClient({ plans, subscription }: { plans: any[], s
                 <span className="text-3xl font-bold">
                   {currencySymbol}{isAnnual && monthlyEquivalent ? Number(monthlyEquivalent).toLocaleString('en-IN') : price.toLocaleString('en-IN')}
                 </span>
-                <span className="text-gray-500">/mo</span>
+                <span className="text-gray-500 dark:text-gray-400">/mo</span>
               </div>
               
               {isAnnual && price > 0 && (
@@ -88,7 +88,7 @@ export default function BillingClient({ plans, subscription }: { plans: any[], s
                   })
                 }}
                 disabled={isPending || (isCurrentPlan && subscription?.status === 'active' && subscription?.billingInterval === intervalLabel)}
-                className={`w-full py-2.5 px-4 rounded-lg font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.isPopular && !isCurrentPlan ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-600 border-blue-600 hover:bg-blue-50'} disabled:bg-gray-100 disabled:text-gray-500 disabled:border-gray-200`}
+                className={`w-full py-2.5 px-4 rounded-lg font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.isPopular && !isCurrentPlan ? 'bg-blue-600 text-white hover:bg-blue-700 border-blue-600' : 'bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-zinc-700'} disabled:bg-gray-100 disabled:text-gray-500 disabled:border-gray-200 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 dark:disabled:border-zinc-700`}
               >
                 {isPending ? 'Processing...' : isCurrentPlan 
                   ? (subscription?.status === 'active' && subscription?.billingInterval === intervalLabel ? 'Current Plan' : 'Update Plan') 

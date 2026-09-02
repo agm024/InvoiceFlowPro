@@ -1,6 +1,7 @@
 import { requireSuperAdmin, getCurrentUser } from "@/lib/auth-context"
 import { AdminSidebar } from "./AdminSidebar"
 import { AdminHeader } from "./AdminHeader"
+import AdminLayoutClient from "./AdminLayoutClient"
 import { signOut } from "@/auth"
 
 export default async function AdminLayout({
@@ -17,14 +18,11 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100">
-      <AdminSidebar />
-      <main className="flex-1 flex flex-col h-screen overflow-y-auto">
-        <AdminHeader user={user} signOutAction={signOutAction} />
-        <div className="p-8 overflow-y-auto flex-1">
-          {children}
-        </div>
-      </main>
-    </div>
+    <AdminLayoutClient 
+      sidebar={<AdminSidebar />} 
+      header={<AdminHeader user={user} signOutAction={signOutAction} />}
+    >
+      {children}
+    </AdminLayoutClient>
   )
 }

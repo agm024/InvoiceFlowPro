@@ -11,9 +11,11 @@ import { format } from 'date-fns'
 import CustomDatePicker from '@/components/CustomDatePicker'
 
 type Client = { id: string, name: string, email?: string | null, phone?: string | null, gstin?: string | null, panNo?: string | null, address?: string | null }
-type Product = { id: string, name: string, price: number, gstRate: number, hsn?: string | null, taxInclusive?: boolean }
+type Product = { id: string, name: string, price: number, gstRate: number, hsn?: string | null, taxInclusive?: boolean, category?: string | null }
 type Bank = { id: string, bankName: string, accountNumber: string, ifsc?: string | null, swiftCode?: string | null, routingNumber?: string | null, iban?: string | null }
 type ExchangeRate = { id: string, currency: string, rate: number }
+
+import CustomDropdown from '@/components/CustomDropdown';
 
 export default function InvoiceForm({ 
   clients: initialClients, 
@@ -117,8 +119,8 @@ export default function InvoiceForm({
   const [productSearch, setProductSearch] = useState('')
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null)
   
-  // Submit Action State
   const [submitAction, setSubmitAction] = useState<'sent' | 'draft' | 'sent_and_print' | 'paid'>('draft')
+  const [enableRoundOff, setEnableRoundOff] = useState(existingInvoice ? existingInvoice.roundOff !== 0 : true)
 
 
 
@@ -185,14 +187,12 @@ export default function InvoiceForm({
 
     if (editingProduct?.id) {
       toast.error('Product editing requires updateProduct action to be fully implemented in actions.ts. We will add it as new for now.');
-      formData.append('gstRate', '18')
       const res = await createProduct(formData)
       if (res.success && res.product) {
         setProducts([...products, res.product])
         setEditingProduct(null)
       }
     } else {
-      formData.append('gstRate', '18')
       const res = await createProduct(formData)
       if (res.success && res.product) {
         setProducts([...products, res.product])
@@ -278,8 +278,8 @@ export default function InvoiceForm({
   }
 
   const totalBeforeRoundOff = subTotal + taxTotal - discountAmount
-  const finalTotal = Math.round(totalBeforeRoundOff)
-  const autoRoundOff = finalTotal - totalBeforeRoundOff
+  const finalTotal = enableRoundOff ? Math.round(totalBeforeRoundOff) : totalBeforeRoundOff
+  const autoRoundOff = enableRoundOff ? finalTotal - totalBeforeRoundOff : 0
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -361,10 +361,10 @@ export default function InvoiceForm({
   return (
     <div className="relative font-sans text-sm flex flex-col items-center w-full min-h-screen bg-zinc-50/50 dark:bg-black/20 p-2 sm:p-8 gap-6">
 
-      <form onSubmit={handleSubmit} className="flex flex-col xl:flex-row gap-4 xl:gap-8 text-foreground w-full max-w-[1200px] mx-auto">
+      <form onSubmit={handleSubmit} className="flex flex-col xl:flex-row gap-4 xl:gap-8 text-foreground w-full max-w-[1400px] mx-auto pb-28 sm:pb-0">
         
         {/* Main Document Area */}
-        <div className="flex-1 bg-white dark:bg-[#0a0a0a] rounded-xl shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 sm:p-6 md:p-12 min-h-[1056px] w-full max-w-4xl mx-auto flex flex-col relative transition-colors duration-200">
+        <div className="flex-1 bg-white dark:bg-[#0a0a0a] rounded-xl shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 sm:p-6 md:p-12 min-h-[1056px] w-full max-w-5xl mx-auto flex flex-col relative transition-colors duration-200">
           
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start gap-6 md:gap-0 mb-8 md:mb-12">
@@ -377,20 +377,16 @@ export default function InvoiceForm({
               />
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-sm text-zinc-500 font-medium">Type:</span>
-                <div className="relative">
-                  <select 
-                    value={invoiceType} 
-                    onChange={e => setInvoiceType(e.target.value)}
-                    className="!bg-none appearance-none bg-zinc-50 dark:bg-zinc-900/50 text-primary font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer rounded-lg px-3 py-1.5 pr-8 transition-colors border border-zinc-200 dark:border-zinc-800 shadow-sm"
-                  >
-                    <option value="REGULAR">Regular</option>
-                    <option value="EXPORT">Export</option>
-                    <option value="QUOTATION">Quotation</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center px-1 text-primary">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                  </div>
-                </div>
+                <CustomDropdown
+                  value={invoiceType}
+                  onChange={setInvoiceType}
+                  options={[
+                    { value: "REGULAR", label: "Regular" },
+                    { value: "EXPORT", label: "Export" },
+                    { value: "QUOTATION", label: "Quotation" }
+                  ]}
+                  className="w-36 text-primary"
+                />
               </div>
             </div>
 
@@ -520,22 +516,19 @@ export default function InvoiceForm({
 
             <div className="w-full md:w-1/3 flex flex-col items-end">
               <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Currency</h3>
-              <div className="flex items-center gap-2 relative">
-                <select 
-                  value={currency} 
-                  onChange={e => setCurrency(e.target.value)}
-                  className="!bg-none appearance-none bg-zinc-50 dark:bg-zinc-900/50 text-lg font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer rounded-lg px-3 py-1.5 pr-8 transition-colors text-right border border-zinc-200 dark:border-zinc-800 shadow-sm"
-                >
-                  <option value="INR">INR - Indian Rupee</option>
-                  <option value="USD">USD - US Dollar</option>
-                  <option value="EUR">EUR - Euro</option>
-                  <option value="GBP">GBP - British Pound</option>
-                  <option value="AUD">AUD - Australian Dollar</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center px-1 text-zinc-500">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                </div>
-              </div>
+              <CustomDropdown
+                value={currency}
+                onChange={setCurrency}
+                options={[
+                  { value: "INR", label: "INR - Indian Rupee" },
+                  { value: "USD", label: "USD - US Dollar" },
+                  { value: "EUR", label: "EUR - Euro" },
+                  { value: "GBP", label: "GBP - British Pound" },
+                  { value: "AUD", label: "AUD - Australian Dollar" }
+                ]}
+                className="w-48 text-right"
+                align="right"
+              />
               {currency !== 'INR' && (
                 <div className="flex items-center gap-2 mt-2 group relative">
                   <span className="text-zinc-500 text-xs font-medium">1 {currency} = ₹</span>
@@ -652,46 +645,27 @@ export default function InvoiceForm({
                   className="w-full bg-transparent resize-none focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded p-2 -ml-2 text-sm text-zinc-600 dark:text-zinc-400 transition-colors"
                 />
               </div>
-                        <div>
-                <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Currency</h3>
-                <div className="relative">
-                  <select 
-                    value={currency} 
-                    onChange={e => setCurrency(e.target.value)}
-                    className="!bg-none appearance-none w-full bg-zinc-50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-lg p-2.5 pr-8 text-sm font-semibold transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-800 shadow-sm"
-                  >
-                    <option value="INR">INR - Indian Rupee</option>
-                    <option value="USD">USD - US Dollar</option>
-                    <option value="EUR">EUR - Euro</option>
-                    <option value="GBP">GBP - British Pound</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center px-2 text-zinc-500">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                  </div>
-                </div>
-              </div>
-
               <div>
                 <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Bank Details</h3>
-                <div className="relative">
-                  <select 
-                    value={paymentMethod === 'BANK' ? bankId : paymentMethod} 
-                    onChange={e => {
-                      const val = e.target.value;
-                      if (val === 'UPI' || val === 'NONE' || val === 'CASH') { setPaymentMethod(val); setBankId(''); } 
-                      else { setPaymentMethod('BANK'); setBankId(val); }
-                    }}
-                    className="!bg-none appearance-none w-full bg-zinc-50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-lg p-2.5 pr-8 text-sm font-semibold transition-colors cursor-pointer border border-zinc-200 dark:border-zinc-800 shadow-sm"
-                  >
-                    <option value="NONE">No Payment Details</option>
-                    <option value="UPI">UPI Payment</option>
-                    <option value="CASH">Cash Payment</option>
-                    {banks.map(b => <option key={b.id} value={b.id}>{b.bankName} (Acc: {b.accountNumber})</option>)}
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center px-2 text-zinc-500">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                  </div>
-                </div>
+                <CustomDropdown
+                  value={paymentMethod === 'BANK' ? bankId : paymentMethod}
+                  onChange={(val: string) => {
+                    if (val === 'UPI' || val === 'NONE' || val === 'CASH') { 
+                      setPaymentMethod(val as any); 
+                      setBankId(''); 
+                    } else { 
+                      setPaymentMethod('BANK'); 
+                      setBankId(val); 
+                    }
+                  }}
+                  options={[
+                    { value: "NONE", label: "No Payment Details" },
+                    { value: "UPI", label: "UPI Payment" },
+                    { value: "CASH", label: "Cash Payment" },
+                    ...banks.map(b => ({ value: b.id, label: b.bankName }))
+                  ]}
+                  className="w-full"
+                />
               </div>
             </div>
 
@@ -709,33 +683,43 @@ export default function InvoiceForm({
               )}
 
               <div className="flex justify-between items-center mb-3 group">
-                <div className="flex items-center gap-2">
-                  <span className="text-zinc-500 text-sm font-medium">Discount</span>
-                  <div className="relative">
-                    <select 
-                      value={discountType} onChange={e => setDiscountType(e.target.value)}
-                      className="!bg-none appearance-none bg-zinc-50 dark:bg-zinc-900/50 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 pr-6 rounded-md border border-zinc-200 dark:border-zinc-800 shadow-sm px-2 py-1"
-                    >
-                      <option value="FLAT">{currency}</option>
-                      <option value="PERCENTAGE">%</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center text-zinc-400">
-                      <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-zinc-500 text-sm font-medium">Discount</span>
+                    <CustomDropdown
+                      value={discountType}
+                      onChange={setDiscountType}
+                      options={[
+                        { value: "FLAT", label: currency },
+                        { value: "PERCENTAGE", label: "%" }
+                      ]}
+                      className="w-24"
+                    />
                   </div>
+                  <input 
+                    type="number" step="0.01" value={discountValue || ""} onChange={e => setDiscountValue(parseFloat(e.target.value) || 0)} placeholder="0.00"
+                    className="w-24 text-right bg-transparent border-b border-dashed border-transparent hover:border-zinc-300 focus:border-primary focus:outline-none text-sm font-medium"
+                  />
                 </div>
-                <input 
-                  type="number" step="0.01" value={discountValue || ""} onChange={e => setDiscountValue(parseFloat(e.target.value) || 0)} placeholder="0.00"
-                  className="w-24 text-right bg-transparent border-b border-dashed border-transparent hover:border-zinc-300 focus:border-primary focus:outline-none text-sm font-medium"
-                />
-              </div>
-              
-              {autoRoundOff !== 0 && (
+                
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-zinc-500 text-sm font-medium">Round Off</span>
-                  <span className="text-sm font-medium text-zinc-500">{autoRoundOff > 0 ? '+' : ''}{autoRoundOff.toFixed(2)}</span>
+                  <span className="text-zinc-500 text-sm font-medium">Round off total</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer"
+                      checked={enableRoundOff}
+                      onChange={(e) => setEnableRoundOff(e.target.checked)}
+                    />
+                    <div className="w-8 h-4.5 bg-zinc-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  </label>
                 </div>
-              )}
+
+                {autoRoundOff !== 0 && enableRoundOff && (
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-zinc-500 text-sm font-medium">Rounding Difference</span>
+                    <span className="text-sm font-medium text-zinc-500">{autoRoundOff > 0 ? '+' : ''}{autoRoundOff.toFixed(2)}</span>
+                  </div>
+                )}
               
               <div className="flex justify-between items-center mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
                 <span className="text-base font-bold">Total</span>
@@ -753,13 +737,14 @@ export default function InvoiceForm({
         </div>
 
         {/* Action Buttons */}
-        <div className="w-full xl:w-72 xl:sticky xl:top-8 flex flex-col gap-4 self-start order-last">
-          <div className="bg-white dark:bg-[#0a0a0a] rounded-xl shadow-lg border border-zinc-200 dark:border-zinc-800 p-5 sm:p-6">
-            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2">
+        <div className="w-full xl:w-72 xl:sticky xl:top-8 flex flex-col gap-4 self-start order-last fixed sm:static bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-800 sm:border-0 p-4 sm:p-0 sm:bg-transparent shadow-[0_-10px_40px_rgba(0,0,0,0.1)] sm:shadow-none pb-safe">
+          <div className="bg-transparent sm:bg-white sm:dark:bg-[#0a0a0a] rounded-none sm:rounded-xl shadow-none sm:shadow-lg border-0 sm:border border-zinc-200 dark:border-zinc-800 p-0 sm:p-6">
+            <h3 className="hidden sm:flex font-semibold text-sm mb-4 items-center gap-2">
               <Eye size={16} className="text-zinc-400" /> Actions
             </h3>
             
-            <div className="flex flex-col gap-3">
+            {/* Desktop layout: standard flex-col stack */}
+            <div className="hidden sm:flex flex-col gap-3">
               <button type="submit" onClick={() => setSubmitAction('sent_and_print')} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-4 py-3 rounded-xl font-bold transition-all hover:bg-black dark:hover:bg-zinc-200 active:scale-[0.98] flex items-center justify-center gap-2">
                 Save & Print
               </button>
@@ -782,6 +767,22 @@ export default function InvoiceForm({
                 Cancel
               </button>
             </div>
+
+            {/* Mobile layout: horizontal layout with primary buttons */}
+            <div className="flex sm:hidden items-center justify-between gap-3 w-full max-w-lg mx-auto">
+              <div className="flex flex-col items-start min-w-0 flex-[0.8]">
+                <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Total Due</span>
+                <span className="text-base font-bold leading-tight truncate w-full text-primary">{currency} {finalTotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+              </div>
+              <div className="flex items-center gap-2 flex-[1.2]">
+                <button type="submit" onClick={() => setSubmitAction('draft')} className="flex-1 bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 px-2 py-3 rounded-xl font-bold hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-xs text-center whitespace-nowrap">
+                  Draft
+                </button>
+                <button type="submit" onClick={() => setSubmitAction('sent')} className="flex-[1.5] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-2 py-3 rounded-xl font-bold transition-all active:scale-[0.98] text-sm text-center whitespace-nowrap">
+                  Issue Now
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </form>
@@ -802,9 +803,15 @@ export default function InvoiceForm({
             
             {editingProduct ? (
               <form onSubmit={handleSaveProduct} className="p-6 flex flex-col gap-6 overflow-y-auto">
-                <div>
-                  <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Product Name *</label>
-                  <input type="text" name="name" defaultValue={editingProduct.name} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <div>
+                    <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Product Name *</label>
+                    <input type="text" name="name" defaultValue={editingProduct.name} required className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block flex gap-1 items-center">Category <span className="text-[10px] lowercase text-zinc-400 normal-case tracking-normal">(Optional)</span></label>
+                    <input type="text" name="category" defaultValue={(editingProduct as any).category || ''} placeholder="e.g. Website" className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors" />
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                   <div>
@@ -838,23 +845,46 @@ export default function InvoiceForm({
                     />
                   </div>
                 </div>
-                <div className="overflow-y-auto p-2 max-h-[400px]">
-                  {filteredProducts.map(p => (
-                    <div key={p.id} className="flex items-center justify-between p-3 hover:bg-sidebar-bg rounded-xl group transition-colors mb-1">
-                      <div className="flex-1 cursor-pointer pl-2" onClick={() => handleSelectProduct(p)}>
-                        <div className="font-semibold text-foreground text-base mb-1">{p.name}</div>
-                        <div className="text-sm text-zinc-500 font-medium">Base Price: ₹{p.price} <span className="text-zinc-300 mx-2">|</span> GST: {p.gstRate}%</div>
+                <div className="overflow-y-auto max-h-[400px]">
+                  {Object.keys(
+                    filteredProducts.reduce((acc, p) => {
+                      const cat = p.category || 'Uncategorized'
+                      if (!acc[cat]) acc[cat] = []
+                      acc[cat].push(p)
+                      return acc
+                    }, {} as Record<string, typeof filteredProducts>)
+                  ).sort((a, b) => {
+                    if (a === 'Uncategorized') return 1;
+                    if (b === 'Uncategorized') return -1;
+                    return a.localeCompare(b);
+                  }).map(category => {
+                    const categoryProducts = filteredProducts.filter(p => (p.category || 'Uncategorized') === category)
+                    return (
+                      <div key={category} className="mb-2">
+                        <div className="sticky top-0 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md px-5 py-2 z-10 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">{category}</span>
+                        </div>
+                        <div className="px-2 pt-1">
+                          {categoryProducts.map(p => (
+                            <div key={p.id} className="flex items-center justify-between p-3 hover:bg-sidebar-bg rounded-xl group transition-colors mb-1">
+                              <div className="flex-1 cursor-pointer pl-2" onClick={() => handleSelectProduct(p)}>
+                                <div className="font-semibold text-foreground text-base mb-1">{p.name}</div>
+                                <div className="text-sm text-zinc-500 font-medium">Base Price: {currency}{p.price} <span className="text-zinc-300 mx-2">|</span> GST: {p.gstRate}%</div>
+                              </div>
+                              <div className="flex items-center gap-2 pr-2">
+                                <button onClick={() => setEditingProduct(p)} className="p-2 text-zinc-400 hover:text-zinc-900 dark:text-white hover:bg-zinc-100 dark:bg-zinc-800 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
+                                  <Edit2 size={18} />
+                                </button>
+                                <button onClick={() => handleSelectProduct(p)} className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:border-zinc-900 dark:border-white hover:text-zinc-900 dark:text-white text-foreground px-5 py-2 rounded-lg font-medium text-sm transition-colors shadow-sm">
+                                  Add
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 pr-2">
-                        <button onClick={() => setEditingProduct(p)} className="p-2 text-zinc-400 hover:text-zinc-900 dark:text-white hover:bg-zinc-100 dark:bg-zinc-800 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
-                          <Edit2 size={18} />
-                        </button>
-                        <button onClick={() => handleSelectProduct(p)} className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:border-zinc-900 dark:border-white hover:text-zinc-900 dark:text-white text-foreground px-5 py-2 rounded-lg font-medium text-sm transition-colors shadow-sm">
-                          Add
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                   {filteredProducts.length === 0 && (
                     <div className="text-center p-12 text-zinc-500 flex flex-col items-center">
                       <div className="bg-sidebar-bg p-4 rounded-full mb-4">
@@ -866,7 +896,7 @@ export default function InvoiceForm({
                 </div>
                 <div className="p-5 border-t border-card-border bg-sidebar-bg/50 flex justify-between items-center">
                   <span className="text-sm font-medium text-zinc-500">Didn't find what you need?</span>
-                  <button onClick={() => setEditingProduct({ name: productSearch, price: 0, gstRate: 18 })} className="text-zinc-900 dark:text-white font-semibold hover:underline flex items-center gap-1.5 bg-zinc-100 dark:bg-zinc-800 px-4 py-2 rounded-lg">
+                  <button onClick={() => setEditingProduct({ name: productSearch, price: 0, gstRate: 18, category: '' })} className="text-zinc-900 dark:text-white font-semibold hover:underline flex items-center gap-1.5 bg-zinc-100 dark:bg-zinc-800 px-4 py-2 rounded-lg">
                     <Plus size={16} /> Create New Product
                   </button>
                 </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Bell, Sun, Moon, HelpCircle, LogOut, ArrowLeft, ArrowUpRight, ShieldCheck, User, Settings } from "lucide-react"
+import { Search, Bell, HelpCircle, LogOut, ArrowLeft, ArrowUpRight, ShieldCheck, User, Settings } from "lucide-react"
 import Link from "next/link"
 import { stopImpersonation } from "./impersonate-actions"
 
@@ -17,22 +17,6 @@ interface AdminHeaderProps {
 export function AdminHeader({ user, signOutAction }: AdminHeaderProps) {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== "undefined") {
-      return document.documentElement.classList.contains("dark")
-    }
-    return false
-  })
-
-  const toggleDarkMode = () => {
-    const nextMode = !darkMode
-    setDarkMode(nextMode)
-    if (nextMode) {
-      document.documentElement.classList.add("dark")
-    } else {
-      document.documentElement.classList.remove("dark")
-    }
-  }
 
   const initials = user?.name
     ? user.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2)
@@ -60,15 +44,6 @@ export function AdminHeader({ user, signOutAction }: AdminHeaderProps) {
         >
           <HelpCircle size={18} />
         </Link>
-
-        {/* Theme Toggle */}
-        <button
-          onClick={toggleDarkMode}
-          className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
-          title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-        >
-          {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-        </button>
 
         {/* Notifications */}
         <div className="relative">

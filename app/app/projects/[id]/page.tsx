@@ -6,6 +6,7 @@ import Link from 'next/link'
 import KanbanBoard from './KanbanBoard'
 import ContractEditor from './ContractEditor'
 import PaymentRoadmap from './PaymentRoadmap'
+import DeleteProjectButton from '../DeleteProjectButton'
 import { ArrowLeft, Briefcase, FileSignature, CheckCircle, ExternalLink, Download } from 'lucide-react'
 
 export default async function ProjectDetailPage({ 
@@ -62,6 +63,7 @@ export default async function ProjectDetailPage({
           </div>
           
           <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 self-start md:self-auto w-full md:w-auto">
+            <DeleteProjectButton projectId={project.id} projectName={project.name} redirectTo="/app/projects" />
             <a 
               href={`/app/projects/${project.id}/contract/print`}
               target="_blank"
