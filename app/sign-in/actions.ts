@@ -32,3 +32,7 @@ export async function signInAction(formData: FormData) {
     throw error
   }
 }
+
+export async function signInWithGoogleAction() {
+  await signIn('google', { redirectTo: '/app' })
+}

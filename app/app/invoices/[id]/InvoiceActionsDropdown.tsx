@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { MoreHorizontal, Link as LinkIcon, Printer, CheckCircle, Clock, Mail } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import ConfirmationModal from '@/components/ConfirmationModal'
 import { updateInvoiceStatus, convertToInvoice, recordPayment } from './actions'
 
 interface Props {
@@ -23,6 +24,7 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSendingReminder, setIsSendingReminder] = useState(false)
   const [isSendingInvoice, setIsSendingInvoice] = useState(false)
+  const [modalState, setModalState] = useState<{ isOpen: boolean, type: 'reminder' | 'send' | null }>({ isOpen: false, type: null })
   
   const handleCopyLink = () => {
     const url = `${window.location.origin}/pay/${encodeURIComponent(invoiceNumber)}`
@@ -81,12 +83,12 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
       return
     }
     
-    if (!window.confirm(`Are you sure you want to send a payment reminder to ${clientEmail}?`)) return;
+    setModalState({ isOpen: true, type: 'reminder' }); return;
 
     setIsSendingReminder(true)
     const { sendPaymentReminder } = await import('@/app/actions/email')
     const formattedAmount = '₹ ' + total.toFixed(2)
-    const res = await sendPaymentReminder(clientEmail, clientName, invoiceNumber, invoiceId, formattedAmount)
+    const res = await sendPaymentReminder(clientEmail!, clientName, invoiceNumber, invoiceId, formattedAmount)
     if (res.success) {
       toast.success('Reminder sent successfully!')
     } else {
@@ -102,12 +104,12 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
       return
     }
     
-    if (!window.confirm(`Are you sure you want to send this invoice to ${clientEmail}?`)) return;
+    setModalState({ isOpen: true, type: 'send' }); return;
 
     setIsSendingInvoice(true)
     const { sendInvoiceEmail } = await import('@/app/actions/email')
     const formattedAmount = '₹ ' + total.toFixed(2)
-    const res = await sendInvoiceEmail(clientEmail, clientName, invoiceNumber, invoiceId, formattedAmount)
+    const res = await sendInvoiceEmail(clientEmail!, clientName, invoiceNumber, invoiceId, formattedAmount)
     if (res.success) {
       toast.success('Invoice sent successfully!')
       if (status === 'draft') {
@@ -118,6 +120,35 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
     }
     setIsSendingInvoice(false)
     setIsOpen(false)
+  }
+
+  const executeSendReminder = async () => {
+    setIsSendingReminder(true)
+    const { sendPaymentReminder } = await import('@/app/actions/email')
+    const formattedAmount = '₹ ' + total.toFixed(2)
+    const res = await sendPaymentReminder(clientEmail!, clientName, invoiceNumber, invoiceId, formattedAmount)
+    if (res.success) {
+      toast.success('Reminder sent successfully!')
+    } else {
+      toast.error('Failed to send reminder.')
+    }
+    setIsSendingReminder(false)
+  }
+
+  const executeSendInvoice = async () => {
+    setIsSendingInvoice(true)
+    const { sendInvoiceEmail } = await import('@/app/actions/email')
+    const formattedAmount = '₹ ' + total.toFixed(2)
+    const res = await sendInvoiceEmail(clientEmail!, clientName, invoiceNumber, invoiceId, formattedAmount)
+    if (res.success) {
+      toast.success('Invoice sent successfully!')
+      if (status === 'draft') {
+        await updateInvoiceStatus(invoiceId, 'sent')
+      }
+    } else {
+      toast.error('Failed to send invoice.')
+    }
+    setIsSendingInvoice(false)
   }
 
   return (

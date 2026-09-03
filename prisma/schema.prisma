@@ -34,6 +34,8 @@ model Company {
   exchangeRates     ExchangeRate[]
   internalTransfers InternalTransfer[]
   assets            Asset[]
+  customRoles       CustomRole[]
+  invitations       Invitation[]
   contracts         Contract[]
   settings          CompanySettings?
   subscription      Subscription?
@@ -89,6 +91,10 @@ model User {
   company      Company       @relation(fields: [companyId], references: [id])
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  customRoleId String?
+  customRole   CustomRole?   @relation(fields: [customRoleId], references: [id])
+  platformRoleId String?
+  platformRole   PlatformRole? @relation(fields: [platformRoleId], references: [id])
   comments     Comment[]
   tasks        ProjectTask[]
 }
@@ -566,4 +572,50 @@ model SupportAccessToken {
   expiresAt    DateTime
   allowWrite   Boolean  @default(false)
   createdAt    DateTime @default(now())
+}
+
+model CustomRole {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  permissions String   // JSON array of permission strings, e.g. ["CREATE_INVOICE", "VIEW_REPORTS"]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       User[]
+}
+
+model PlatformRole {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  permissions String   // JSON array of strings
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       User[]
+}
+
+model Invitation {
+  id           String   @id @default(cuid())
+  email        String
+  companyId    String?
+  company      Company? @relation(fields: [companyId], references: [id])
+  customRoleId String?
+  platformRoleId String?
+  token        String   @unique
+  status       String   @default("PENDING") // PENDING, ACCEPTED, EXPIRED
+  invitedBy    String   // ID or email of inviter
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([email, token])
 }

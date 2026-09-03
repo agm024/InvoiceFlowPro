@@ -93,44 +93,72 @@ export async function updateProduct(id: string, formData: FormData) {
       // Find and update items in draft invoices/estimates
       const drafts = await prisma.invoice.findMany({
         where: { status: 'draft', companyId, items: { some: { productId: id } } },
-        include: { items: true }
+        include: { items: { include: { product: true } } }
       })
       
       for (const inv of drafts) {
-        let newSubTotal = 0
-        let newTaxTotal = 0
-        
-        for (const item of inv.items) {
+        // 1. Calculate base subtotal
+        let rawSubTotal = 0
+        const itemBases = inv.items.map(item => {
           if (item.productId === id) {
+            // The updated product
             let totalWithoutTax = price * item.quantity
-            let taxAmount = (totalWithoutTax * gstRate) / 100
-            
             if (taxInclusive) {
               totalWithoutTax = (price * item.quantity * 100) / (100 + gstRate)
-              taxAmount = (price * item.quantity) - totalWithoutTax
             }
-            
-            const itemPrice = taxInclusive ? Number((totalWithoutTax / item.quantity).toFixed(2)) : price
-            
+            rawSubTotal += totalWithoutTax
+            return { ...item, _totalWithoutTax: totalWithoutTax, _gstRate: gstRate, _taxInclusive: taxInclusive, _price: price }
+          } else {
+            // Other products
+            let totalWithoutTax = item.price * item.quantity
+            if (item.product?.taxInclusive) {
+              totalWithoutTax = (item.price * item.quantity * 100) / (100 + (item.product.gstRate || 0))
+            }
+            rawSubTotal += totalWithoutTax
+            return { ...item, _totalWithoutTax: totalWithoutTax, _gstRate: item.product?.gstRate || 0, _taxInclusive: item.product?.taxInclusive || false, _price: item.price }
+          }
+        })
+
+        // 2. Calculate invoice discount
+        let discountAmount = 0
+        if (inv.discountType === 'FLAT') {
+          discountAmount = inv.discountValue
+        } else if (inv.discountType === 'PERCENTAGE') {
+          discountAmount = rawSubTotal * (inv.discountValue / 100)
+        }
+
+        const discountRatio = rawSubTotal > 0 ? discountAmount / rawSubTotal : 0
+
+        // 3. Apply prorated tax and update items
+        let newTaxTotal = 0
+        for (const item of itemBases) {
+          const itemDiscount = item._totalWithoutTax * discountRatio
+          const itemDiscountedBase = item._totalWithoutTax - itemDiscount
+          const taxAmount = itemDiscountedBase * (item._gstRate / 100)
+          
+          newTaxTotal += taxAmount
+
+          if (item.productId === id) {
+            const itemPrice = item._taxInclusive ? Number((item._totalWithoutTax / item.quantity).toFixed(2)) : item._price
             await prisma.invoiceItem.update({
               where: { id: item.id },
               data: { price: itemPrice, tax: taxAmount }
             })
-            
-            newSubTotal += totalWithoutTax
-            newTaxTotal += taxAmount
           } else {
-             // For other items, just add their existing values
-             newSubTotal += (item.price * item.quantity)
-             newTaxTotal += item.tax
+            // Update tax on other items too, in case invoice discount ratio changed due to this product price change!
+            await prisma.invoiceItem.update({
+              where: { id: item.id },
+              data: { tax: taxAmount }
+            })
           }
         }
         
-        // Basic total calculation (assumes no complex invoice-level discounts for this quick sync)
-        const newTotal = Math.round(newSubTotal + newTaxTotal)
+        const totalBeforeRoundOff = rawSubTotal - discountAmount + newTaxTotal
+        const newTotal = inv.roundOff ? Math.round(totalBeforeRoundOff) : totalBeforeRoundOff
+        
         await prisma.invoice.update({
           where: { id: inv.id },
-          data: { subTotal: newSubTotal, taxTotal: newTaxTotal, total: newTotal }
+          data: { subTotal: rawSubTotal, taxTotal: newTaxTotal, total: newTotal }
         })
       }
     }

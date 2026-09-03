@@ -25,6 +25,15 @@ export default async function UsersPage() {
     companyName: u.company?.name || "No Company"
   }))
 
+  const platformRoles = await prisma.platformRole.findMany({
+    orderBy: { createdAt: 'desc' }
+  })
+
+  const adminInvitations = await prisma.invitation.findMany({
+    where: { platformRoleId: { not: null }, status: 'PENDING' },
+    orderBy: { createdAt: 'desc' }
+  })
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
@@ -32,7 +41,7 @@ export default async function UsersPage() {
         <p className="text-xs text-zinc-500 mt-1">Directory of all registered user accounts on InvoiceFlowPro.</p>
       </div>
 
-      <UsersTableClient users={formattedUsers} />
+      <UsersTableClient users={formattedUsers} roles={platformRoles} invitations={adminInvitations} />
     </div>
   )
 }

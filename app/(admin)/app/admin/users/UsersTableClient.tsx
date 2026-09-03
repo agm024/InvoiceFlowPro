@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Search, ShieldCheck, ShieldAlert, Key, MoreHorizontal, UserX, UserCheck } from "lucide-react"
+import { Search, ShieldCheck, ShieldAlert, Key, MoreHorizontal, UserX, UserCheck, X } from "lucide-react"
+import { toast } from "react-hot-toast"
+import { inviteSuperAdmin, revokeAdminInvitation } from "./admin-actions"
 
 interface UserRow {
   id: string
@@ -15,13 +17,50 @@ interface UserRow {
 
 interface UsersTableClientProps {
   users: UserRow[]
+  roles?: any[]
+  invitations?: any[]
 }
 
-export function UsersTableClient({ users }: UsersTableClientProps) {
+export function UsersTableClient({ users, roles = [], invitations = [] }: UsersTableClientProps) {
   const [search, setSearch] = useState("")
   const [roleFilter, setRoleFilter] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [isInviting, setIsInviting] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState("")
+  const [selectedRole, setSelectedRole] = useState("")
   const itemsPerPage = 15
+
+  const handleInvite = async () => {
+    if (!inviteEmail || !inviteEmail.includes('@')) {
+      toast.error("Please enter a valid email")
+      return
+    }
+    if (!selectedRole) {
+      toast.error("Please select a platform role")
+      return
+    }
+    
+    toast.promise(inviteSuperAdmin(inviteEmail, selectedRole), {
+      loading: "Sending admin invitation...",
+      success: (res) => {
+        if (res.error) throw new Error(res.error)
+        setIsInviting(false)
+        setInviteEmail("")
+        setSelectedRole("")
+        return "Invitation sent via email!"
+      },
+      error: (err) => err.message
+    })
+  }
+
+  const handleRevoke = async (id: string) => {
+    if (!confirm("Revoke this admin invitation?")) return
+    toast.promise(revokeAdminInvitation(id), {
+      loading: "Revoking...",
+      success: "Invitation revoked",
+      error: "Failed to revoke"
+    })
+  }
 
   // Filter & Search Logic
   const filteredUsers = users.filter(user => {
@@ -75,8 +114,77 @@ export function UsersTableClient({ users }: UsersTableClientProps) {
             <option value="ADMIN">Tenant Admin</option>
             <option value="MEMBER">Tenant Member</option>
           </select>
+          <button 
+            onClick={() => setIsInviting(!isInviting)}
+            className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
+          >
+            {isInviting ? "Cancel" : "Invite Admin"}
+          </button>
         </div>
       </div>
+
+      {isInviting && (
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
+          <h3 className="text-sm font-semibold mb-3">Invite Platform Admin</h3>
+          <div className="flex flex-col md:flex-row gap-3">
+            <input 
+              type="email" 
+              placeholder="Email address"
+              className="flex-1 max-w-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-1.5 text-sm"
+              value={inviteEmail}
+              onChange={e => setInviteEmail(e.target.value)}
+            />
+            <select 
+              className="w-full md:w-64 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-1.5 text-sm"
+              value={selectedRole}
+              onChange={e => setSelectedRole(e.target.value)}
+            >
+              <option value="">Select Platform Role...</option>
+              {roles.map(r => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+            <button 
+              onClick={handleInvite}
+              className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-1.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
+            >
+              Send Invitation
+            </button>
+          </div>
+        </div>
+      )}
+
+      {invitations.length > 0 && (
+        <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm overflow-hidden mb-6">
+          <div className="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 px-4 py-3">
+            <h3 className="text-sm font-semibold flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-orange-500" /> Pending Admin Invitations
+            </h3>
+          </div>
+          <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
+            {invitations.map(inv => (
+              <div key={inv.id} className="flex items-center justify-between p-4 bg-orange-50/30 dark:bg-orange-500/5">
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                    <Key className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{inv.email}</p>
+                    <p className="text-xs text-zinc-500">Invited by {inv.invitedBy} &bull; Role: {roles.find(r => r.id === inv.platformRoleId)?.name || "Unknown"}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => handleRevoke(inv.id)}
+                  className="p-1.5 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded"
+                  title="Revoke Invitation"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Users Table */}
       <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm">
@@ -119,7 +227,7 @@ export function UsersTableClient({ users }: UsersTableClientProps) {
                     {user.companyName}
                   </td>
                   <td className="px-6 py-4 text-zinc-500">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {new Date(user.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">

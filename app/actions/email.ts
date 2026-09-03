@@ -12,10 +12,12 @@ if (token) {
 
 export async function sendEmail({
   to,
+  toName,
   subject,
   html,
 }: {
   to: string;
+  toName?: string;
   subject: string;
   html: string;
 }) {
@@ -34,7 +36,7 @@ export async function sendEmail({
         {
           email_address: {
             address: to,
-            name: to.split('@')[0] || "Client",
+            name: toName || to.split('@')[0] || "Client",
           },
         },
       ],
@@ -179,3 +181,5 @@ export async function sendInvoiceEmail(clientEmail: string, clientName: string, 
     html
   });
 }
+
+

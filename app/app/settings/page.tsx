@@ -25,6 +25,28 @@ export default async function SettingsPage(props: { searchParams: Promise<{ tab?
     select: { supportAccessGranted: true }
   })
 
+  const roles = await prisma.customRole.findMany({
+    where: { companyId },
+    orderBy: { createdAt: 'desc' }
+  })
+
+  const users = await prisma.user.findMany({
+    where: { companyId },
+    include: { customRole: true },
+    orderBy: { createdAt: 'desc' }
+  })
+
+  const invitations = await prisma.invitation.findMany({
+    where: { companyId, status: 'PENDING' },
+    orderBy: { createdAt: 'desc' }
+  })
+
+  const subscription = await prisma.subscription.findUnique({
+    where: { companyId }
+  })
+
+  const { user: currentUser } = await requireCompany()
+
   return (
     <div className="max-w-6xl mx-auto w-full p-4 md:p-8">
       <div className="mb-8">
@@ -39,6 +61,11 @@ export default async function SettingsPage(props: { searchParams: Promise<{ tab?
         internalTransfers={internalTransfers} 
         initialTab={initialTab} 
         supportAccessGranted={company?.supportAccessGranted || false}
+        roles={roles}
+        users={users}
+        invitations={invitations}
+        currentUser={currentUser}
+        subscription={subscription}
       />
     </div>
   )

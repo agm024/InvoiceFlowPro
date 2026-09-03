@@ -43,6 +43,9 @@ export async function saveEmailTemplate(formData: FormData) {
   revalidatePath("/app/admin/system/emails")
 }
 
+import { sendEmail } from "@/app/actions/email"
+import { wrapInTemplate } from "@/lib/email-helpers"
+
 export async function sendTestEmail(templateId: string, email: string) {
   await requireSuperAdmin()
   await requireWriteAccess()
@@ -54,7 +57,32 @@ export async function sendTestEmail(templateId: string, email: string) {
   const template = await prisma.emailTemplate.findUnique({ where: { id: templateId } })
   if (!template) throw new Error("Email template not found")
 
-  // Log simulation to EmailLog
+  // Generate a realistic HTML body by replacing variables with placeholders
+  let htmlToSend = template.htmlBody
+  if (template.variables) {
+    const vars = template.variables.split(',')
+    vars.forEach(v => {
+      htmlToSend = htmlToSend.replace(new RegExp(`\\{\\{${v}\\}\\}`, 'g'), `[Test ${v}]`)
+    })
+  }
+
+  // Send the actual email using ZeptoMail
+  // Format the raw DB template with our standard styling
+  const prettyHtml = htmlToSend.startsWith('<div') 
+    ? htmlToSend 
+    : wrapInTemplate(`<div style="color: #52525b; font-size: 16px; line-height: 1.6;">${htmlToSend.replace(/\n/g, '<br/>')}</div>`);
+
+  const result = await sendEmail({
+    to: email,
+    subject: `[TEST] ${template.subject}`,
+    html: prettyHtml
+  })
+
+  if (!result.success) {
+    throw new Error(result.error || "Failed to send email via ZeptoMail")
+  }
+
+  // Log successful delivery to EmailLog
   await prisma.emailLog.create({
     data: {
       recipient: email,
@@ -69,7 +97,7 @@ export async function sendTestEmail(templateId: string, email: string) {
   await logAudit({
     action: "EMAIL_TEST_SENT",
     targetId: templateId,
-    reason: `Simulated dispatch of ${template.name} template to ${email}`
+    reason: `Dispatched ${template.name} template to ${email} via ZeptoMail`
   })
 
   revalidatePath("/app/admin/system/emails")

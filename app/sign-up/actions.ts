@@ -33,6 +33,18 @@ export async function signUpAction(data: any) {
       }
     })
 
+    await tx.companySettings.create({
+      data: {
+        companyId: company.id,
+        companyName: company.name,
+        businessType: company.businessType,
+        gstin: company.gstin,
+        panNo: company.pan,
+        address: company.address,
+        upiId: 'demo@upi'
+      }
+    })
+
     await tx.user.create({
       data: {
         name,
@@ -58,4 +70,12 @@ export async function signUpAction(data: any) {
     // Re-throw redirect error
     throw error
   }
+}
+
+import { cookies } from 'next/headers'
+
+export async function signUpWithGoogleAction() {
+  const cookieStore = await cookies()
+  cookieStore.set('isSignUp', 'true', { maxAge: 120 })
+  await signIn('google', { redirectTo: '/app' })
 }

@@ -199,22 +199,26 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
         </div>
 
         {/* Business Type */}
-        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
-            Business Type :
-          </label>
-          <select 
-            name="businessType" defaultValue={initialSettings?.businessType || ''}
-            className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors cursor-pointer"
-          >
-            <option value="">Select Type</option>
-            <option value="IT & Software">IT & Software</option>
-            <option value="Consulting">Consulting</option>
-            <option value="Manufacturing">Manufacturing</option>
-            <option value="Retail">Retail</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
+            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 w-full md:w-48 shrink-0">
+              Business Type :
+            </label>
+            <select 
+              name="businessType" defaultValue={initialSettings?.businessType || ''}
+              className="flex-1 rounded-md px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white transition-colors cursor-pointer"
+            >
+              <option value="">Select Type</option>
+              <option value="Freelance / Individual">Freelance / Individual</option>
+              <option value="LLC">LLC</option>
+              <option value="Private Limited">Private Limited</option>
+              <option value="Partnership">Partnership</option>
+              <option value="IT & Software">IT & Software</option>
+              <option value="Retail">Retail</option>
+              <option value="Consulting">Consulting</option>
+              <option value="Manufacturing">Manufacturing</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
         {/* Alternative Contact Number */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-12">
@@ -275,3 +279,5 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     </section>
   )
 }
+
+

@@ -12,10 +12,15 @@ export async function getCompanySettings() {
 
   // Create default settings if they don't exist yet
   if (!settings) {
+    const company = await prisma.company.findUnique({ where: { id: companyId } })
     settings = await prisma.companySettings.create({
       data: {
         companyId,
-        companyName: 'Your Company Name',
+        companyName: company?.name || 'Your Company Name',
+        businessType: company?.businessType,
+        gstin: company?.gstin,
+        panNo: company?.pan,
+        address: company?.address,
         upiId: 'demo@upi'
       }
     })

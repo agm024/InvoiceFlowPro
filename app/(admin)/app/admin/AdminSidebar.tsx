@@ -40,7 +40,8 @@ export function AdminSidebar() {
       group: "Tenants",
       items: [
         { title: "Businesses", href: "/app/admin/businesses", icon: Building2 },
-        { title: "Global Users", href: "/app/admin/users", icon: Users2 }
+        { title: "Global Users", href: "/app/admin/users", icon: Users2 },
+        { title: "Global Roles", href: "/app/admin/users/roles", icon: ShieldCheck }
       ]
     },
     {

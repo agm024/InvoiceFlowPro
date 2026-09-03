@@ -80,7 +80,7 @@ export async function requireCompany() {
   const user = await getCurrentUser()
   
   if (!user.companyId) {
-    throw new Error('User is not associated with a company')
+    redirect('/onboarding')
   }
 
   return {

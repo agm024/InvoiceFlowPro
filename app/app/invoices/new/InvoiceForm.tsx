@@ -223,7 +223,8 @@ export default function InvoiceForm({
   }
 
   const calculatedItems = useMemo(() => {
-    return items.map(item => {
+    // First pass: calculate base amounts before discount
+    const baseItems = items.map(item => {
       let product = products.find(p => p.id === item.productId)
       
       if (!product && adHocMilestoneDetails && adHocMilestoneDetails.productId === item.productId) {
@@ -237,47 +238,65 @@ export default function InvoiceForm({
         } as any
       }
 
-      if (!product) return { ...item, price: item.price || 0, taxAmount: 0, totalWithTax: 0, totalWithoutTax: 0, gstRate: 0, isTaxInclusive: false }
+      if (!product) return { ...item, price: item.price || 0, taxAmount: 0, postDiscountTaxAmount: 0, totalWithTax: 0, totalWithoutTax: 0, gstRate: 0, isTaxInclusive: false }
       
       const itemPrice = typeof item.price === 'number' ? item.price : 0
       const effectiveGstRate = invoiceType === 'EXPORT' ? 0 : product.gstRate
       
       let totalWithoutTax = itemPrice * item.quantity;
-      let taxAmount = 0;
-      let totalWithTax = 0;
-      
       if (product.taxInclusive && invoiceType !== 'EXPORT') {
-        totalWithTax = itemPrice * item.quantity;
-        totalWithoutTax = totalWithTax / (1 + effectiveGstRate / 100);
-        taxAmount = totalWithTax - totalWithoutTax;
-      } else {
-        taxAmount = totalWithoutTax * (effectiveGstRate / 100);
-        totalWithTax = totalWithoutTax + taxAmount;
+        totalWithoutTax = (itemPrice * item.quantity) / (1 + effectiveGstRate / 100);
       }
 
       return {
         ...item,
         price: itemPrice,
-        taxAmount,
-        totalWithTax,
         totalWithoutTax,
         gstRate: effectiveGstRate,
         isTaxInclusive: product.taxInclusive || false
       }
     })
-  }, [items, products, invoiceType])
+
+    const rawSubTotal = baseItems.reduce((sum, item) => sum + (item.totalWithoutTax || 0), 0)
+    
+    let discountAmount = 0
+    if (discountType === 'FLAT') {
+      discountAmount = discountValue
+    } else if (discountType === 'PERCENTAGE') {
+      discountAmount = rawSubTotal * (discountValue / 100)
+    }
+
+    const discountRatio = rawSubTotal > 0 ? discountAmount / rawSubTotal : 0
+
+    // Second pass: compute post-discount taxes
+    return baseItems.map(item => {
+      const taxAmount = (item.totalWithoutTax || 0) * (item.gstRate / 100)
+      const totalWithTax = (item.totalWithoutTax || 0) + taxAmount
+      
+      const itemDiscount = (item.totalWithoutTax || 0) * discountRatio
+      const itemDiscountedBase = (item.totalWithoutTax || 0) - itemDiscount
+      const postDiscountTaxAmount = itemDiscountedBase * (item.gstRate / 100)
+
+      return {
+        ...item,
+        taxAmount,
+        postDiscountTaxAmount,
+        totalWithTax
+      }
+    })
+  }, [items, products, invoiceType, discountType, discountValue])
 
   const subTotal = calculatedItems.reduce((sum, item) => sum + (item.totalWithoutTax || 0), 0)
-  const taxTotal = calculatedItems.reduce((sum, item) => sum + item.taxAmount, 0)
+  const taxTotal = calculatedItems.reduce((sum, item) => sum + item.postDiscountTaxAmount, 0)
   
   let discountAmount = 0
   if (discountType === 'FLAT') {
     discountAmount = discountValue
   } else if (discountType === 'PERCENTAGE') {
-    discountAmount = (subTotal + taxTotal) * (discountValue / 100)
+    discountAmount = subTotal * (discountValue / 100)
   }
 
-  const totalBeforeRoundOff = subTotal + taxTotal - discountAmount
+  const totalBeforeRoundOff = subTotal - discountAmount + taxTotal
   const finalTotal = enableRoundOff ? Math.round(totalBeforeRoundOff) : totalBeforeRoundOff
   const autoRoundOff = enableRoundOff ? finalTotal - totalBeforeRoundOff : 0
 
@@ -589,7 +608,7 @@ export default function InvoiceForm({
                     <div className="flex items-center md:w-24">
                       <input 
                         type="number" min="1" value={item.quantity || ""} 
-                        onChange={e => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                        onChange={e => updateItem(index, 'quantity', e.target.value === '' ? '' : Math.max(1, parseInt(e.target.value) || 1))}
                         className="w-10 md:w-full bg-transparent md:text-center font-medium focus:outline-none focus:bg-zinc-50 dark:focus:bg-zinc-900 rounded md:px-2 md:py-1"
                       />
                     </div>

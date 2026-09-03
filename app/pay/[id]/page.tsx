@@ -13,17 +13,30 @@ export default async function PayInvoicePage({ params }: { params: Promise<{ id:
   const resolvedParams = await params
   let invoice = await prisma.invoice.findUnique({
     where: { id: resolvedParams.id },
-    include: { client: true, items: { include: { product: true } } }
+    include: { client: true, items: { include: { product: true } }, creditNotes: true, debitNotes: true }
   })
 
   if (!invoice) {
     invoice = await prisma.invoice.findFirst({
       where: { invoiceNumber: resolvedParams.id },
-      include: { client: true, items: { include: { product: true } } }
+      include: { client: true, items: { include: { product: true } }, creditNotes: true, debitNotes: true }
     })
   }
 
   if (!invoice) notFound()
+
+  // Prevent paying drafts or cancelled invoices
+  if (invoice.status === 'draft' || invoice.status === 'cancelled') {
+    return (
+      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col items-center justify-center p-6">
+        <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm text-center max-w-sm border border-zinc-200 dark:border-zinc-800">
+          <FileText className="mx-auto text-zinc-400 mb-4" size={48} />
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">Invoice Unavailable</h2>
+          <p className="text-zinc-500 text-sm">This invoice is not available for payment. It may be a draft or cancelled.</p>
+        </div>
+      </div>
+    )
+  }
 
   let companySettings = await prisma.companySettings.findUnique({
     where: { companyId: invoice.companyId }
@@ -31,8 +44,12 @@ export default async function PayInvoicePage({ params }: { params: Promise<{ id:
   if (!companySettings) {
     companySettings = await prisma.companySettings.findFirst()
   }
-  const amountDue = invoice.total - (invoice.amountPaid || 0)
-  const isPaid = invoice.status === 'paid' || amountDue <= 0
+  
+  const cnTotal = (invoice as any).creditNotes?.reduce((sum: number, cn: any) => sum + cn.amount, 0) || 0
+  const dnTotal = (invoice as any).debitNotes?.reduce((sum: number, dn: any) => sum + dn.amount, 0) || 0
+  
+  const amountDue = invoice.total - (invoice.amountPaid || 0) - cnTotal + dnTotal
+  const isPaid = invoice.status === 'paid' || amountDue <= 0.01
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col items-center py-12 px-6">

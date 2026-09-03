@@ -5,35 +5,50 @@ import SettingsForm from './SettingsForm'
 import BankAccountsList from './BankAccountsList'
 import ExchangeRatesList from './ExchangeRatesList'
 import SupportAccessToggle from './SupportAccessToggle'
-import { Building2, Landmark, Currency, Users, Shield, Receipt, Check } from 'lucide-react'
+import RolesClient from './RolesClient'
+import TeamMembersClient from './TeamMembersClient'
+import MyProfileClient from './MyProfileClient'
+import { Building2, Landmark, Currency, Users, Shield, Receipt, Check, UserCircle } from 'lucide-react'
 
 export default function SettingsTabs({ 
   settings, 
   banks, 
   exchangeRates,
   internalTransfers = [],
-  initialTab = 'company',
-  supportAccessGranted = false
+  initialTab = 'profile',
+  supportAccessGranted = false,
+  roles = [],
+  users = [],
+  invitations = [],
+  currentUser = {},
+  subscription = null
 }: { 
   settings: any, 
   banks: any[], 
   exchangeRates: any[],
   internalTransfers?: any[],
   initialTab?: string,
-  supportAccessGranted?: boolean
+  supportAccessGranted?: boolean,
+  roles?: any[],
+  users?: any[],
+  invitations?: any[],
+  currentUser?: any,
+  subscription?: any
 }) {
   const router = useRouter()
-  const activeTab = initialTab || 'company'
+  const activeTab = initialTab || 'profile'
 
   const handleTabChange = (tabId: string) => {
     router.push(`/app/settings?tab=${tabId}`)
   }
 
   const tabs = [
+    { id: 'profile', name: 'My Profile', icon: UserCircle },
     { id: 'company', name: 'Company Profile', icon: Building2 },
     { id: 'banks', name: 'Bank Accounts', icon: Landmark },
     { id: 'currency', name: 'Exchange Rates', icon: Currency },
     { id: 'team', name: 'Team Members', icon: Users },
+    { id: 'roles', name: 'Roles & Permissions', icon: Shield },
   ]
 
   return (
@@ -64,6 +79,10 @@ export default function SettingsTabs({
 
       {/* Content Area */}
       <div className="flex-1 min-w-0">
+        {activeTab === 'profile' && (
+          <MyProfileClient currentUser={currentUser} subscription={subscription} />
+        )}
+
         {activeTab === 'company' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div className="mb-6">
@@ -100,46 +119,11 @@ export default function SettingsTabs({
         )}
 
         {activeTab === 'team' && (
+          <TeamMembersClient users={users} invitations={invitations} roles={roles} />
+        )}
+        {activeTab === 'roles' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Team Management</h2>
-              <p className="text-sm text-zinc-500 mt-1">Manage accountants and team members.</p>
-            </div>
-            <div className="bg-card-bg border border-card-border rounded-xl shadow-sm overflow-hidden">
-              <div className="p-6 border-b border-card-border flex justify-between items-center">
-                <h3 className="font-semibold text-foreground">Active Members (3)</h3>
-                <button className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
-                  Invite Member
-                </button>
-              </div>
-              <div className="divide-y divide-card-border">
-                {[
-                  { name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active' },
-                  { name: 'Alice Smith', email: 'alice@example.com', role: 'Accountant', status: 'Active' },
-                  { name: 'Bob Jones', email: 'bob@example.com', role: 'Viewer', status: 'Pending' },
-                ].map((user, idx) => (
-                  <div key={idx} className="p-4 px-6 flex items-center justify-between hover:bg-sidebar-bg/50 transition-colors">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 font-bold">
-                        {user.name.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-foreground">{user.name}</p>
-                        <p className="text-sm text-zinc-500">{user.email}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400 bg-sidebar-bg px-3 py-1 rounded-full border border-card-border">
-                        {user.role}
-                      </span>
-                      <span className={`text-xs font-bold px-2 py-1 rounded ${user.status === 'Active' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-orange-500/10 text-orange-600'}`}>
-                        {user.status}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <RolesClient initialRoles={roles || []} />
           </div>
         )}
       </div>

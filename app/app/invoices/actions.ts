@@ -91,6 +91,21 @@ export async function createInvoice(data: {
   milestoneId?: string
 }) {
   const { companyId } = await requireCompany()
+
+  // Server-side validation of totals
+  const calculatedSubTotal = data.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const calculatedTaxTotal = data.items.reduce((sum, item) => sum + item.tax, 0)
+  
+  let discountAmount = 0
+  if (data.discountType === 'FLAT') {
+    discountAmount = data.discountValue
+  } else if (data.discountType === 'PERCENTAGE') {
+    discountAmount = calculatedSubTotal * (data.discountValue / 100)
+  }
+  
+  const totalBeforeRoundOff = calculatedSubTotal - discountAmount + calculatedTaxTotal
+  const calculatedTotal = data.roundOff === 1 ? Math.round(totalBeforeRoundOff) : totalBeforeRoundOff
+
   try {
     const newInvoice = await prisma.invoice.create({
       data: {
@@ -109,11 +124,11 @@ export async function createInvoice(data: {
         discountValue: data.discountValue,
         roundOff: data.roundOff,
         exchangeRate: data.exchangeRate || 1.0,
-        subTotal: data.subTotal,
-        taxTotal: data.taxTotal,
-        total: data.total,
+        subTotal: calculatedSubTotal,
+        taxTotal: calculatedTaxTotal,
+        total: calculatedTotal,
         status: data.status === 'paid' ? 'paid' : (data.status || 'draft'),
-        amountPaid: data.status === 'paid' ? data.total : 0,
+        amountPaid: data.status === 'paid' ? calculatedTotal : 0,
         items: {
           create: data.items.map(item => ({
             productId: item.productId,
@@ -191,6 +206,21 @@ export async function updateInvoice(id: string, data: {
   date?: string
 }) {
   const { companyId } = await requireCompany()
+
+  // Server-side validation of totals
+  const calculatedSubTotal = data.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const calculatedTaxTotal = data.items.reduce((sum, item) => sum + item.tax, 0)
+  
+  let discountAmount = 0
+  if (data.discountType === 'FLAT') {
+    discountAmount = data.discountValue
+  } else if (data.discountType === 'PERCENTAGE') {
+    discountAmount = calculatedSubTotal * (data.discountValue / 100)
+  }
+  
+  const totalBeforeRoundOff = calculatedSubTotal - discountAmount + calculatedTaxTotal
+  const calculatedTotal = data.roundOff === 1 ? Math.round(totalBeforeRoundOff) : totalBeforeRoundOff
+
   try {
     // We use a transaction to delete existing items and insert new ones
     await prisma.$transaction(async (tx) => {
@@ -225,12 +255,12 @@ export async function updateInvoice(id: string, data: {
           discountValue: data.discountValue,
           roundOff: data.roundOff,
           exchangeRate: data.exchangeRate,
-          subTotal: data.subTotal,
-          taxTotal: data.taxTotal,
-          total: data.total,
+          subTotal: calculatedSubTotal,
+          taxTotal: calculatedTaxTotal,
+          total: calculatedTotal,
           ...(data.status ? { 
             status: data.status,
-            ...(data.status === 'paid' ? { amountPaid: data.total } : {}) 
+            ...(data.status === 'paid' ? { amountPaid: calculatedTotal } : {}) 
           } : {}),
           items: {
             create: data.items.map(item => ({
@@ -322,4 +352,3 @@ export async function recordPayment(id: string, amountReceived: number, bankId?:
     return { error: 'Failed to record payment' }
   }
 }
-
