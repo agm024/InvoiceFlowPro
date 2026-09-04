@@ -87,3 +87,17 @@ export async function removeTeamMember(id: string) {
   revalidatePath("/app/settings")
   return { success: true }
 }
+
+export async function updateTeamMemberRole(userId: string, customRoleId: string | null) {
+  const { companyId } = await requireCompany()
+  await requireWriteAccess()
+
+  await prisma.user.update({
+    where: { id: userId, companyId },
+    data: { customRoleId }
+  })
+
+  await logAudit({ action: "TEAM_ROLE_UPDATED", targetId: userId, metadata: { customRoleId } })
+  revalidatePath("/app/settings")
+  return { success: true }
+}
