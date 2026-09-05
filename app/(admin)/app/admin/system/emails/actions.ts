@@ -18,7 +18,12 @@ export async function saveEmailTemplate(formData: FormData) {
     throw new Error("All fields are required to save an email template.")
   }
 
-  const plainTextBody = htmlBody.replace(/<[^>]*>/g, "")
+  let plainTextBody = htmlBody
+  let prev = ""
+  while (plainTextBody !== prev) {
+    prev = plainTextBody
+    plainTextBody = plainTextBody.replace(/<[^>]*>/g, "")
+  }
   const variablesArray: string[] = []
   const regex = /\{\{([^}]+)\}\}/g
   let match
