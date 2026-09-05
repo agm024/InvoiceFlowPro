@@ -9,10 +9,7 @@ content = content.replace(
   '  subscription?: any\n}) {',
   '  subscription?: any\n  isUserLimitReached?: boolean\n}) {'
 );
-content = content.replace(
-  '<TeamMembersClient users={users} invitations={invitations} roles={roles} isLimitReached={isUserLimitReached} />',
-  '<TeamMembersClient users={users} invitations={invitations} roles={roles} isLimitReached={isUserLimitReached} />'
-);
+
 
 // If it wasn't replaced before:
 if (!content.includes('isLimitReached={isUserLimitReached}')) {
