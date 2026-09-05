@@ -1,4 +1,7 @@
-import { getClients } from './actions'
+const fs = require('fs');
+let content = fs.readFileSync('app/app/clients/page.tsx', 'utf8');
+
+content = `import { getClients } from './actions'
 import ClientsClient from './ClientsClient'
 import prisma from '@/utils/prisma'
 import { requireCompany } from '@/lib/auth-context'
@@ -21,4 +24,6 @@ export default async function ClientsPage() {
   }
   
   return <ClientsClient initialClients={clients} isLimitReached={isLimitReached} />
-}
+}`;
+
+fs.writeFileSync('app/app/clients/page.tsx', content, 'utf8');

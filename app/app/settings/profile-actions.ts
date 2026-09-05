@@ -1,7 +1,7 @@
 'use server'
 
 import prisma from '@/utils/prisma'
-import { requireCompany } from '@/lib/auth-context'
+import { requireCompany, requireWriteAccess } from '@/lib/auth-context'
 import bcrypt from 'bcryptjs'
 
 export async function changePasswordAction(currentPassword: string, newPassword: string) {
@@ -28,6 +28,7 @@ export async function changePasswordAction(currentPassword: string, newPassword:
 }
 
 export async function deleteAccountAction() {
+  await requireWriteAccess()
   const { user, companyId } = await requireCompany()
 
   // Verify they are the admin (or superadmin)

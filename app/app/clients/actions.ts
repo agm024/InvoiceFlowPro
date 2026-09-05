@@ -41,6 +41,22 @@ async function generateUniqueSlug(name: string, model: any, companyId: string, e
 
 export async function createClient(formData: FormData) {
   const { companyId } = await requireCompany()
+
+  const company = await prisma.company.findUnique({
+    where: { id: companyId },
+    include: { subscription: { include: { plan: true } } }
+  })
+  if (!company) return { error: "Company not found" }
+
+  if (company.subscription?.plan?.clientLimits) {
+    const currentClientCount = await prisma.client.count({
+      where: { companyId }
+    })
+    
+    if (currentClientCount >= company.subscription.plan.clientLimits) {
+      return { error: `You have reached your limit of ${company.subscription.plan.clientLimits} clients. Please upgrade your plan.` }
+    }
+  }
   const name = formData.get('name') as string
   const email = formData.get('email') as string
   const phone = formData.get('phone') as string

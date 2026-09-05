@@ -41,6 +41,17 @@ export default async function SettingsPage(props: { searchParams: Promise<{ tab?
     orderBy: { createdAt: 'desc' }
   })
 
+  const companyFull = await prisma.company.findUnique({
+    where: { id: companyId },
+    include: { subscription: { include: { plan: true } } }
+  })
+  let isUserLimitReached = false;
+  if (companyFull?.subscription?.plan?.userLimits) {
+    if ((users.length + invitations.length) >= companyFull.subscription.plan.userLimits) {
+      isUserLimitReached = true;
+    }
+  }
+
   const subscription = await prisma.subscription.findUnique({
     where: { companyId }
   })

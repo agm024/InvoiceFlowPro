@@ -97,6 +97,22 @@ export async function getInvoiceDetails(id: string) {
 
 export async function convertToInvoice(id: string) {
   const { companyId } = await requireCompany()
+
+  const company = await prisma.company.findUnique({
+    where: { id: companyId },
+    include: { subscription: { include: { plan: true } } }
+  })
+  if (!company) return { error: "Company not found" }
+
+  if (company.subscription?.plan?.invoiceLimits) {
+    const currentInvoiceCount = await prisma.invoice.count({
+      where: { companyId }
+    })
+    
+    if (currentInvoiceCount >= company.subscription.plan.invoiceLimits) {
+      return { error: `You have reached your limit of ${company.subscription.plan.invoiceLimits} invoices. Please upgrade your plan.` }
+    }
+  }
   try {
     const existing = await prisma.invoice.findFirst({ where: { id, companyId }, include: { items: true } })
     if (!existing || existing.invoiceType !== 'QUOTATION') return { error: 'Invalid quotation' }

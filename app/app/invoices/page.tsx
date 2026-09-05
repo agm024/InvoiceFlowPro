@@ -11,6 +11,21 @@ export const metadata = {
 export default async function InvoicesPage() {
   const allInvoices = await getInvoices()
   const invoices = allInvoices.filter(inv => inv.invoiceType !== 'QUOTATION')
+  const { requireCompany } = await import('@/lib/auth-context')
+  const prisma = (await import('@/utils/prisma')).default
+  const { companyId } = await requireCompany()
+  const company = await prisma.company.findUnique({
+    where: { id: companyId },
+    include: { subscription: { include: { plan: true } } }
+  })
+  let isLimitReached = false;
+  if (company?.subscription?.plan?.invoiceLimits) {
+    const currentCount = await prisma.invoice.count({ where: { companyId } })
+    if (currentCount >= company.subscription.plan.invoiceLimits) {
+      isLimitReached = true;
+    }
+  }
+
   const settings = await getCompanySettings()
   const banks = await getBanks()
 

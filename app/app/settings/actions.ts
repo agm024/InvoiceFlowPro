@@ -3,6 +3,7 @@
 import prisma from '@/utils/prisma'
 import { revalidatePath } from 'next/cache'
 import { requireCompany } from '@/lib/auth-context'
+import { redirect } from 'next/navigation'
 
 export async function getCompanySettings() {
   const { companyId } = await requireCompany()

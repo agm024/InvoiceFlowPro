@@ -37,6 +37,7 @@ export async function impersonateCompany(companyId: string, reason: string, allo
   cookieStore.set('impersonatedCompanyId', companyId, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
     path: '/'
   })
 
@@ -44,6 +45,7 @@ export async function impersonateCompany(companyId: string, reason: string, allo
     cookieStore.set('impersonateWriteEnabled', 'true', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       path: '/'
     })
   } else {

@@ -5,7 +5,7 @@ import { Users, Mail, X, Check, Trash2, ShieldAlert } from "lucide-react"
 import { toast } from "react-hot-toast"
 import { inviteTeamMember, revokeInvitation, removeTeamMember, updateTeamMemberRole } from "./team-actions"
 
-export default function TeamMembersClient({ users, invitations, roles }: { users: any[], invitations: any[], roles: any[] }) {
+export default function TeamMembersClient({ users, invitations, roles, isLimitReached }: { users: any[], invitations: any[], roles: any[], isLimitReached?: boolean }) {
   const [isInviting, setIsInviting] = useState(false)
   const [email, setEmail] = useState("")
   const [selectedRole, setSelectedRole] = useState("")
@@ -63,6 +63,14 @@ export default function TeamMembersClient({ users, invitations, roles }: { users
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+      {isLimitReached && (
+        <div className="mb-6 bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400 px-4 py-3 rounded-xl border border-red-200 dark:border-red-900/50 flex items-center justify-between font-medium text-sm w-full">
+          <span>You have reached your plan's team member limit. Please upgrade your subscription to invite more members.</span>
+          <a href="/app/settings?tab=pricing" className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-red-700 transition-colors font-semibold">
+            Upgrade Plan
+          </a>
+        </div>
+      )}
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-foreground">Team Management</h2>
         <p className="text-sm text-zinc-500 mt-1">Manage accountants and team members.</p>
@@ -109,12 +117,22 @@ export default function TeamMembersClient({ users, invitations, roles }: { users
         <div className="p-6 border-b border-card-border flex justify-between items-center">
           <h3 className="font-semibold text-foreground">Active & Pending Members</h3>
           {!isInviting && (
-            <button 
-              onClick={() => setIsInviting(true)}
-              className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
-            >
-              Invite Member
-            </button>
+            isLimitReached ? (
+              <button 
+                disabled
+                className="bg-zinc-200 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-600 px-4 py-2 rounded-lg text-sm font-semibold transition-opacity cursor-not-allowed"
+                title="Team member limit reached"
+              >
+                Invite Member
+              </button>
+            ) : (
+              <button 
+                onClick={() => setIsInviting(true)}
+                className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
+              >
+                Invite Member
+              </button>
+            )
           )}
         </div>
         

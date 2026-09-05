@@ -55,7 +55,7 @@ export default async function NewInvoicePage({
     }
   }
 
-  const { clients, products, banks, exchangeRates, nextInvoiceNumber, companySettings } = await getInvoiceFormData()
+  const { clients, products, banks, exchangeRates, nextInvoiceNumber, companySettings, isLimitReached } = await getInvoiceFormData()
 
   return (
     <div className="p-4 md:p-8 max-w-[1600px] mx-auto w-full">
@@ -75,6 +75,7 @@ export default async function NewInvoicePage({
         milestoneId={milestoneId}
         adHocMilestoneDetails={adHocMilestoneDetails}
         companySettings={companySettings}
+        isLimitReached={isLimitReached}
       />
     </div>
   )

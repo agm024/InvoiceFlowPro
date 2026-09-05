@@ -21,7 +21,8 @@ export default function SettingsTabs({
   users = [],
   invitations = [],
   currentUser = {},
-  subscription = null
+  subscription = null,
+  isUserLimitReached
 }: { 
   settings: any, 
   banks: any[], 
@@ -33,7 +34,8 @@ export default function SettingsTabs({
   users?: any[],
   invitations?: any[],
   currentUser?: any,
-  subscription?: any
+  subscription?: any,
+  isUserLimitReached?: boolean
 }) {
   const router = useRouter()
   const activeTab = initialTab || 'profile'
@@ -119,7 +121,7 @@ export default function SettingsTabs({
         )}
 
         {activeTab === 'team' && (
-          <TeamMembersClient users={users} invitations={invitations} roles={roles} />
+          <TeamMembersClient users={users} invitations={invitations} roles={roles} isLimitReached={isUserLimitReached} />
         )}
         {activeTab === 'roles' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">

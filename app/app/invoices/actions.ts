@@ -65,7 +65,20 @@ export async function getInvoiceFormData() {
   
   const companySettings = await prisma.companySettings.findFirst({ where: { companyId } })
 
-  return { clients, products, banks, exchangeRates, nextInvoiceNumber, nextQuotationNumber, companySettings }
+  const company = await prisma.company.findUnique({
+    where: { id: companyId },
+    include: { subscription: { include: { plan: true } } }
+  })
+  
+  let isLimitReached = false;
+  if (company?.subscription?.plan?.invoiceLimits) {
+    const currentCount = await prisma.invoice.count({ where: { companyId } })
+    if (currentCount >= company.subscription.plan.invoiceLimits) {
+      isLimitReached = true;
+    }
+  }
+
+  return { clients, products, banks, exchangeRates, nextInvoiceNumber, nextQuotationNumber, companySettings, isLimitReached }
 }
 
 export async function createInvoice(data: {
@@ -91,6 +104,22 @@ export async function createInvoice(data: {
   milestoneId?: string
 }) {
   const { companyId } = await requireCompany()
+
+  const company = await prisma.company.findUnique({
+    where: { id: companyId },
+    include: { subscription: { include: { plan: true } } }
+  })
+  if (!company) return { error: "Company not found" }
+
+  if (company.subscription?.plan?.invoiceLimits) {
+    const currentInvoiceCount = await prisma.invoice.count({
+      where: { companyId }
+    })
+    
+    if (currentInvoiceCount >= company.subscription.plan.invoiceLimits) {
+      return { error: `You have reached your limit of ${company.subscription.plan.invoiceLimits} invoices. Please upgrade your plan.` }
+    }
+  }
 
   // Server-side validation of totals
   const calculatedSubTotal = data.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)

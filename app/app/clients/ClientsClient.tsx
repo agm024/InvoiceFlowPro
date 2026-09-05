@@ -31,7 +31,7 @@ const statusLabels: Record<string, string> = {
   LOST: 'Lost / Inactive'
 }
 
-export default function ClientsClient({ initialClients }: { initialClients: Client[] }) {
+export default function ClientsClient({ initialClients, isLimitReached }: { initialClients: Client[], isLimitReached?: boolean }) {
   const [clients, setClients] = useState(initialClients)
   const [editingClient, setEditingClient] = useState<Client | null>(null)
   const [searchQuery, setSearchQuery] = useState('')

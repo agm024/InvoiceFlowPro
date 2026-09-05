@@ -72,7 +72,7 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
     if (res.success) {
       window.location.href = `/app/invoices/${res.newInvoiceId}`
     } else {
-      toast.error('Failed to convert to invoice')
+      toast.error(res.error || 'Failed to convert to invoice')
     }
     setIsOpen(false)
   }

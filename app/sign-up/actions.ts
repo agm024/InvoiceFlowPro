@@ -76,6 +76,12 @@ import { cookies } from 'next/headers'
 
 export async function signUpWithGoogleAction() {
   const cookieStore = await cookies()
-  cookieStore.set('isSignUp', 'true', { maxAge: 120 })
+  cookieStore.set('isSignUp', 'true', { 
+    maxAge: 120,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/'
+  })
   await signIn('google', { redirectTo: '/app' })
 }

@@ -27,7 +27,8 @@ export default function InvoiceForm({
   existingInvoice,
   milestoneId,
   adHocMilestoneDetails,
-  companySettings
+  companySettings,
+  isLimitReached
 }: { 
   clients: Client[], 
   products: Product[],
@@ -38,7 +39,8 @@ export default function InvoiceForm({
   existingInvoice?: any,
   milestoneId?: string,
   adHocMilestoneDetails?: any,
-  companySettings?: any
+  companySettings?: any,
+  isLimitReached?: boolean
 }) {
   const router = useRouter()
   
@@ -120,6 +122,7 @@ export default function InvoiceForm({
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null)
   
   const [submitAction, setSubmitAction] = useState<'sent' | 'draft' | 'sent_and_print' | 'paid'>('draft')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [enableRoundOff, setEnableRoundOff] = useState(existingInvoice ? existingInvoice.roundOff !== 0 : true)
 
 
@@ -302,6 +305,10 @@ export default function InvoiceForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (isSubmitting) return;
+    setIsSubmitting(true)
+    if (isSubmitting) return;
+    setIsSubmitting(true)
     if (!clientId) { toast.error('Please select a client'); return }
     if (items.length === 0 || !items[0].productId) { toast.error('Please add at least one product'); return }
 
@@ -371,7 +378,8 @@ export default function InvoiceForm({
         { duration: 5000 }
       )
     } else {
-      toast.error('Error saving document')
+      toast.error(res.error || 'Error saving document')
+      setIsSubmitting(false)
     }
   }
 
@@ -764,21 +772,21 @@ export default function InvoiceForm({
             
             {/* Desktop layout: standard flex-col stack */}
             <div className="hidden sm:flex flex-col gap-3">
-              <button type="submit" onClick={() => setSubmitAction('sent_and_print')} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-4 py-3 rounded-xl font-bold transition-all hover:bg-black dark:hover:bg-zinc-200 active:scale-[0.98] flex items-center justify-center gap-2">
+              <button type="submit" onClick={() => setSubmitAction('sent_and_print')} disabled={isSubmitting} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-4 py-3 rounded-xl font-bold transition-all hover:bg-black dark:hover:bg-zinc-200 active:scale-[0.98] flex items-center justify-center gap-2">
                 Save & Print
               </button>
               
-              <button type="submit" onClick={() => setSubmitAction('sent')} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm px-4 py-3 rounded-xl font-bold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all active:scale-[0.98]">
+              <button type="submit" onClick={() => setSubmitAction('sent')} disabled={isSubmitting} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm px-4 py-3 rounded-xl font-bold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all active:scale-[0.98]">
                 Save & Issue
               </button>
 
-              <button type="submit" onClick={() => setSubmitAction('paid')} className="w-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-3 rounded-xl font-bold hover:bg-emerald-500/20 transition-all active:scale-[0.98]">
+              <button type="submit" onClick={() => setSubmitAction('paid')} disabled={isSubmitting} className="w-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-4 py-3 rounded-xl font-bold hover:bg-emerald-500/20 transition-all active:scale-[0.98]">
                 Mark as Paid
               </button>
               
               <div className="h-px bg-zinc-200 dark:bg-zinc-800 my-2 w-full" />
               
-              <button type="submit" onClick={() => setSubmitAction('draft')} className="w-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 px-4 py-2.5 rounded-xl font-semibold hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
+              <button type="submit" onClick={() => setSubmitAction('draft')} disabled={isSubmitting} className="w-full bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 px-4 py-2.5 rounded-xl font-semibold hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
                 Save as Draft
               </button>
               
@@ -794,10 +802,10 @@ export default function InvoiceForm({
                 <span className="text-base font-bold leading-tight truncate w-full text-primary">{currency} {finalTotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
               </div>
               <div className="flex items-center gap-2 flex-[1.2]">
-                <button type="submit" onClick={() => setSubmitAction('draft')} className="flex-1 bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 px-2 py-3 rounded-xl font-bold hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-xs text-center whitespace-nowrap">
+                <button type="submit" onClick={() => setSubmitAction('draft')} disabled={isSubmitting} className="flex-1 bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 px-2 py-3 rounded-xl font-bold hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-xs text-center whitespace-nowrap">
                   Draft
                 </button>
-                <button type="submit" onClick={() => setSubmitAction('sent')} className="flex-[1.5] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-2 py-3 rounded-xl font-bold transition-all active:scale-[0.98] text-sm text-center whitespace-nowrap">
+                <button type="submit" onClick={() => setSubmitAction('sent')} disabled={isSubmitting} className="flex-[1.5] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-2 py-3 rounded-xl font-bold transition-all active:scale-[0.98] text-sm text-center whitespace-nowrap">
                   Issue Now
                 </button>
               </div>
