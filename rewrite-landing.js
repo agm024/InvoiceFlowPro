@@ -1,4 +1,5 @@
-import Link from 'next/link'
+const fs = require('fs');
+const content = `import Link from 'next/link'
 import { MarketingNav, MarketingFooter } from '@/components/MarketingShared'
 import { ArrowRight, CheckCircle2, Zap, Users, Globe, Receipt } from 'lucide-react'
 import { auth } from '@/auth'
@@ -89,7 +90,7 @@ export default async function LandingPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center items-stretch">
             {plans.map(plan => (
-              <div key={plan.id} className={`flex flex-col bg-white dark:bg-zinc-900 rounded-3xl p-8 border ${plan.isPopular ? 'border-blue-500 shadow-xl shadow-blue-500/10' : 'border-zinc-200 dark:border-zinc-800'} relative`}>
+              <div key={plan.id} className={\`flex flex-col bg-white dark:bg-zinc-900 rounded-3xl p-8 border \${plan.isPopular ? 'border-blue-500 shadow-xl shadow-blue-500/10' : 'border-zinc-200 dark:border-zinc-800'} relative\`}>
                 {plan.isPopular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-md">
                     Most Popular
@@ -105,15 +106,15 @@ export default async function LandingPage() {
                 <ul className="space-y-4 mb-8 flex-1">
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="w-6 h-6 text-blue-500 shrink-0" />
-                    <span className="text-zinc-700 dark:text-zinc-300">{plan.userLimits === null ? 'Unlimited Users' : `Up to ${plan.userLimits} Users`}</span>
+                    <span className="text-zinc-700 dark:text-zinc-300">{plan.userLimits === null ? 'Unlimited Users' : \`Up to \${plan.userLimits} Users\`}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="w-6 h-6 text-blue-500 shrink-0" />
-                    <span className="text-zinc-700 dark:text-zinc-300">{plan.clientLimits === null ? 'Unlimited Clients' : `Up to ${plan.clientLimits} Clients`}</span>
+                    <span className="text-zinc-700 dark:text-zinc-300">{plan.clientLimits === null ? 'Unlimited Clients' : \`Up to \${plan.clientLimits} Clients\`}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="w-6 h-6 text-blue-500 shrink-0" />
-                    <span className="text-zinc-700 dark:text-zinc-300">{plan.invoiceLimits === null ? 'Unlimited Invoices' : `Up to ${plan.invoiceLimits} Invoices`}</span>
+                    <span className="text-zinc-700 dark:text-zinc-300">{plan.invoiceLimits === null ? 'Unlimited Invoices' : \`Up to \${plan.invoiceLimits} Invoices\`}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="w-6 h-6 text-blue-500 shrink-0" />
@@ -123,7 +124,7 @@ export default async function LandingPage() {
                 
                 <Link 
                   href="/sign-up" 
-                  className={`w-full py-4 px-6 rounded-xl font-bold text-center transition-all ${plan.isPopular ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}
+                  className={\`w-full py-4 px-6 rounded-xl font-bold text-center transition-all \${plan.isPopular ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'}\`}
                 >
                   {plan.monthlyPrice === 0 ? 'Get Started' : 'Subscribe Now'}
                 </Link>
@@ -138,3 +139,13 @@ export default async function LandingPage() {
     </div>
   )
 }
+`;
+fs.writeFileSync('app/page.tsx', content, 'utf8');
+
+// Also update the footer in MarketingShared.tsx
+let footerText = fs.readFileSync('components/MarketingShared.tsx', 'utf8');
+footerText = footerText.replace(
+    /&copy; \{new Date\(\)\.getFullYear\(\)\} InvoiceFlowPro\. All rights reserved\./g,
+    '&copy; {new Date().getFullYear()} Global One Logistics And Distribution. All rights reserved.'
+);
+fs.writeFileSync('components/MarketingShared.tsx', footerText, 'utf8');

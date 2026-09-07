@@ -61,7 +61,7 @@ export function MarketingFooter() {
         </div>
       </div>
       <div className="text-center text-zinc-500 text-sm">
-        &copy; {new Date().getFullYear()} InvoiceFlowPro. All rights reserved.
+        &copy; {new Date().getFullYear()} Global One Logistics And Distribution. All rights reserved.
       </div>
     </footer>
   )
