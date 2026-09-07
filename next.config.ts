@@ -3,11 +3,12 @@ import type { NextConfig } from "next";
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://o4512011724587008.ingest.us.sentry.io;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://o4512011724587008.ingest.us.sentry.io https://va.vercel-scripts.com;
+    worker-src 'self' blob:;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src 'self' https://fonts.gstatic.com;
   img-src 'self' blob: data: https:;
-  connect-src 'self' https://o4512011724587008.ingest.us.sentry.io https://accounts.google.com;
+  connect-src 'self' https://o4512011724587008.ingest.us.sentry.io https://accounts.google.com https://vitals.vercel-insights.com;
   object-src 'none';
   base-uri 'self';
   form-action 'self';

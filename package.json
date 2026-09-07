@@ -19,6 +19,7 @@
     "date-fns": "^4.4.0",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
+    "glob": "^13.0.6",
     "html-to-image": "^1.11.13",
     "jspdf": "^4.2.1",
     "lucide-react": "^1.24.0",

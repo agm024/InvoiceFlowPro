@@ -1,4 +1,5 @@
 'use client'
+import UpgradeModal from '@/components/UpgradeModal'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -41,6 +42,7 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
   const [emailMessage, setEmailMessage] = useState('')
   const [selectedClientForEmail, setSelectedClientForEmail] = useState<Client | null>(null)
   const [isSubmittingEmail, setIsSubmittingEmail] = useState(false)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   useEffect(() => {
     // Fire and forget to generate missing tokens
@@ -310,6 +312,13 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
 
 
       {/* Email Modal */}
+      <UpgradeModal 
+        isOpen={showUpgradeModal} 
+        onClose={() => setShowUpgradeModal(false)} 
+        title="Client Limit Reached" 
+        message="You have reached the maximum number of clients allowed on your current plan. Upgrade your plan to add more clients." 
+      />
+
       {emailModalOpen && selectedClientForEmail && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isSubmittingEmail && setEmailModalOpen(false)}></div>

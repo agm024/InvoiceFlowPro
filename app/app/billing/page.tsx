@@ -3,6 +3,7 @@ import prisma from '@/utils/prisma'
 import { AlertCircle, ShieldAlert } from 'lucide-react'
 import BillingClient from './BillingClient'
 import { cancelSubscription } from './actions'
+import { format } from 'date-fns'
 
 export default async function BillingPage() {
   const { companyId } = await requireCompany()
@@ -49,7 +50,7 @@ export default async function BillingPage() {
               <p><strong>Status:</strong> <span className={`capitalize font-medium ${subscription.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>{subscription.status.replace('_', ' ')}</span></p>
               <p><strong>Billing Interval:</strong> <span className="capitalize">{subscription.billingInterval || 'Month'}</span></p>
               {subscription.currentPeriodEnd && (
-                <p><strong>Renews on:</strong> {new Date(subscription.currentPeriodEnd).toLocaleDateString()}</p>
+                <p><strong>Renews on:</strong> {format(new Date(subscription.currentPeriodEnd), 'MMM dd, yyyy')}</p>
               )}
             </div>
           ) : (

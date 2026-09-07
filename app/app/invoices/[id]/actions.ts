@@ -2,10 +2,11 @@
 
 import prisma from '@/utils/prisma'
 import { revalidatePath } from 'next/cache'
-import { requireCompany } from '@/lib/auth-context'
+import { requireCompany, requireWriteAccess } from '@/lib/auth-context'
 
 export async function updateInvoiceStatus(id: string, status: string) {
   const { companyId } = await requireCompany()
+  await requireWriteAccess()
   try {
     // Prisma extended where allows filtering by companyId
     await prisma.invoice.updateMany({
@@ -24,6 +25,7 @@ export async function updateInvoiceStatus(id: string, status: string) {
 
 export async function recordPayment(id: string, amountReceived: number, paymentId?: string) {
   const { companyId } = await requireCompany()
+  await requireWriteAccess()
   try {
     const invoice = await prisma.invoice.findFirst({ 
       where: { id, companyId },
@@ -97,6 +99,7 @@ export async function getInvoiceDetails(id: string) {
 
 export async function convertToInvoice(id: string) {
   const { companyId } = await requireCompany()
+  await requireWriteAccess()
 
   const company = await prisma.company.findUnique({
     where: { id: companyId },
@@ -110,7 +113,7 @@ export async function convertToInvoice(id: string) {
     })
     
     if (currentInvoiceCount >= company.subscription.plan.invoiceLimits) {
-      return { error: `You have reached your limit of ${company.subscription.plan.invoiceLimits} invoices. Please upgrade your plan.` }
+      // return { error: ... } // Unlimited invoices!
     }
   }
   try {
@@ -179,6 +182,7 @@ export async function convertToInvoice(id: string) {
 
 export async function issueCreditNote(invoiceId: string, amount: number, taxAmount: number, reason: string) {
   const { companyId } = await requireCompany()
+  await requireWriteAccess()
   try {
     const invoice = await prisma.invoice.findFirst({ where: { id: invoiceId, companyId } })
     if (!invoice) return { error: 'Invoice not found' }
@@ -218,6 +222,7 @@ export async function issueCreditNote(invoiceId: string, amount: number, taxAmou
 
 export async function issueDebitNote(invoiceId: string, amount: number, taxAmount: number, reason: string) {
   const { companyId } = await requireCompany()
+  await requireWriteAccess()
   try {
     const invoice = await prisma.invoice.findFirst({ where: { id: invoiceId, companyId } })
     if (!invoice) return { error: 'Invoice not found' }
@@ -257,6 +262,7 @@ export async function issueDebitNote(invoiceId: string, amount: number, taxAmoun
 
 export async function cancelInvoice(invoiceId: string, reason: string) {
   const { companyId } = await requireCompany()
+  await requireWriteAccess()
   try {
     const invoice = await prisma.invoice.findFirst({ where: { id: invoiceId, companyId } })
     if (!invoice) return { error: 'Invoice not found' }

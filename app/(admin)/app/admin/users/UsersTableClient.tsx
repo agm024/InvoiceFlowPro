@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Search, ShieldCheck, ShieldAlert, Key, MoreHorizontal, UserX, UserCheck, X } from "lucide-react"
 import { toast } from "react-hot-toast"
 import { inviteSuperAdmin, revokeAdminInvitation } from "./admin-actions"
+import { format } from 'date-fns'
 
 interface UserRow {
   id: string
@@ -227,7 +228,7 @@ export function UsersTableClient({ users, roles = [], invitations = [] }: UsersT
                     {user.companyName}
                   </td>
                   <td className="px-6 py-4 text-zinc-500">
-                    {new Date(user.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    {format(new Date(user.createdAt), 'MMM dd, yyyy')}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">

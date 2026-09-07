@@ -6,6 +6,7 @@ import { getStateNameByCode } from '@/utils/stateCodes'
 import { slugify } from '@/utils/slugify'
 import crypto from 'crypto'
 import { requireCompany } from '@/lib/auth-context'
+import { checkFeatureLimit } from '@/lib/billing'
 
 export async function getClients() {
   const { companyId } = await requireCompany()

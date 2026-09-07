@@ -19,6 +19,9 @@ export default async function EstimateViewPage({ params }: { params: Promise<{ i
 
   if (!estimate) notFound()
 
+  const subscription = await prisma.subscription.findUnique({ where: { companyId: estimate.companyId }, include: { plan: true } })
+  const isFree = !subscription || subscription.plan.name.toLowerCase() === 'free'
+
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto w-full">
       <div className="flex justify-between items-center mb-6">

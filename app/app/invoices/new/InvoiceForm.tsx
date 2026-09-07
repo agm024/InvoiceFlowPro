@@ -125,6 +125,15 @@ export default function InvoiceForm({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [enableRoundOff, setEnableRoundOff] = useState(existingInvoice ? existingInvoice.roundOff !== 0 : true)
 
+  useEffect(() => {
+    if (isProductModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; }
+  }, [isProductModalOpen]);
+
 
 
   // Auto-change to EXPORT if currency is not INR
@@ -856,7 +865,7 @@ export default function InvoiceForm({
                 </div>
                 <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-card-border">
                   <button type="button" onClick={() => setEditingProduct(null)} className="px-5 py-2.5 font-medium text-zinc-500 hover:bg-sidebar-bg rounded-lg transition-colors">Back</button>
-                  <button type="submit" className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm">Save Product</button>
+                  <button type="submit" className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm">Save Product</button>
                 </div>
               </form>
             ) : (

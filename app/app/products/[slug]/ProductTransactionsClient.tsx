@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 'use client'
 
 import { useState } from 'react'
@@ -70,7 +71,7 @@ export default function ProductTransactionsClient({ invoiceItems }: { invoiceIte
                   <tr key={item.id} className="hover:bg-sidebar-bg/50 transition-colors">
                     <td className="px-6 py-4 font-medium">{item.invoice.invoiceNumber}</td>
                     <td className="px-6 py-4">{item.invoice.client.name}</td>
-                    <td className="px-6 py-4 text-zinc-500">{new Date(item.invoice.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                    <td className="px-6 py-4 text-zinc-500">{format(new Date(item.invoice.date), 'MMM dd, yyyy')}</td>
                     <td className="px-6 py-4 text-right">{item.price.toFixed(2)}</td>
                     <td className="px-6 py-4 text-right">{priceWithTax.toFixed(2)}</td>
                     <td className="px-6 py-4 text-right">{item.quantity}</td>

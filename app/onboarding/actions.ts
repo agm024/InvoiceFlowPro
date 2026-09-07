@@ -60,6 +60,19 @@ export async function completeGoogleOnboardingAction(data: any) {
         isSuperAdmin: false
       }
     })
+
+    const freePlan = await tx.plan.findFirst({ where: { name: 'Free' } });
+    if (freePlan) {
+      await tx.subscription.create({
+        data: {
+          companyId: company.id,
+          planId: freePlan.id,
+          status: 'active',
+          billingInterval: 'month'
+        }
+      });
+    }
+
   })
 
   return { success: true }

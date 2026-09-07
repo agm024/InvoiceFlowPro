@@ -1,6 +1,7 @@
 import prisma from "@/utils/prisma"
 import { requireSuperAdmin } from "@/lib/auth-context"
 import Link from "next/link"
+import { format } from 'date-fns'
 
 export const dynamic = 'force-dynamic'
 
@@ -64,10 +65,10 @@ export default async function SubscriptionsPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-zinc-500">
-                      {sub.currentPeriodEnd ? new Date(sub.currentPeriodEnd).toLocaleDateString() : "-"}
+                      {sub.currentPeriodEnd ? format(new Date(sub.currentPeriodEnd), 'MMM dd, yyyy') : "-"}
                     </td>
                     <td className="px-6 py-4 text-zinc-400">
-                      {new Date(sub.createdAt).toLocaleDateString()}
+                      {format(new Date(sub.createdAt), 'MMM dd, yyyy')}
                     </td>
                   </tr>
                 )

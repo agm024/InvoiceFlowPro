@@ -1,4 +1,5 @@
 "use client"
+import { format } from "date-fns"
 
 import { useState, useTransition } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
@@ -115,7 +116,7 @@ export function BusinessesTableClient({
       c._count.users,
       c._count.clients,
       c._count.invoices,
-      new Date(c.createdAt).toLocaleDateString()
+      format(new Date(c.createdAt), 'MMM dd, yyyy')
     ])
     
     const csvContent = "data:text/csv;charset=utf-8," 
@@ -334,7 +335,7 @@ export function BusinessesTableClient({
                   {visibleColumns.invoices && <td className="px-6 py-4 text-zinc-500">{company._count.invoices}</td>}
                   {visibleColumns.created && (
                     <td className="px-6 py-4 text-zinc-500">
-                      {new Date(company.createdAt).toLocaleDateString()}
+                      {format(new Date(company.createdAt), 'MMM dd, yyyy')}
                     </td>
                   )}
                   <td className="px-6 py-4 text-right">

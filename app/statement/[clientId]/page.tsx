@@ -21,6 +21,9 @@ export default async function StatementPage({ params }: { params: Promise<{ clie
 
   if (!client) notFound()
 
+  const subscription = await prisma.subscription.findUnique({ where: { companyId: client.companyId }, include: { plan: true } })
+  const isFree = !subscription || subscription.plan.name.toLowerCase() === 'free'
+
   const companySettings = await prisma.companySettings.findFirst()
 
   // Calculate ledger
@@ -75,7 +78,21 @@ export default async function StatementPage({ params }: { params: Promise<{ clie
       <div className="hidden md:block absolute top-8 right-8 print:hidden">
         <PrintButton />
       </div>
-      <div id="statement-content" className="max-w-4xl mx-auto bg-white p-4 md:p-8">
+      <div id="statement-content" className="max-w-4xl mx-auto bg-white p-4 md:p-8 relative">
+        {isFree && (
+          <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden z-0 select-none opacity-[0.04]">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex gap-16 whitespace-nowrap -rotate-45 mb-32">
+                {Array.from({ length: 4 }).map((_, j) => (
+                  <span key={j} className="text-4xl md:text-6xl font-black text-black">
+                    CREATED WITH INVOICEFLOWPRO
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-start border-b-2 border-zinc-900 pb-8 mb-8 gap-6">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">STATEMENT OF ACCOUNT</h1>
@@ -143,6 +160,8 @@ export default async function StatementPage({ params }: { params: Promise<{ clie
             )}
           </tbody>
         </table>
+        </div>
+
         </div>
 
         {/* Print Button (hidden when printing) */}

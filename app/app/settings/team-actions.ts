@@ -1,4 +1,5 @@
 "use server"
+import { checkFeatureLimit } from '@/lib/billing'
 
 import prisma from "@/utils/prisma"
 import { requireCompany, requireWriteAccess, requireSuperAdmin } from "@/lib/auth-context"
@@ -17,13 +18,9 @@ export async function inviteTeamMember(email: string, customRoleId: string) {
   })
   if (!company) return { error: "Company not found" }
 
-  if (company.subscription?.plan?.userLimits) {
-    const currentUserCount = await prisma.user.count({ where: { companyId } })
-    const pendingInvites = await prisma.invitation.count({ where: { companyId, status: "PENDING" } })
-    
-    if ((currentUserCount + pendingInvites) >= company.subscription.plan.userLimits) {
-      return { error: `You have reached your limit of ${company.subscription.plan.userLimits} team members. Please upgrade your plan.` }
-    }
+  const { allowed } = await checkFeatureLimit(companyId, 'team_member');
+  if (!allowed) {
+    return { error: 'You have reached your limit. Please upgrade your plan.' };
   }
 
   const existingUser = await prisma.user.findUnique({ where: { email } })
@@ -94,10 +91,7 @@ export async function removeTeamMember(id: string) {
   // But since user must belong to a company in this schema, we might just delete them or remove role
   // Let's just remove the role for now so they have no permissions, or delete the user record if they only belong here.
   // We'll just remove the customRole and set role to 'member'
-  await prisma.user.update({
-    where: { id, companyId },
-    data: { customRoleId: null, role: 'member' }
-  })
+  await prisma.user.delete({ where: { id, companyId } })
 
   revalidatePath("/app/settings")
   return { success: true }

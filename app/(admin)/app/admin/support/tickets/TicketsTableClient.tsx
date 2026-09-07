@@ -4,6 +4,7 @@ import { useState, useTransition } from "react"
 import Link from "next/link"
 import { Search, Eye, AlertCircle, RefreshCw, CheckCircle2, AlertTriangle, ArrowRight } from "lucide-react"
 import { updateTicketDetails } from "./actions"
+import { format } from 'date-fns'
 
 interface TicketRow {
   id: string
@@ -171,7 +172,7 @@ export function TicketsTableClient({ tickets }: TicketsTableClientProps) {
                         {t.priority}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-zinc-400">{new Date(t.createdAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-zinc-400">{format(new Date(t.createdAt), 'MMM dd, yyyy')}</td>
                     <td className="px-6 py-4 text-right">
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleOpenDetail(t); }}

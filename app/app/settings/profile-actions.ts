@@ -30,6 +30,7 @@ export async function changePasswordAction(currentPassword: string, newPassword:
 export async function deleteAccountAction() {
   await requireWriteAccess()
   const { user, companyId } = await requireCompany()
+  if (user.role !== 'owner') return { error: 'Only the company owner can delete the account' }
 
   // Verify they are the admin (or superadmin)
   // Actually, if it's their company and they are the owner, delete the whole company

@@ -57,6 +57,7 @@ export default function SettingsTabs({
     <div className="flex flex-col md:flex-row gap-8">
       {/* Sidebar Tabs */}
       <div className="md:w-64 shrink-0">
+        <div className="relative">
         <nav className="flex flex-row md:flex-col gap-1 overflow-x-auto hide-scrollbar pb-2 md:pb-0">
           {tabs.map(tab => {
             const Icon = tab.icon
@@ -67,16 +68,18 @@ export default function SettingsTabs({
                 onClick={() => handleTabChange(tab.id)}
                 className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                   isActive 
-                    ? 'bg-zinc-100 dark:bg-zinc-800 dark:bg-zinc-800/20 text-zinc-900 dark:text-white dark:text-zinc-900 dark:text-white' 
+                    ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' 
                     : 'text-zinc-600 dark:text-zinc-400 hover:bg-sidebar-bg hover:text-foreground'
                 }`}
               >
-                <Icon size={18} className={isActive ? 'text-zinc-900 dark:text-white dark:text-zinc-900 dark:text-white' : 'text-zinc-400'} />
+                <Icon size={18} className={isActive ? 'text-zinc-900 dark:text-white' : 'text-zinc-400'} />
                 {tab.name}
               </button>
             )
           })}
         </nav>
+        <div className="md:hidden absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-white dark:from-[#0a0a0a] to-transparent pointer-events-none" />
+      </div>
       </div>
 
       {/* Content Area */}

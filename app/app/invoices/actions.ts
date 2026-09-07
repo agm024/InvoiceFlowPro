@@ -2,7 +2,8 @@
 
 import prisma from '@/utils/prisma'
 import { revalidatePath } from 'next/cache'
-import { requireCompany } from '@/lib/auth-context'
+import { requireCompany, requireWriteAccess } from '@/lib/auth-context'
+import { checkFeatureLimit } from '@/lib/billing'
 
 export async function getInvoices() {
   const { companyId } = await requireCompany()
@@ -71,11 +72,9 @@ export async function getInvoiceFormData() {
   })
   
   let isLimitReached = false;
-  if (company?.subscription?.plan?.invoiceLimits) {
-    const currentCount = await prisma.invoice.count({ where: { companyId } })
-    if (currentCount >= company.subscription.plan.invoiceLimits) {
-      isLimitReached = true;
-    }
+  const { allowed } = await checkFeatureLimit(companyId, 'invoice');
+  if (!allowed) {
+    isLimitReached = true;
   }
 
   return { clients, products, banks, exchangeRates, nextInvoiceNumber, nextQuotationNumber, companySettings, isLimitReached }
@@ -104,6 +103,7 @@ export async function createInvoice(data: {
   milestoneId?: string
 }) {
   const { companyId } = await requireCompany()
+  await requireWriteAccess()
 
   const company = await prisma.company.findUnique({
     where: { id: companyId },
@@ -111,14 +111,9 @@ export async function createInvoice(data: {
   })
   if (!company) return { error: "Company not found" }
 
-  if (company.subscription?.plan?.invoiceLimits) {
-    const currentInvoiceCount = await prisma.invoice.count({
-      where: { companyId }
-    })
-    
-    if (currentInvoiceCount >= company.subscription.plan.invoiceLimits) {
-      return { error: `You have reached your limit of ${company.subscription.plan.invoiceLimits} invoices. Please upgrade your plan.` }
-    }
+  const { allowed } = await checkFeatureLimit(companyId, 'invoice');
+  if (!allowed) {
+    return { error: 'You have reached your limit. Please upgrade your plan.' };
   }
 
   // Server-side validation of totals
@@ -191,6 +186,7 @@ export async function createInvoice(data: {
 
 export async function deleteInvoice(id: string) {
   const { companyId } = await requireCompany()
+  await requireWriteAccess()
   try {
     const invoice = await prisma.invoice.findFirst({ where: { id, companyId } })
     if (!invoice) return { error: 'Invoice not found' }
@@ -235,6 +231,7 @@ export async function updateInvoice(id: string, data: {
   date?: string
 }) {
   const { companyId } = await requireCompany()
+  await requireWriteAccess()
 
   // Server-side validation of totals
   const calculatedSubTotal = data.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
@@ -379,5 +376,27 @@ export async function recordPayment(id: string, amountReceived: number, bankId?:
   } catch (error) {
     console.error('Failed to record payment:', error)
     return { error: 'Failed to record payment' }
+  }
+}
+
+
+export async function deleteInvoices(ids: string[]) {
+  const { requireCompany } = await import('@/lib/auth-context')
+  const { requireWriteAccess } = await import('@/lib/auth-context')
+  
+  const { companyId } = await requireCompany()
+  await requireWriteAccess()
+
+  try {
+    await prisma.invoice.deleteMany({
+      where: {
+        id: { in: ids },
+        companyId
+      }
+    })
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to delete invoices', error)
+    return { error: 'Failed to delete invoices' }
   }
 }

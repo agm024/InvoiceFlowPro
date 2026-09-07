@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 'use client'
 
 import { useState } from 'react'
@@ -29,7 +30,7 @@ export default function GstExportButton({
         const headers = ['Invoice Number', 'Invoice Date', 'Client Name', 'Client GSTIN', 'Taxable Value', 'GST Rate (%)', 'CGST', 'SGST', 'IGST', 'Invoice Total']
         const rows = invoices.map(i => [
           i.invoiceNumber,
-          new Date(i.date).toLocaleDateString(),
+          format(new Date(i.date), 'MMM dd, yyyy'),
           `"${i.clientName.replace(/"/g, '""')}"`,
           i.clientGstin,
           i.taxableValue.toFixed(2),

@@ -2,6 +2,7 @@ import { requireSuperAdmin } from "@/lib/auth-context"
 import prisma from "@/utils/prisma"
 import { resolveTicket } from "./actions"
 import { CheckCircle2 } from "lucide-react"
+import { format } from 'date-fns'
 
 export default async function AdminSupportPage() {
   await requireSuperAdmin()
@@ -54,7 +55,7 @@ export default async function AdminSupportPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-zinc-500">
-                    {ticket.createdAt.toLocaleDateString()}
+                    {format(new Date(ticket.createdAt), 'MMM dd, yyyy')}
                   </td>
                   <td className="px-6 py-4 text-right">
                     {ticket.status === 'OPEN' ? (

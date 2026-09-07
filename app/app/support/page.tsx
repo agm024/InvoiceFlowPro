@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { requireCompany } from '@/lib/auth-context'
 import prisma from '@/utils/prisma'
 import { revalidatePath } from 'next/cache'
@@ -100,7 +101,7 @@ export default async function TenantSupportPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-zinc-500">
-                    {ticket.createdAt.toLocaleDateString()}
+                    {format(new Date(ticket.createdAt), 'MMM dd, yyyy')}
                   </td>
                 </tr>
               ))}
@@ -142,7 +143,7 @@ export default async function TenantSupportPage() {
                     </span>
                   </div>
                   <div className="text-xs text-zinc-500">
-                    {ticket.createdAt.toLocaleDateString()}
+                    {format(new Date(ticket.createdAt), 'MMM dd, yyyy')}
                   </div>
                 </div>
               </div>

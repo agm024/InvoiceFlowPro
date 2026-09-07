@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { requireSuperAdmin } from '@/lib/auth-context'
 import prisma from '@/utils/prisma'
 import { createAnnouncement, deleteAnnouncement } from './actions'
@@ -80,7 +81,7 @@ export default async function AnnouncementsPage() {
                   )}
                 </td>
                 <td className="px-6 py-4 text-zinc-600 dark:text-zinc-400">
-                  {announcement.createdAt.toLocaleDateString()}
+                  {format(new Date(announcement.createdAt), 'MMM dd, yyyy')}
                 </td>
                 <td className="px-6 py-4 text-right">
                   <form action={deleteAnnouncement}>
