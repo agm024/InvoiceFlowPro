@@ -55,7 +55,7 @@ export default async function AdminSupportPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-zinc-500">
-                    {format(new Date(ticket.createdAt), 'MMM dd, yyyy')}
+                    {format(new Date(ticket.createdAt), 'dd MMM yyyy')}
                   </td>
                   <td className="px-6 py-4 text-right">
                     {ticket.status === 'OPEN' ? (

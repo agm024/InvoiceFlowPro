@@ -88,7 +88,7 @@ export default async function BusinessesPage({
         </div>
         <Link 
           href="/app/admin/businesses/new" 
-          className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-xs font-semibold hover:opacity-90 transition flex items-center gap-2 shadow-sm"
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-xs font-semibold hover:opacity-90 transition flex items-center gap-2 shadow-sm"
         >
           <Plus size={14} /> Register Business
         </Link>

@@ -39,7 +39,7 @@ export function AdminHeader({ user, signOutAction }: AdminHeaderProps) {
         {/* Help & Documentation */}
         <Link 
           href="/app/support"
-          className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
+          className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-primary-foreground hover:bg-zinc-50 dark:hover:bg-primary transition-colors"
           title="Admin Help Desk"
         >
           <HelpCircle size={18} />
@@ -49,7 +49,7 @@ export function AdminHeader({ user, signOutAction }: AdminHeaderProps) {
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors relative"
+            className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-primary-foreground hover:bg-zinc-50 dark:hover:bg-primary transition-colors relative"
             title="System alerts"
           >
             <Bell size={18} />

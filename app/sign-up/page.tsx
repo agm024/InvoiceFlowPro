@@ -148,7 +148,7 @@ export default function SignUpPage() {
                     </button>
                   </div>
                 </div>
-                <button onClick={handleSendOtp} disabled={loading} className="w-full mt-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-3 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-white/90 transition-colors flex items-center justify-center gap-2">
+                <button onClick={handleSendOtp} disabled={loading} className="w-full mt-4 bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2">
                   {loading ? <Loader2 size={18} className="animate-spin" /> : <>Verify Email <ArrowRight size={18} /></>}
                 </button>
 
@@ -182,7 +182,7 @@ export default function SignUpPage() {
                   <button onClick={prevStep} className="px-4 py-3 rounded-xl font-medium border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                     <ArrowLeft size={18} />
                   </button>
-                  <button onClick={handleVerifyOtp} disabled={loading} className="flex-1 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-3 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-white/90 transition-colors flex items-center justify-center gap-2">
+                  <button onClick={handleVerifyOtp} disabled={loading} className="flex-1 bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2">
                     {loading ? <Loader2 size={18} className="animate-spin" /> : <>Verify Code <CheckCircle2 size={18} /></>}
                   </button>
                 </div>
@@ -223,7 +223,7 @@ export default function SignUpPage() {
                   <button onClick={() => setStep(1)} className="px-4 py-3 rounded-xl font-medium border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                     <ArrowLeft size={18} />
                   </button>
-                  <button onClick={nextStep} className="flex-1 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-3 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-white/90 transition-colors flex items-center justify-center gap-2">
+                  <button onClick={nextStep} className="flex-1 bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2">
                     Continue <ArrowRight size={18} />
                   </button>
                 </div>
@@ -265,7 +265,7 @@ export default function SignUpPage() {
                   <button onClick={prevStep} className="px-4 py-3 rounded-xl font-medium border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                     <ArrowLeft size={18} />
                   </button>
-                  <button onClick={handleSubmit} disabled={loading} className="flex-1 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-3 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-white/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+                  <button onClick={handleSubmit} disabled={loading} className="flex-1 bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
                     {loading ? <Loader2 className="animate-spin" size={18} /> : <>Complete Setup <CheckCircle2 size={18} /></>}
                   </button>
                 </div>

@@ -117,7 +117,7 @@ export function UsersTableClient({ users, roles = [], invitations = [] }: UsersT
           </select>
           <button 
             onClick={() => setIsInviting(!isInviting)}
-            className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
+            className="bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
           >
             {isInviting ? "Cancel" : "Invite Admin"}
           </button>
@@ -147,7 +147,7 @@ export function UsersTableClient({ users, roles = [], invitations = [] }: UsersT
             </select>
             <button 
               onClick={handleInvite}
-              className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-1.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
+              className="bg-primary text-primary-foreground px-4 py-1.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
             >
               Send Invitation
             </button>
@@ -228,7 +228,7 @@ export function UsersTableClient({ users, roles = [], invitations = [] }: UsersT
                     {user.companyName}
                   </td>
                   <td className="px-6 py-4 text-zinc-500">
-                    {format(new Date(user.createdAt), 'MMM dd, yyyy')}
+                    {format(new Date(user.createdAt), 'dd MMM yyyy')}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">

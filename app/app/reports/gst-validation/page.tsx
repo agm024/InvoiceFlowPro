@@ -232,7 +232,7 @@ export default async function GstValidationPage() {
                     Audit: {h.validCount} valid, {h.errorCount} warning/error
                   </span>
                   <span className="text-emerald-600 font-semibold">SUCCESS</span>
-                  <span className="text-zinc-400">{format(new Date(h.createdAt), 'MMM dd, hh:mm a')}</span>
+                  <span className="text-zinc-400">{format(new Date(h.createdAt), 'dd MMM yyyy, hh:mm a')}</span>
                 </div>
               </div>
             )

@@ -74,7 +74,7 @@ export default function TransfersClient({
         </div>
         <button 
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm shadow-zinc-900/20"
+          className="flex items-center gap-2 bg-primary text-primary-foreground text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-hover transition-colors shadow-sm shadow-primary/20"
         >
           <Plus size={18} /> {showForm ? 'Cancel' : 'Record Transfer'}
         </button>
@@ -124,7 +124,7 @@ export default function TransfersClient({
                 </div>
               </div>
               <div className="flex justify-end mt-4">
-                <button disabled={isSubmitting} type="submit" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50">
+                <button disabled={isSubmitting} type="submit" className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50">
                   {isSubmitting ? 'Saving...' : 'Save Transfer'}
                 </button>
               </div>

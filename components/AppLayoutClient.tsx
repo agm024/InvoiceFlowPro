@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
+import GlobalCreateMenu from './GlobalCreateMenu'
+import GlobalSearch from './GlobalSearch'
 
 export default function AppLayoutClient({
   sidebar,
@@ -59,6 +61,8 @@ export default function AppLayoutClient({
       <main className="flex-1 flex flex-col h-screen overflow-y-auto pt-16 md:pt-0 w-full min-w-0 print:h-auto print:overflow-visible print:block">
         {children}
       </main>
+      <GlobalSearch />
+      <GlobalCreateMenu />
     </div>
   )
 }

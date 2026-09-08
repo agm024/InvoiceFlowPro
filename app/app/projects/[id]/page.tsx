@@ -70,7 +70,7 @@ export default async function ProjectDetailPage({
               rel="noopener noreferrer"
               className={`flex-1 sm:flex-none justify-center inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold shadow-sm hover:-translate-y-0.5 transition-all border ${
                 project.contractApprovedAt 
-                ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-transparent shadow-lg' 
+                ? 'bg-primary text-primary-foreground border-transparent shadow-lg' 
                 : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800'
               }`}
             >

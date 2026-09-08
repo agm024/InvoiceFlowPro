@@ -79,7 +79,7 @@ export default async function GlobalInvoicesPage() {
                       <StatusBadge status={inv.status} />
                     </td>
                     <td className="px-6 py-4 text-zinc-500">
-                      {format(new Date(inv.createdAt), 'MMM dd, yyyy')}
+                      {format(new Date(inv.createdAt), 'dd MMM yyyy')}
                     </td>
                   </tr>
                 ))

@@ -73,16 +73,11 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
 
       <div className="bg-white text-black rounded-xl shadow-sm overflow-hidden border border-zinc-200">
         {isFree && (
-          <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden z-0 select-none opacity-[0.04]">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="flex gap-16 whitespace-nowrap -rotate-45 mb-32">
-                {Array.from({ length: 4 }).map((_, j) => (
-                  <span key={j} className="text-4xl md:text-6xl font-black text-black">
-                    CREATED WITH INVOICEFLOWPRO
-                  </span>
-                ))}
-              </div>
-            ))}
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-0 select-none overflow-hidden">
+             <div className="border-[8px] border-zinc-100 rounded-[2rem] px-16 py-8 -rotate-[25deg] flex flex-col items-center justify-center opacity-70">
+                <span className="text-zinc-200 font-black text-6xl tracking-widest uppercase">InvoiceFlow<span className="text-zinc-100">Pro</span></span>
+                <span className="text-zinc-300 font-bold text-xl tracking-[0.3em] uppercase mt-3">Invoicing Software</span>
+             </div>
           </div>
         )}
         <div className="p-10 md:p-14 relative z-10">

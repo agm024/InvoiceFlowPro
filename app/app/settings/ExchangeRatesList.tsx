@@ -155,7 +155,7 @@ export default function ExchangeRatesList({ initialRates }: { initialRates: any[
         </div>
         <button 
           type="submit" disabled={isAdding}
-          className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50 w-full md:w-auto h-[42px]"
+          className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50 w-full md:w-auto h-[42px]"
         >
           {isAdding ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
           Save Rate

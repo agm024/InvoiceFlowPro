@@ -12,6 +12,7 @@ model Company {
   id                   String   @id @default(cuid())
   name                 String
   gstin                String?
+  rzpCustomerId    String?   @unique
   pan                  String?
   address              String?
   city                 String?
@@ -58,6 +59,8 @@ model Plan {
   userLimits    Int?
   clientLimits  Int?
   invoiceLimits Int?
+  rzpPlanIdMonthly String?
+  rzpPlanIdYearly  String?
   displayOrder  Int            @default(0)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
@@ -71,6 +74,7 @@ model Subscription {
   status           String    @default("active")
   billingInterval  String    @default("month")
   currentPeriodEnd DateTime?
+  rzpSubscriptionId String?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
@@ -618,4 +622,12 @@ model VerificationToken {
   createdAt DateTime @default(now())
 
   @@unique([email, token])
+}
+
+
+model WebhookEvent {
+  id          String   @id @default(cuid())
+  eventId     String   @unique
+  type        String
+  processedAt DateTime @default(now())
 }

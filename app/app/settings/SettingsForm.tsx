@@ -268,7 +268,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
         <div className="pt-6 border-t border-card-border flex justify-end">
           <button 
             type="submit" disabled={isSaving}
-            className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-8 py-3 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-sm shadow-zinc-900/20 disabled:opacity-50"
+            className="bg-primary text-primary-foreground text-white px-8 py-3 rounded-lg font-medium hover:bg-primary-hover transition-colors flex items-center gap-2 shadow-sm shadow-primary/20 disabled:opacity-50"
           >
             {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
             Save Company Details

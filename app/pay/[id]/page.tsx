@@ -42,7 +42,7 @@ export default async function PayInvoicePage({ params }: { params: Promise<{ id:
     where: { companyId: invoice.companyId }
   })
   if (!companySettings) {
-    companySettings = await prisma.companySettings.findFirst()
+    companySettings = null // Do not leak other company settings!
   }
   
   const cnTotal = (invoice as any).creditNotes?.reduce((sum: number, cn: any) => sum + cn.amount, 0) || 0
@@ -81,12 +81,12 @@ export default async function PayInvoicePage({ params }: { params: Promise<{ id:
           <div className="bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 space-y-3">
             <div className="flex justify-between text-sm">
               <span className="text-zinc-500">Date Issued</span>
-              <span className="font-medium text-zinc-900 dark:text-zinc-100">{format(new Date(invoice.date), 'MMMM dd, yyyy')}</span>
+              <span className="font-medium text-zinc-900 dark:text-zinc-100">{format(new Date(invoice.date), 'dd MMM yyyy')}</span>
             </div>
             {invoice.dueDate && (
               <div className="flex justify-between text-sm">
                 <span className="text-zinc-500">Due Date</span>
-                <span className="font-medium text-zinc-900 dark:text-zinc-100">{format(new Date(invoice.dueDate), 'MMMM dd, yyyy')}</span>
+                <span className="font-medium text-zinc-900 dark:text-zinc-100">{format(new Date(invoice.dueDate), 'dd MMM yyyy')}</span>
               </div>
             )}
             <div className="flex justify-between text-sm pt-3 border-t border-zinc-200 dark:border-zinc-700">

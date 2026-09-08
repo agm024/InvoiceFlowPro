@@ -76,7 +76,7 @@ export default async function RevenuePage() {
                   <td className="px-6 py-4">{p.subscription.plan.name}</td>
                   <td className="px-6 py-4">{p.originalCurrency} {p.originalAmount}</td>
                   <td className="px-6 py-4">₹{p.convertedAmountInr.toLocaleString("en-IN")}</td>
-                  <td className="px-6 py-4">{format(new Date(p.createdAt), 'MMM dd, yyyy')}</td>
+                  <td className="px-6 py-4">{format(new Date(p.createdAt), 'dd MMM yyyy')}</td>
                 </tr>
               ))}
               {recentPayments.length === 0 && (

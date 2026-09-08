@@ -10,6 +10,8 @@ interface PaymentRow {
   gatewayTransactionId: string | null
   companyId: string
   companyName: string
+  rzpCustomerId: string | null
+  rzpSubscriptionId: string | null
   planName: string
   originalAmount: number
   originalCurrency: string
@@ -94,7 +96,7 @@ export function PaymentsTableClient({ payments }: PaymentsTableClientProps) {
           <table className="w-full text-xs text-left whitespace-nowrap">
             <thead className="bg-zinc-50 dark:bg-zinc-900/50 text-zinc-500 font-semibold border-b border-zinc-200 dark:border-zinc-800 uppercase tracking-wider">
               <tr>
-                <th className="px-6 py-4">Transaction ID</th>
+                <th className="px-6 py-4">Gateway IDs (Payment & Sub)</th>
                 <th className="px-6 py-4">Business</th>
                 <th className="px-6 py-4">Plan</th>
                 <th className="px-6 py-4">Original Amount</th>
@@ -108,7 +110,9 @@ export function PaymentsTableClient({ payments }: PaymentsTableClientProps) {
               {paginatedPayments.map(p => (
                 <tr key={p.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition">
                   <td className="px-6 py-4 font-mono text-zinc-900 dark:text-white">
-                    {p.gatewayTransactionId || p.id}
+                    <div><span className="font-semibold text-zinc-400">Pay:</span> {p.gatewayTransactionId || 'N/A'}</div>
+                    {p.rzpSubscriptionId && <div className="text-[10px] mt-0.5"><span className="font-semibold text-zinc-400">Sub:</span> {p.rzpSubscriptionId}</div>}
+                    {p.rzpCustomerId && <div className="text-[10px] mt-0.5"><span className="font-semibold text-zinc-400">Cust:</span> {p.rzpCustomerId}</div>}
                   </td>
                   <td className="px-6 py-4">
                     <Link href={`/app/admin/businesses/${p.companyId}`} className="font-semibold text-blue-600 dark:text-blue-400 hover:underline">

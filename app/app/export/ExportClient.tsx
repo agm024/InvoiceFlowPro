@@ -222,7 +222,7 @@ export default function ExportClient({ invoices, settings, expenses = [] }: { in
         gstin: inv.client.gstin,
         name: inv.client.name,
         invNum: inv.invoiceNumber,
-        invDate: format(new Date(inv.date), 'dd-MMM-yyyy'),
+        invDate: format(new Date(inv.date), 'dd MMM yyyy'),
         invVal: inv.total * inv.exchangeRate,
         pos: inv.client.stateCode ? `${inv.client.stateCode}-${inv.client.stateName || getStateNameByCode(inv.client.stateCode)}` : '',
         rev: 'N',
@@ -279,7 +279,7 @@ export default function ExportClient({ invoices, settings, expenses = [] }: { in
       wsExp.addRow({
         type: 'WOPAY',
         invNum: inv.invoiceNumber,
-        invDate: format(new Date(inv.date), 'dd-MMM-yyyy'),
+        invDate: format(new Date(inv.date), 'dd MMM yyyy'),
         invVal: inv.total * inv.exchangeRate,
         port: '', shipNo: '', shipDate: '', app: '',
         taxval: inv.total * inv.exchangeRate,
@@ -317,7 +317,7 @@ export default function ExportClient({ invoices, settings, expenses = [] }: { in
       <div className="flex gap-4">
         <button 
           onClick={handleDownload}
-          className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-3 rounded-lg font-medium inline-block transition-colors"
+          className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-lg font-medium inline-block transition-colors"
         >
           Download GST Excel (.xlsx)
         </button>

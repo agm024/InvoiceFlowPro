@@ -88,11 +88,11 @@ export default function InvoiceRowActions({ invoice, settings, onDelete }: { inv
                   </div>
                   <div className="text-right">
                     <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Invoice Date</h3>
-                    <p className="font-medium text-zinc-900">{format(new Date(invoice.date), 'MMM dd, yyyy')}</p>
+                    <p className="font-medium text-zinc-900">{format(new Date(invoice.date), 'dd MMM yyyy')}</p>
                     {invoice.dueDate && (
                       <>
                         <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2 mt-4">Due Date</h3>
-                        <p className="font-medium text-zinc-900">{format(new Date(invoice.dueDate), 'MMM dd, yyyy')}</p>
+                        <p className="font-medium text-zinc-900">{format(new Date(invoice.dueDate), 'dd MMM yyyy')}</p>
                       </>
                     )}
                   </div>

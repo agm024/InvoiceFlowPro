@@ -116,7 +116,7 @@ export function BusinessesTableClient({
       c._count.users,
       c._count.clients,
       c._count.invoices,
-      format(new Date(c.createdAt), 'MMM dd, yyyy')
+      format(new Date(c.createdAt), 'dd MMM yyyy')
     ])
     
     const csvContent = "data:text/csv;charset=utf-8," 
@@ -335,14 +335,14 @@ export function BusinessesTableClient({
                   {visibleColumns.invoices && <td className="px-6 py-4 text-zinc-500">{company._count.invoices}</td>}
                   {visibleColumns.created && (
                     <td className="px-6 py-4 text-zinc-500">
-                      {format(new Date(company.createdAt), 'MMM dd, yyyy')}
+                      {format(new Date(company.createdAt), 'dd MMM yyyy')}
                     </td>
                   )}
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end items-center gap-2">
                       <Link 
                         href={`/app/admin/businesses/${company.id}`}
-                        className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                        className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-primary-foreground rounded-lg hover:bg-zinc-100 dark:hover:bg-primary transition-colors"
                         title="View details"
                       >
                         <Eye size={14} />

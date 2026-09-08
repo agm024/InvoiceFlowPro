@@ -172,11 +172,11 @@ export function TicketsTableClient({ tickets }: TicketsTableClientProps) {
                         {t.priority}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-zinc-400">{format(new Date(t.createdAt), 'MMM dd, yyyy')}</td>
+                    <td className="px-6 py-4 text-zinc-400">{format(new Date(t.createdAt), 'dd MMM yyyy')}</td>
                     <td className="px-6 py-4 text-right">
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleOpenDetail(t); }}
-                        className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                        className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-primary-foreground rounded-lg hover:bg-zinc-100 dark:hover:bg-primary transition-colors"
                       >
                         <Eye size={14} />
                       </button>
@@ -290,7 +290,7 @@ export function TicketsTableClient({ tickets }: TicketsTableClientProps) {
               <button 
                 onClick={handleSaveDetails}
                 disabled={isPending || !commentReason.trim()}
-                className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 py-2 rounded-lg text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-1 shadow-sm"
+                className="w-full bg-primary text-primary-foreground py-2 rounded-lg text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-1 shadow-sm"
               >
                 Save Ticket Update <ArrowRight size={12} />
               </button>

@@ -33,12 +33,12 @@ export default function SendEmailButton({ invoiceId, invoiceNumber, total, statu
     const formattedAmount = '₹ ' + total.toFixed(2)
     const res = await sendInvoiceEmail(clientEmail!, clientName, invoiceNumber, invoiceId, formattedAmount)
     if (res.success) {
-      toast.success('Invoice sent successfully!')
+      toast.success(`Invoice sent successfully to ${clientEmail}!`)
       if (status === 'draft') {
         await updateInvoiceStatus(invoiceId, 'sent')
       }
     } else {
-      toast.error('Failed to send invoice.')
+      toast.error('Something went wrong. Try again.')
     }
     setIsSending(false)
   }
@@ -50,7 +50,7 @@ export default function SendEmailButton({ invoiceId, invoiceNumber, total, statu
     <button
       onClick={handleSendInvoice}
       disabled={isSending}
-      className="flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-md text-sm font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors disabled:opacity-50"
+      className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-hover transition-colors disabled:opacity-50"
     >
       <Mail size={16} /> {isSending ? 'Sending...' : 'Send via Email'}
     </button>

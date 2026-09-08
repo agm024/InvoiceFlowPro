@@ -118,7 +118,7 @@ export default function CheckoutButton({ invoiceId, amount, currency, companyNam
 
       {/* Dynamic Header */}
       {!isSuccess && !isFailed && (
-        <div className="bg-zinc-900 dark:bg-black p-8 pt-12 text-center text-white border-b border-zinc-800 -mt-8 -mx-8 mb-8">
+        <div className="bg-primary dark:bg-primary p-8 pt-12 text-center text-primary-foreground border-b border-zinc-800 -mt-8 -mx-8 mb-8">
           <h1 className="text-4xl font-black">{currency} {amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h1>
           <p className="text-zinc-400 mt-2 font-medium tracking-wide uppercase text-sm">Payment Request</p>
         </div>
@@ -144,7 +144,7 @@ export default function CheckoutButton({ invoiceId, amount, currency, companyNam
           <p className="text-sm text-zinc-600 dark:text-zinc-400 max-w-sm mb-6">{failureReason}</p>
           <button 
             onClick={() => { setIsFailed(false); setLoading(false) }} 
-            className="px-6 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg font-medium shadow-sm"
+            className="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium shadow-sm"
           >
             Try Again
           </button>
@@ -200,7 +200,7 @@ export default function CheckoutButton({ invoiceId, amount, currency, companyNam
             <button 
               onClick={handlePayment} 
               disabled={loading}
-              className="w-full bg-zinc-900 hover:bg-black dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white py-4 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-zinc-900/20"
+              className="w-full bg-primary hover:bg-primary text-primary-foreground py-4 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-primary/20"
             >
               {loading ? <Loader2 size={18} className="animate-spin" /> : <CreditCard size={18} />}
               Pay Securely via Razorpay

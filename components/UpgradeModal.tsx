@@ -62,7 +62,7 @@ export default function UpgradeModal({
           <div className="flex flex-col gap-3">
             <Link 
               href="/app/billing" 
-              className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-3 rounded-xl font-bold shadow-md hover:bg-black dark:hover:bg-zinc-200 transition-all flex items-center justify-center gap-2"
+              className="w-full bg-primary text-primary-foreground px-4 py-3 rounded-xl font-bold shadow-md hover:bg-primary-hover transition-all flex items-center justify-center gap-2"
             >
               Upgrade Plan <ArrowRight size={18} />
             </Link>

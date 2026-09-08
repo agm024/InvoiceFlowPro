@@ -268,7 +268,7 @@ By signing below, the Client formally accepts the handover of the project.
             <button
               type="submit"
               disabled={isSubmitting || !signature.trim() || !isScrolledToBottom}
-              className="w-full sm:w-auto px-6 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <CheckCircle size={18} />
               {isSubmitting ? 'Signing...' : 'Sign & Accept'}

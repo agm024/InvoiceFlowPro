@@ -27,7 +27,7 @@ export default async function NewCompanyPage() {
             <Link href="/app/admin/businesses" className="px-6 py-2.5 rounded-lg font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition">
               Cancel
             </Link>
-            <button type="submit" className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition flex items-center gap-2">
+            <button type="submit" className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-primary-hover transition flex items-center gap-2">
               <Save size={18} /> Create Company
             </button>
           </div>

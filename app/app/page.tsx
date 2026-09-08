@@ -76,7 +76,7 @@ export default async function DashboardPage({
   const itcAmount = expensesInTimeframe.filter(e => e.itcEligible).reduce((sum, e) => sum + e.taxAmount, 0)
   const gstLiability = Math.max(0, gstCollected - itcAmount)
   const gstPaid = allExpenses.filter(e => e.category === 'GST_PAYMENT' && e.date >= dateLimit).reduce((sum, e) => sum + e.totalAmount, 0)
-  const gstBalance = gstLiability - gstPaid
+  const gstBalance = Math.max(0, gstLiability - gstPaid)
 
   // Historical calculations (for trend percentages)
   const prevPaidInvoices = allInvoices.filter(i => i.status === 'paid' && i.date >= prevDateLimitStart && i.date <= prevDateLimitEnd)
@@ -150,6 +150,7 @@ export default async function DashboardPage({
     .sort((a, b) => (a.dueDate!.getTime() - b.dueDate!.getTime()))
     .slice(0, 5)
 
+  const allClientsCount = await prisma.client.count({ where: { companyId } })
   const topClients = (await prisma.client.findMany({ where: { companyId }, include: { invoices: true } }))
     .map(client => {
       const revenue = client.invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
@@ -204,14 +205,63 @@ export default async function DashboardPage({
     'ytd': 'Year To Date'
   }
 
+  const isNewTenant = allInvoices.length === 0 && allClientsCount === 0
+
+  if (isNewTenant) {
+    return (
+      <div className="p-6 md:p-12 max-w-4xl mx-auto w-full text-zinc-950 dark:text-zinc-50 flex flex-col items-center justify-center min-h-[70vh] animate-in fade-in duration-500">
+        <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-6 border border-blue-100 dark:border-blue-800">
+          <span className="text-4xl">👋</span>
+        </div>
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-center mb-4">Welcome to InvoiceFlow!</h1>
+        <p className="text-lg text-zinc-500 dark:text-zinc-400 text-center max-w-xl mb-12">
+          Let's get your business ready to send its first invoice. Create your first professional invoice in less than a minute.
+        </p>
+        
+        <div className="w-full max-w-md bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-xl mb-8">
+          <h3 className="font-bold text-lg mb-6 flex items-center justify-between">
+            <span>Get your account ready</span>
+            <span className="text-sm font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full">Step 1 of 5</span>
+          </h3>
+          <ul className="space-y-4">
+            <li className="flex items-center gap-3 text-zinc-900 dark:text-zinc-100 font-medium">
+              <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs">✓</div>
+              Create account
+            </li>
+            <li className="flex items-center gap-3 text-zinc-500">
+              <div className="w-6 h-6 rounded-full border-2 border-zinc-200 dark:border-zinc-700"></div>
+              Add business information
+            </li>
+            <li className="flex items-center gap-3 text-zinc-500">
+              <div className="w-6 h-6 rounded-full border-2 border-zinc-200 dark:border-zinc-700"></div>
+              Configure GST/Tax settings
+            </li>
+            <li className="flex items-center gap-3 text-zinc-500">
+              <div className="w-6 h-6 rounded-full border-2 border-zinc-200 dark:border-zinc-700"></div>
+              Add your first client
+            </li>
+            <li className="flex items-center gap-3 text-zinc-500">
+              <div className="w-6 h-6 rounded-full border-2 border-zinc-200 dark:border-zinc-700"></div>
+              Create your first invoice
+            </li>
+          </ul>
+        </div>
+
+        <Link href="/app/invoices/new" className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:scale-105 flex items-center gap-2">
+          <span className="text-xl">+</span> Create Your First Invoice
+        </Link>
+      </div>
+    )
+  }
+
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto w-full text-zinc-950 dark:text-zinc-50 space-y-8 animate-in fade-in duration-500">
       
       {/* Header & Filter Controls */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Financial Overview</h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mt-1">Tenant Dashboard monitoring real-time transactions.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight">Your Financial Overview</h1>
+          <p className="text-zinc-500 dark:text-zinc-400 mt-1">Monitor real-time transactions and business health.</p>
         </div>
         
         {/* Timeframe Controls */}
@@ -343,7 +393,7 @@ export default async function DashboardPage({
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-sm">₹{(inv.total * inv.exchangeRate).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                      <p className="text-[10px] text-amber-600 dark:text-amber-500 font-bold mt-0.5">Due {format(new Date(inv.dueDate!), 'MMM dd')}</p>
+                      <p className="text-[10px] text-amber-600 dark:text-amber-500 font-bold mt-0.5">Due {format(new Date(inv.dueDate!), 'dd MMM')}</p>
                     </div>
                   </div>
                 ))
@@ -429,7 +479,7 @@ export default async function DashboardPage({
           {timeline.map((event, idx) => (
             <div key={idx} className="flex justify-between items-center text-xs">
               <span className="font-semibold text-zinc-700 dark:text-zinc-300">{event.title}</span>
-              <span className="text-zinc-400">{format(new Date(event.date), 'MMM dd, hh:mm a')}</span>
+              <span className="text-zinc-400">{format(new Date(event.date), 'dd MMM yyyy, hh:mm a')}</span>
             </div>
           ))}
         </div>

@@ -314,7 +314,7 @@ export default function InvoiceListClient({
             </Link>
             <Link 
               href={type === 'quotation' ? '/app/estimates/new' : '/app/invoices/new'} 
-              className="flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm shadow-zinc-900/20"
+              className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-hover transition-colors shadow-sm shadow-primary/20"
             >
               <Plus size={18} /> Create {type === 'quotation' ? 'Quotation' : 'Invoice'}
             </Link>
@@ -412,7 +412,7 @@ export default function InvoiceListClient({
                       onClick={() => { setDateRange(range); setIsDateDropdownOpen(false); }}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                         dateRange === range 
-                          ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white border-zinc-600' 
+                          ? 'bg-primary text-primary-foreground text-white border-zinc-600' 
                           : 'bg-transparent text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-sidebar-border hover:border-zinc-300 dark:hover:border-zinc-500'
                       }`}
                     >
@@ -500,7 +500,7 @@ export default function InvoiceListClient({
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-1">No invoices found</h3>
             <p className="text-zinc-500 mb-6 text-sm">Create a new invoice to bill a client for your services.</p>
-            <Link href="/app/invoices/new" className="bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 text-sm">
+            <Link href="/app/invoices/new" className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 text-sm">
               <Plus size={16} /> Create
             </Link>
           </div>
@@ -654,7 +654,7 @@ export default function InvoiceListClient({
                     </div>
                     <h3 className="text-lg font-semibold text-foreground mb-1">No invoices found</h3>
                     <p className="text-zinc-500 mb-6">Create a new invoice to bill a client for your services.</p>
-                    <Link href="/app/invoices/new" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
+                    <Link href="/app/invoices/new" className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
                       <Plus size={18} /> Create Invoice
                     </Link>
                   </td>

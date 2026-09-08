@@ -17,7 +17,25 @@ export async function POST(req: Request) {
       }
     }
 
+    
     const event = JSON.parse(textBody)
+    const eventId = req.headers.get('x-razorpay-event-id') || event.id || `webhook_${Date.now()}`;
+
+    try {
+      await prisma.webhookEvent.create({
+        data: {
+          eventId,
+          type: event.event
+        }
+      });
+    } catch (e: any) {
+      if (e.code === 'P2002') {
+        console.log(`Webhook ${eventId} already processed, skipping gracefully.`);
+        return NextResponse.json({ status: 'ok', msg: 'Already processed' })
+      }
+      throw e;
+    }
+
 
     if (event.event === 'payment.captured' || event.event === 'order.paid') {
       const payment = event.payload.payment.entity
@@ -83,6 +101,41 @@ export async function POST(req: Request) {
             }
           });
         }
+      }
+    }
+
+    
+    if (event.event === 'subscription.paused') {
+      const subEntity = event.payload.subscription.entity;
+      const companyId = subEntity.notes?.companyId;
+      if (companyId) {
+        const freePlan = await prisma.plan.findFirst({ where: { name: 'Free' } });
+        if (freePlan) {
+          await prisma.subscription.update({
+            where: { companyId },
+            data: { status: 'paused', planId: freePlan.id }
+          });
+        }
+      }
+    }
+
+    if (event.event === 'subscription.resumed') {
+      const subEntity = event.payload.subscription.entity;
+      const companyId = subEntity.notes?.companyId;
+      if (companyId) {
+        // Find original plan from Razorpay payload
+        const rzpPlanId = subEntity.plan_id;
+        const originalPlan = await prisma.plan.findFirst({
+          where: { OR: [{ rzpPlanIdMonthly: rzpPlanId }, { rzpPlanIdYearly: rzpPlanId }] }
+        });
+        
+        await prisma.subscription.update({
+          where: { companyId },
+          data: { 
+            status: 'active', 
+            ...(originalPlan ? { planId: originalPlan.id } : {})
+          }
+        });
       }
     }
 

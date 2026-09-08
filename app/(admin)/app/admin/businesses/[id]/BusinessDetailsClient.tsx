@@ -245,7 +245,7 @@ export function BusinessDetailsClient({
               disabled={!company.supportAccessGranted || adminImpersonating}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition shadow-sm flex items-center gap-1.5 ${
                 company.supportAccessGranted && !adminImpersonating
-                  ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90"
+                  ? "bg-primary text-primary-foreground hover:opacity-90"
                   : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed border border-zinc-200 dark:border-zinc-700"
               }`}
             >
@@ -415,7 +415,7 @@ export function BusinessDetailsClient({
                           {u.role}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-zinc-400">{format(new Date(u.createdAt), 'MMM dd, yyyy')}</td>
+                      <td className="px-6 py-4 text-zinc-400">{format(new Date(u.createdAt), 'dd MMM yyyy')}</td>
                     </tr>
                   ))}
                   {users.length === 0 && (
@@ -446,7 +446,7 @@ export function BusinessDetailsClient({
                   {invoices.map(inv => (
                     <tr key={inv.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition">
                       <td className="px-6 py-4 text-zinc-900 dark:text-white font-semibold">{inv.invoiceNumber}</td>
-                      <td className="px-6 py-4 text-zinc-500">{format(new Date(inv.date), 'MMM dd, yyyy')}</td>
+                      <td className="px-6 py-4 text-zinc-500">{format(new Date(inv.date), 'dd MMM yyyy')}</td>
                       <td className="px-6 py-4 text-zinc-700 dark:text-zinc-300">
                         {inv.currency === "USD" ? "$" : "₹"}{inv.total.toLocaleString()}
                       </td>
@@ -527,13 +527,13 @@ export function BusinessDetailsClient({
             <div className="grid grid-cols-2 gap-4 border-b border-zinc-100 dark:border-zinc-900 pb-6 text-xs">
               <div>
                 <p className="text-zinc-400 font-semibold">Start Billing Date</p>
-                <p className="text-sm font-bold mt-1 text-zinc-800 dark:text-zinc-200">{format(new Date(company.createdAt), 'MMM dd, yyyy')}</p>
+                <p className="text-sm font-bold mt-1 text-zinc-800 dark:text-zinc-200">{format(new Date(company.createdAt), 'dd MMM yyyy')}</p>
               </div>
               <div>
                 <p className="text-zinc-400 font-semibold">Next Invoice Billing Date</p>
                 <p className="text-sm font-bold mt-1 text-zinc-800 dark:text-zinc-200">
                   {company.subscription?.currentPeriodEnd 
-                    ? format(new Date(company.subscription.currentPeriodEnd), 'MMM dd, yyyy') 
+                    ? format(new Date(company.subscription.currentPeriodEnd), 'dd MMM yyyy') 
                     : "End of billing cycle"}
                 </p>
               </div>
@@ -545,7 +545,7 @@ export function BusinessDetailsClient({
                 <div className="relative">
                   <div className="absolute -left-[21px] top-1.5 w-2 h-2 rounded-full bg-emerald-500"></div>
                   <p className="font-semibold text-zinc-800 dark:text-zinc-200">Subscription Registered</p>
-                  <p className="text-zinc-400 text-[10px]">{format(new Date(company.createdAt), 'MMM dd, yyyy')}</p>
+                  <p className="text-zinc-400 text-[10px]">{format(new Date(company.createdAt), 'dd MMM yyyy')}</p>
                 </div>
               </div>
             </div>
@@ -612,7 +612,7 @@ export function BusinessDetailsClient({
                         </span>
                       </td>
                       <td className="px-6 py-4 capitalize text-zinc-700 dark:text-zinc-300">{t.status.toLowerCase()}</td>
-                      <td className="px-6 py-4 text-zinc-400">{format(new Date(t.createdAt), 'MMM dd, yyyy')}</td>
+                      <td className="px-6 py-4 text-zinc-400">{format(new Date(t.createdAt), 'dd MMM yyyy')}</td>
                     </tr>
                   ))}
                   {tickets.length === 0 && (
@@ -678,7 +678,7 @@ export function BusinessDetailsClient({
               <button 
                 onClick={handleImpersonate}
                 disabled={isPending}
-                className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition disabled:opacity-50"
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition disabled:opacity-50"
               >
                 {isPending ? "Connecting..." : "Confirm & Launch"}
               </button>
@@ -717,7 +717,7 @@ export function BusinessDetailsClient({
               <button 
                 onClick={handleSuspend}
                 disabled={isPending}
-                className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-50"
               >
                 {isPending ? "Executing..." : "Confirm"}
               </button>
@@ -769,7 +769,7 @@ export function BusinessDetailsClient({
               <button 
                 onClick={handlePlanChange}
                 disabled={isPending}
-                className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-50"
               >
                 {isPending ? "Migrating..." : "Update Plan"}
               </button>

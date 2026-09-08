@@ -1,3 +1,4 @@
+import { requireCompany } from '@/lib/auth-context'
 import prisma from '@/utils/prisma'
 import Link from 'next/link'
 import { format } from 'date-fns'
@@ -5,9 +6,10 @@ import { Briefcase, Plus } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ProjectsPage() {
-  const projects = await prisma.project.findMany({
-    include: {
+export default async function ProjectsPage() { 
+  const { companyId } = await requireCompany();
+
+  const projects = await prisma.project.findMany({ where: { companyId }, include: {
       client: true,
       milestones: true
     },
@@ -21,7 +23,7 @@ export default async function ProjectsPage() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Projects</h1>
           <p className="text-sm text-zinc-500 mt-1">Manage project ceilings and milestone pipelines.</p>
         </div>
-        <Link href="/app/projects/new" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors w-full sm:w-auto text-center">
+        <Link href="/app/projects/new" className="bg-primary hover:bg-primary-hover text-primary-foreground px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm transition-colors w-full sm:w-auto text-center">
           + New Project
         </Link>
       </div>
@@ -46,7 +48,7 @@ export default async function ProjectsPage() {
                     </div>
                     <h3 className="text-lg font-semibold text-foreground mb-1">No active projects</h3>
                     <p className="text-zinc-500 mb-6">Create your first project to start mapping milestones and ceilings.</p>
-                    <Link href="/app/projects/new" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
+                    <Link href="/app/projects/new" className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
                       <Plus size={18} /> Create Project
                     </Link>
                   </td>
@@ -92,7 +94,7 @@ export default async function ProjectsPage() {
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-1">No active projects</h3>
               <p className="text-zinc-500 mb-6">Create your first project to start mapping milestones and ceilings.</p>
-              <Link href="/app/projects/new" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-3 rounded-xl font-bold shadow-lg inline-flex items-center gap-2">
+              <Link href="/app/projects/new" className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg inline-flex items-center gap-2">
                 <Plus size={18} /> Create Project
               </Link>
             </div>

@@ -378,7 +378,7 @@ export default function InvoiceForm({
                 toast.dismiss(t.id)
                 router.push(existingInvoice ? `/app/invoices/${existingInvoice.id}` : `/app/invoices`)
               }}
-              className="ml-2 px-3 py-1 bg-zinc-900 text-white rounded-md text-xs font-bold hover:bg-black transition-colors"
+              className="ml-2 px-3 py-1 bg-primary text-primary-foreground rounded-md text-xs font-bold hover:bg-primary transition-colors"
             >
               View
             </button>
@@ -544,7 +544,7 @@ export default function InvoiceForm({
                   </div>
                   <div className="mt-4 flex justify-end gap-2">
                     <button type="button" onClick={() => setIsAddingClient(false)} className="px-4 py-2 text-sm font-medium text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200">Cancel</button>
-                    <button type="button" onClick={handleCreateClient} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-md font-medium text-sm hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm">Save Customer</button>
+                    <button type="button" onClick={handleCreateClient} className="bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium text-sm hover:bg-primary-hover transition-colors shadow-sm">Save Customer</button>
                   </div>
                 </div>
               )}
@@ -781,11 +781,11 @@ export default function InvoiceForm({
             
             {/* Desktop layout: standard flex-col stack */}
             <div className="hidden sm:flex flex-col gap-3">
-              <button type="submit" onClick={() => setSubmitAction('sent_and_print')} disabled={isSubmitting} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-4 py-3 rounded-xl font-bold transition-all hover:bg-black dark:hover:bg-zinc-200 active:scale-[0.98] flex items-center justify-center gap-2">
+              <button type="submit" onClick={() => setSubmitAction('sent_and_print')} disabled={isSubmitting} className="w-full bg-primary text-primary-foreground shadow-md px-4 py-3 rounded-xl font-bold transition-all hover:bg-primary-hover active:scale-[0.98] flex items-center justify-center gap-2">
                 Save & Print
               </button>
               
-              <button type="submit" onClick={() => setSubmitAction('sent')} disabled={isSubmitting} className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm px-4 py-3 rounded-xl font-bold hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all active:scale-[0.98]">
+              <button type="submit" onClick={() => setSubmitAction('sent')} disabled={isSubmitting} className="w-full bg-primary text-primary-foreground shadow-sm px-4 py-3 rounded-xl font-bold hover:bg-primary-hover transition-all active:scale-[0.98]">
                 Save & Issue
               </button>
 
@@ -814,7 +814,7 @@ export default function InvoiceForm({
                 <button type="submit" onClick={() => setSubmitAction('draft')} disabled={isSubmitting} className="flex-1 bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 px-2 py-3 rounded-xl font-bold hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-xs text-center whitespace-nowrap">
                   Draft
                 </button>
-                <button type="submit" onClick={() => setSubmitAction('sent')} disabled={isSubmitting} className="flex-[1.5] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md px-2 py-3 rounded-xl font-bold transition-all active:scale-[0.98] text-sm text-center whitespace-nowrap">
+                <button type="submit" onClick={() => setSubmitAction('sent')} disabled={isSubmitting} className="flex-[1.5] bg-primary text-primary-foreground shadow-md px-2 py-3 rounded-xl font-bold transition-all active:scale-[0.98] text-sm text-center whitespace-nowrap">
                   Issue Now
                 </button>
               </div>
@@ -865,7 +865,7 @@ export default function InvoiceForm({
                 </div>
                 <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-card-border">
                   <button type="button" onClick={() => setEditingProduct(null)} className="px-5 py-2.5 font-medium text-zinc-500 hover:bg-sidebar-bg rounded-lg transition-colors">Back</button>
-                  <button type="submit" className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm">Save Product</button>
+                  <button type="submit" className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-primary-hover transition-colors shadow-sm">Save Product</button>
                 </div>
               </form>
             ) : (

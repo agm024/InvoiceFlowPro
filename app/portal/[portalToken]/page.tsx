@@ -36,7 +36,7 @@ export default async function ClientPortalPage({ params }: { params: Promise<{ p
     notFound()
   }
 
-  const companySettings = await prisma.companySettings.findFirst()
+  const companySettings = await prisma.companySettings.findUnique({ where: { companyId: client.companyId } })
 
   const unpaidInvoices = client.invoices.filter(i => i.status !== 'paid' && i.status !== 'cancelled' && i.status !== 'draft' && i.invoiceType !== 'QUOTATION')
   const paidInvoices = client.invoices.filter(i => i.status === 'paid' && i.invoiceType !== 'QUOTATION')

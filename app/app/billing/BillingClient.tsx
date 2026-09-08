@@ -1,15 +1,42 @@
 "use client"
+import toast from 'react-hot-toast'
+import Script from 'next/script'
+import { useRouter } from 'next/navigation'
 
 import { useState, useTransition } from 'react'
 import { CheckCircle2 } from 'lucide-react'
 import { createCheckoutSession } from './actions'
 
 export default function BillingClient({ plans, subscription }: { plans: any[], subscription: any }) {
+  const router = useRouter()
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
   const [isAnnual, setIsAnnual] = useState(true)
   const [isPending, startTransition] = useTransition()
+  
+  const handleSubscribe = async (planId: string, isAnnual: boolean, price: number) => {
+    if (price <= 0) {
+      if (confirm('Are you sure you want to downgrade to the Free plan? You may lose access to premium features.')) {
+        setLoadingPlan(planId);
+        try {
+          const cancelRes = await fetch('/api/subscriptions/cancel', { method: 'POST' });
+          if (!cancelRes.ok) throw new Error('Failed to cancel on Razorpay');
+          toast.success('Successfully downgraded to Free plan');
+          router.refresh();
+        } catch (e: any) {
+          toast.error('Failed to downgrade');
+        } finally {
+          setLoadingPlan(null);
+        }
+      }
+      return;
+    }
+    router.push(`/checkout/${planId}?interval=${isAnnual ? 'year' : 'month'}`);
+  };
 
   return (
-    <div className="dark:text-white">
+    <>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+      <div className="dark:text-white">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Available Plans</h2>
         
@@ -38,7 +65,7 @@ export default function BillingClient({ plans, subscription }: { plans: any[], s
           price = price || 0
 
           const currencySymbol = plan.currency === 'USD' ? '$' : plan.currency === 'INR' ? '₹' : plan.currency;
-          const isCurrentPlan = subscription?.planId === plan.id
+          const isCurrentPlan = subscription?.planId === plan.id || (!subscription && price === 0)
 
           return (
             <div key={plan.id} className={`border dark:border-zinc-700 rounded-2xl p-6 flex flex-col bg-white dark:bg-zinc-900 shadow-sm transition-shadow relative ${plan.isPopular && !isCurrentPlan ? 'border-blue-500 border-2' : ''}`}>
@@ -82,15 +109,11 @@ export default function BillingClient({ plans, subscription }: { plans: any[], s
               </ul>
               
               <button
-                onClick={() => {
-                  startTransition(async () => {
-                    await createCheckoutSession(plan.id, isAnnual ? 'year' : 'month');
-                  })
-                }}
-                disabled={isPending || (isCurrentPlan && subscription?.status === 'active' && subscription?.billingInterval === intervalLabel)}
+                onClick={() => handleSubscribe(plan.id, isAnnual, isAnnual ? plan.yearlyPrice : plan.monthlyPrice)}
+                disabled={loadingPlan === plan.id || (isCurrentPlan && subscription?.status === 'active' && subscription?.billingInterval === intervalLabel)}
                 className={`w-full py-2.5 px-4 rounded-lg font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.isPopular && !isCurrentPlan ? 'bg-blue-600 text-white hover:bg-blue-700 border-blue-600' : 'bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-zinc-700'} disabled:bg-gray-100 disabled:text-gray-500 disabled:border-gray-200 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 dark:disabled:border-zinc-700`}
               >
-                {isPending ? 'Processing...' : isCurrentPlan 
+                {loadingPlan === plan.id ? 'Processing...' : isCurrentPlan 
                   ? (subscription?.status === 'active' && subscription?.billingInterval === intervalLabel ? 'Current Plan' : 'Update Plan') 
                   : 'Subscribe'}
               </button>
@@ -99,5 +122,6 @@ export default function BillingClient({ plans, subscription }: { plans: any[], s
         })}
       </div>
     </div>
+    </>
   )
 }

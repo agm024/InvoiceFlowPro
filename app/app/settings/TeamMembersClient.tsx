@@ -128,7 +128,7 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
             ) : (
               <button 
                 onClick={() => setIsInviting(true)}
-                className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
+                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
               >
                 Invite Member
               </button>

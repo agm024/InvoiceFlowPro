@@ -49,7 +49,7 @@ export default function PrintButton() {
       type="button" 
       onClick={handleDownload}
       disabled={isExporting}
-      className="bg-zinc-900 hover:bg-zinc-800 text-white px-8 py-3 rounded-full font-bold shadow-lg transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50"
+      className="bg-primary hover:bg-primary-hover text-primary-foreground px-8 py-3 rounded-full font-bold shadow-lg transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50"
     >
       <Download size={20} />
       {isExporting ? 'Exporting...' : 'Export as PDF'}

@@ -85,7 +85,7 @@ export default async function JobsPage() {
         <form action={simulateJob}>
           <button 
             type="submit"
-            className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-xs font-semibold hover:opacity-90 transition flex items-center gap-1.5 shadow-sm"
+            className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-xs font-semibold hover:opacity-90 transition flex items-center gap-1.5 shadow-sm"
           >
             <Play size={12} /> Dispatch Test Job
           </button>

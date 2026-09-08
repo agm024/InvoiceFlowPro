@@ -1,9 +1,12 @@
 import { MarketingNav, MarketingFooter } from '@/components/MarketingShared'
 import prisma from '@/utils/prisma'
 import { PricingClient } from './PricingClient'
+import { cookies } from 'next/headers'
 
 export default async function PricingPage() {
-  const plans = await prisma.plan.findMany({
+  const token = (await cookies()).get('auth_token')?.value
+  let user = { companyId: 'test' }; // mock user for testing
+const plans = await prisma.plan.findMany({
     orderBy: { displayOrder: 'asc' }
   })
 
@@ -16,7 +19,7 @@ export default async function PricingPage() {
           <p className="text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">No hidden fees. Pay only for what you need. Upgrade or downgrade at any time.</p>
         </div>
         
-        <PricingClient plans={plans} />
+        <PricingClient plans={plans} user={user} />
       </main>
       <MarketingFooter />
     </div>

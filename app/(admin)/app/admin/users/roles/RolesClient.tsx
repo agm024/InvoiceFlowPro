@@ -100,7 +100,7 @@ export default function RolesClient({ initialRoles }: { initialRoles: any[] }) {
         {!isCreating && !editingRole && (
           <button 
             onClick={handleCreateNew}
-            className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 flex items-center gap-2 transition-opacity"
+            className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 flex items-center gap-2 transition-opacity"
           >
             <Plus size={16} /> Create Global Role
           </button>
@@ -171,7 +171,7 @@ export default function RolesClient({ initialRoles }: { initialRoles: any[] }) {
               </button>
               <button 
                 onClick={handleSave}
-                className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2 rounded-lg text-sm font-bold hover:opacity-90 flex items-center gap-2 transition-opacity shadow-sm"
+                className="bg-primary text-primary-foreground px-6 py-2 rounded-lg text-sm font-bold hover:opacity-90 flex items-center gap-2 transition-opacity shadow-sm"
               >
                 <Save size={16} /> Save Role
               </button>

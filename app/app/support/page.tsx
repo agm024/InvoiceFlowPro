@@ -101,7 +101,7 @@ export default async function TenantSupportPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-zinc-500">
-                    {format(new Date(ticket.createdAt), 'MMM dd, yyyy')}
+                    {format(new Date(ticket.createdAt), 'dd MMM yyyy')}
                   </td>
                 </tr>
               ))}
@@ -143,7 +143,7 @@ export default async function TenantSupportPage() {
                     </span>
                   </div>
                   <div className="text-xs text-zinc-500">
-                    {format(new Date(ticket.createdAt), 'MMM dd, yyyy')}
+                    {format(new Date(ticket.createdAt), 'dd MMM yyyy')}
                   </div>
                 </div>
               </div>

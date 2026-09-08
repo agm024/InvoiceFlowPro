@@ -18,6 +18,8 @@ export default async function PaymentsPage() {
     gatewayTransactionId: p.gatewayTransactionId,
     companyId: p.companyId,
     companyName: p.company.name,
+    rzpCustomerId: p.company.rzpCustomerId,
+    rzpSubscriptionId: p.subscription.rzpSubscriptionId,
     planName: p.subscription.plan.name,
     originalAmount: p.originalAmount,
     originalCurrency: p.originalCurrency,

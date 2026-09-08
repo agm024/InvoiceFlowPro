@@ -60,7 +60,7 @@ export default function ContractEditor({ projectId, initialContract, isSigned }:
         <button 
           onClick={handleSave}
           disabled={isSaving || isSigned}
-          className="text-sm bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 px-4 py-2 rounded-lg transition-colors font-bold flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-sm bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-2 rounded-lg transition-colors font-bold flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSaving ? 'Saving...' : <><Save size={16} /> Save Contract Settings</>}
         </button>
@@ -73,24 +73,24 @@ export default function ContractEditor({ projectId, initialContract, isSigned }:
         )}
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Client Company Name</label>
-          <input type="text" value={vars.companyName} onChange={e => handleChange('companyName', e.target.value)} className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.companyName} onChange={e => handleChange('companyName', e.target.value)} className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Client Primary Email</label>
-          <input type="text" value={vars.primaryEmail} onChange={e => handleChange('primaryEmail', e.target.value)} className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.primaryEmail} onChange={e => handleChange('primaryEmail', e.target.value)} className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Client Physical Address</label>
-          <input type="text" value={vars.companyAddress} onChange={e => handleChange('companyAddress', e.target.value)} className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.companyAddress} onChange={e => handleChange('companyAddress', e.target.value)} className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
         <div className="h-px bg-zinc-200 dark:bg-zinc-800 md:col-span-2 my-2"></div>
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Number of Pages</label>
-          <input type="text" value={vars.pages} onChange={e => handleChange('pages', e.target.value)} placeholder="e.g. 5" className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.pages} onChange={e => handleChange('pages', e.target.value)} placeholder="e.g. 5" className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">SEO Tier</label>
-          <select value={vars.seoTier} onChange={e => handleChange('seoTier', e.target.value)} className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white">
+          <select value={vars.seoTier} onChange={e => handleChange('seoTier', e.target.value)} className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground">
             <option>Basic</option>
             <option>Standard</option>
             <option>Advanced</option>
@@ -98,35 +98,35 @@ export default function ContractEditor({ projectId, initialContract, isSigned }:
         </div>
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Total Fee / Pricing</label>
-          <input type="text" value={vars.totalFee} onChange={e => handleChange('totalFee', e.target.value)} placeholder="e.g. ₹50,000 or $1,000" className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.totalFee} onChange={e => handleChange('totalFee', e.target.value)} placeholder="e.g. ₹50,000 or $1,000" className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Payment Methods Allowed</label>
-          <input type="text" value={vars.paymentRails} onChange={e => handleChange('paymentRails', e.target.value)} placeholder="e.g. Bank Transfer / UPI" className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.paymentRails} onChange={e => handleChange('paymentRails', e.target.value)} placeholder="e.g. Bank Transfer / UPI" className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Max Revisions</label>
-          <input type="text" value={vars.revisions} onChange={e => handleChange('revisions', e.target.value)} placeholder="e.g. 2" className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.revisions} onChange={e => handleChange('revisions', e.target.value)} placeholder="e.g. 2" className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Asset Delivery Window (Days)</label>
-          <input type="text" value={vars.assetDays} onChange={e => handleChange('assetDays', e.target.value)} placeholder="e.g. 14" className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.assetDays} onChange={e => handleChange('assetDays', e.target.value)} placeholder="e.g. 14" className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Ghosting Penalty Fee</label>
-          <input type="text" value={vars.reactivationFee} onChange={e => handleChange('reactivationFee', e.target.value)} placeholder="e.g. ₹5,000" className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.reactivationFee} onChange={e => handleChange('reactivationFee', e.target.value)} placeholder="e.g. ₹5,000" className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Cancellation Notice (Days)</label>
-          <input type="text" value={vars.noticeDays} onChange={e => handleChange('noticeDays', e.target.value)} placeholder="e.g. 7" className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.noticeDays} onChange={e => handleChange('noticeDays', e.target.value)} placeholder="e.g. 7" className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Warranty Period (Days)</label>
-          <input type="text" value={vars.warrantyDays} onChange={e => handleChange('warrantyDays', e.target.value)} placeholder="e.g. 30" className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.warrantyDays} onChange={e => handleChange('warrantyDays', e.target.value)} placeholder="e.g. 30" className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Legal Jurisdiction</label>
-          <input type="text" value={vars.jurisdiction} onChange={e => handleChange('jurisdiction', e.target.value)} placeholder="e.g. Mumbai, Maharashtra" className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-white" />
+          <input type="text" value={vars.jurisdiction} onChange={e => handleChange('jurisdiction', e.target.value)} placeholder="e.g. Mumbai, Maharashtra" className="w-full px-3 py-2 bg-zinc-50 dark:bg-primary border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm outline-none focus:border-zinc-900 dark:focus:border-white text-zinc-900 dark:text-primary-foreground" />
         </div>
       </div>
     </div>

@@ -92,7 +92,7 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
           <div className="flex items-center gap-3 shrink-0 self-start md:self-auto w-full md:w-auto">
             <Link 
               href={`/app/products/${product.slug}/edit`}
-              className="flex-1 md:flex-none justify-center inline-flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+              className="flex-1 md:flex-none justify-center inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
             >
               <Edit3 size={16} />
               Edit Item

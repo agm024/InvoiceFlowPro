@@ -142,7 +142,7 @@ export default function BankAccountsList({ initialBanks, initialTransfers = [] }
         <div className="flex justify-end pt-2">
           <button 
             type="submit" disabled={isAdding}
-            className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
+            className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
           >
             {isAdding ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
             Add Bank
@@ -194,7 +194,7 @@ export default function BankAccountsList({ initialBanks, initialTransfers = [] }
               <input type="date" name="date" required defaultValue={format(new Date(), 'yyyy-MM-dd')} className="w-full rounded-lg px-4 py-2.5 bg-background border border-sidebar-border" />
             </div>
             <div>
-              <button disabled={isTransferring} type="submit" className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 disabled:opacity-50 flex items-center justify-center gap-2">
+              <button disabled={isTransferring} type="submit" className="w-full bg-primary text-primary-foreground text-white px-4 py-2.5 rounded-lg font-medium hover:bg-primary-hover disabled:opacity-50 flex items-center justify-center gap-2">
                 <ArrowRightLeft size={16} /> Transfer
               </button>
             </div>

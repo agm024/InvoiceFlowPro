@@ -283,7 +283,7 @@ export default function ProductForm({ initialData, action, title }: ProductFormP
             <button 
               type="submit" 
               disabled={loading}
-              className="inline-flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-8 py-3 rounded-xl font-bold hover:bg-black dark:hover:bg-zinc-200 hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold hover:bg-primary-hover hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
             >
               <Save size={18} />
               {loading ? 'Saving...' : 'Save Product'}

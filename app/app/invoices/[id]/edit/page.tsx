@@ -1,3 +1,4 @@
+import { requireCompany } from '@/lib/auth-context'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import InvoiceForm from '../../new/InvoiceForm'
@@ -21,7 +22,7 @@ export default async function EditInvoicePage({ params }: { params: Promise<{ id
   const clients = await getClients()
   const products = await getProducts()
   const banks = await getBanks()
-  const companySettings = await prisma.companySettings.findFirst()
+  const companySettings = await prisma.companySettings.findFirst({ where: { companyId: invoice.companyId } })
 
   return (
     <div className="p-4 md:p-8 max-w-[1600px] mx-auto w-full">

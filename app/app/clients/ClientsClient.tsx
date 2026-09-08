@@ -141,7 +141,7 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
           </div>
           <Link 
             href="/app/clients/new" 
-            className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm flex items-center gap-2 shrink-0"
+            className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary-hover transition-colors shadow-sm flex items-center gap-2 shrink-0"
           >
             <Plus size={18} /> <span className="hidden sm:inline">Add Client</span>
           </Link>
@@ -155,7 +155,7 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
           </div>
           <h3 className="text-lg font-semibold text-foreground mb-1">No clients found</h3>
           <p className="text-zinc-500 mb-6">You haven&apos;t added any clients yet, or none match your search.</p>
-          <Link href="/app/clients/new" className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
+          <Link href="/app/clients/new" className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
             <Plus size={18} /> Create your first client
           </Link>
         </div>
@@ -303,7 +303,7 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
               </div>
               <div className="flex justify-end gap-3 mt-4 pt-6 border-t border-card-border">
                 <button type="button" onClick={() => setEditingClient(null)} className="px-5 py-2.5 font-medium text-zinc-500 hover:bg-sidebar-bg rounded-lg transition-colors">Cancel</button>
-                <button type="submit" className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm">Save Changes</button>
+                <button type="submit" className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-primary-hover transition-colors shadow-sm">Save Changes</button>
               </div>
             </form>
           </div>
@@ -355,7 +355,7 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
               </div>
               <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-card-border">
                 <button type="button" onClick={() => setEmailModalOpen(false)} disabled={isSubmittingEmail} className="px-5 py-2.5 font-medium text-zinc-500 hover:bg-sidebar-bg rounded-lg transition-colors">Cancel</button>
-                <button type="submit" disabled={isSubmittingEmail} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2">
+                <button type="submit" disabled={isSubmittingEmail} className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-primary-hover transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2">
                   <Send size={16} />
                   {isSubmittingEmail ? 'Sending...' : 'Send Email'}
                 </button>

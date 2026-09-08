@@ -21,7 +21,7 @@ export default async function EstimatesPage() {
         </div>
         <Link 
           href="/app/estimates/new" 
-          className="bg-zinc-900 hover:bg-black dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-1.5"
+          className="bg-primary hover:bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-1.5"
         >
           <Plus size={16} /> New Estimate
         </Link>
@@ -50,7 +50,7 @@ export default async function EstimatesPage() {
                     </Link>
                   </td>
                   <td className="px-6 py-4 text-zinc-500">
-                    {format(new Date(estimate.date), 'MMM dd, yyyy')}
+                    {format(new Date(estimate.date), 'dd MMM yyyy')}
                   </td>
                   <td className="px-6 py-4">
                     <span className="font-medium text-zinc-900 dark:text-zinc-100">{estimate.client.name}</span>
@@ -93,7 +93,7 @@ export default async function EstimatesPage() {
             <p className="mb-6">Create your first estimate to send to a client.</p>
             <Link 
               href="/app/estimates/new"
-              className="bg-zinc-900 hover:bg-black dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors inline-flex items-center gap-2"
+              className="bg-primary hover:bg-primary text-primary-foreground px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors inline-flex items-center gap-2"
             >
               <Plus size={18} /> New Estimate
             </Link>

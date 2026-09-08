@@ -78,7 +78,7 @@ export default function KanbanBoard({ project }: { project: any }) {
               className="bg-transparent text-sm font-bold text-zinc-900 dark:text-white focus:outline-none cursor-pointer appearance-none pr-8"
             >
               {stages.map(s => (
-                <option key={s} value={s} className="bg-white dark:bg-zinc-900 text-black dark:text-white">{s}</option>
+                <option key={s} value={s} className="bg-white dark:bg-primary text-black dark:text-primary-foreground">{s}</option>
               ))}
             </select>
             {isUpdatingStage && <Loader2 size={14} className="animate-spin text-blue-500" />}

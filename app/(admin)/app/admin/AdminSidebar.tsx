@@ -102,7 +102,7 @@ export function AdminSidebar() {
           </div>
         )}
         {isCollapsed && (
-          <div className="w-8 h-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center font-bold text-white dark:text-zinc-900 text-xs mx-auto">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-bold text-primary-foreground text-xs mx-auto">
             IF
           </div>
         )}

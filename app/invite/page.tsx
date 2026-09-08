@@ -127,7 +127,7 @@ function InviteContent() {
                 <button 
                   type="submit" 
                   disabled={submitting} 
-                  className="w-full mt-6 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-3 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
+                  className="w-full mt-6 bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2"
                 >
                   {submitting ? <Loader2 size={18} className="animate-spin" /> : <>Accept Invitation <ArrowRight size={18} /></>}
                 </button>

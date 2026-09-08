@@ -137,7 +137,7 @@ export default function EstimateForm({
         <button 
           type="submit" 
           disabled={loading}
-          className="bg-zinc-900 hover:bg-black dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-6 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
+          className="bg-primary hover:bg-primary text-primary-foreground px-6 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
         >
           {loading ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
           Save Estimate

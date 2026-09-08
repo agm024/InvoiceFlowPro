@@ -30,7 +30,7 @@ export default function GstExportButton({
         const headers = ['Invoice Number', 'Invoice Date', 'Client Name', 'Client GSTIN', 'Taxable Value', 'GST Rate (%)', 'CGST', 'SGST', 'IGST', 'Invoice Total']
         const rows = invoices.map(i => [
           i.invoiceNumber,
-          format(new Date(i.date), 'MMM dd, yyyy'),
+          format(new Date(i.date), 'dd MMM yyyy'),
           `"${i.clientName.replace(/"/g, '""')}"`,
           i.clientGstin,
           i.taxableValue.toFixed(2),

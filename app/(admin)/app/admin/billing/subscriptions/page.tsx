@@ -1,6 +1,7 @@
 import prisma from "@/utils/prisma"
 import { requireSuperAdmin } from "@/lib/auth-context"
 import Link from "next/link"
+import { SubscriptionActions } from "./SubscriptionActions"
 import { format } from 'date-fns'
 
 export const dynamic = 'force-dynamic'
@@ -28,9 +29,11 @@ export default async function SubscriptionsPage() {
                 <th className="px-6 py-4">Business</th>
                 <th className="px-6 py-4">Plan Name</th>
                 <th className="px-6 py-4">Billing Cycle</th>
+                <th className="px-6 py-4">Gateway IDs (Razorpay)</th>
                 <th className="px-6 py-4">Lifecycle Status</th>
                 <th className="px-6 py-4">Current Period End</th>
                 <th className="px-6 py-4">Created Date</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 font-medium">
@@ -47,6 +50,11 @@ export default async function SubscriptionsPage() {
                     </td>
                     <td className="px-6 py-4 text-zinc-800 dark:text-zinc-200 font-semibold">{sub.plan.name}</td>
                     <td className="px-6 py-4 capitalize text-zinc-500">{sub.billingInterval}ly</td>
+                    <td className="px-6 py-4 text-[10px] text-zinc-500 space-y-1">
+                      {sub.rzpSubscriptionId && <div><span className="font-semibold text-zinc-400">Sub:</span> {sub.rzpSubscriptionId}</div>}
+                      {sub.company.rzpCustomerId && <div><span className="font-semibold text-zinc-400">Cust:</span> {sub.company.rzpCustomerId}</div>}
+                      {(sub.billingInterval === 'year' ? sub.plan.rzpPlanIdYearly : sub.plan.rzpPlanIdMonthly) && <div><span className="font-semibold text-zinc-400">Plan:</span> {sub.billingInterval === 'year' ? sub.plan.rzpPlanIdYearly : sub.plan.rzpPlanIdMonthly}</div>}
+                    </td>
                     <td className="px-6 py-4">
                       {isCanceledAtPeriodEnd ? (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400">
@@ -65,17 +73,20 @@ export default async function SubscriptionsPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-zinc-500">
-                      {sub.currentPeriodEnd ? format(new Date(sub.currentPeriodEnd), 'MMM dd, yyyy') : "-"}
+                      {sub.currentPeriodEnd ? format(new Date(sub.currentPeriodEnd), 'dd MMM yyyy') : "-"}
                     </td>
                     <td className="px-6 py-4 text-zinc-400">
-                      {format(new Date(sub.createdAt), 'MMM dd, yyyy')}
+                      {format(new Date(sub.createdAt), 'dd MMM yyyy')}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <SubscriptionActions subId={sub.id} status={sub.status} />
                     </td>
                   </tr>
                 )
               })}
               {subscriptions.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-zinc-500">No subscriptions found.</td>
+                  <td colSpan={7} className="px-6 py-12 text-center text-zinc-500">No subscriptions found.</td>
                 </tr>
               )}
             </tbody>

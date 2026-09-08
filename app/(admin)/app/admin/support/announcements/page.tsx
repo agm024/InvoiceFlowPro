@@ -43,7 +43,7 @@ export default async function AnnouncementsPage() {
               <label htmlFor="published" className="text-sm font-medium">Publish immediately</label>
             </div>
           </div>
-          <button type="submit" className="px-4 py-2 font-medium bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 rounded-md hover:opacity-90 transition text-sm">
+          <button type="submit" className="px-4 py-2 font-medium bg-primary text-primary-foreground rounded-md hover:opacity-90 transition text-sm">
             Create Announcement
           </button>
         </form>
@@ -81,7 +81,7 @@ export default async function AnnouncementsPage() {
                   )}
                 </td>
                 <td className="px-6 py-4 text-zinc-600 dark:text-zinc-400">
-                  {format(new Date(announcement.createdAt), 'MMM dd, yyyy')}
+                  {format(new Date(announcement.createdAt), 'dd MMM yyyy')}
                 </td>
                 <td className="px-6 py-4 text-right">
                   <form action={deleteAnnouncement}>

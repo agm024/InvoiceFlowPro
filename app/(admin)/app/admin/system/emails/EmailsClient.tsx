@@ -95,7 +95,7 @@ export function EmailsClient({ templates, logs }: EmailsClientProps) {
         {activeTab === "templates" && !editingTemplate && !isCreating && (
           <button 
             onClick={() => setIsCreating(true)}
-            className="flex items-center gap-1.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold hover:opacity-90 shadow-sm"
+            className="flex items-center gap-1.5 bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-semibold hover:opacity-90 shadow-sm"
           >
             <Plus size={14} /> Create Template
           </button>
@@ -171,7 +171,7 @@ export function EmailsClient({ templates, logs }: EmailsClientProps) {
                     <button 
                       type="submit"
                       disabled={isPending}
-                      className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition"
+                      className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition"
                     >
                       Save Template
                     </button>
@@ -240,7 +240,7 @@ export function EmailsClient({ templates, logs }: EmailsClientProps) {
               <button 
                 onClick={handleSendTest}
                 disabled={isPending || !testTemplateId || !testEmailRecipient}
-                className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 py-2 rounded-lg text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-sm"
+                className="w-full bg-primary text-primary-foreground py-2 rounded-lg text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-sm"
               >
                 <Send size={12} /> Send Test Delivery
               </button>

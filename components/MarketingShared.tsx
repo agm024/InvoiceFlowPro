@@ -6,7 +6,7 @@ export async function MarketingNav() {
   return (
     <nav className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 max-w-7xl mx-auto w-full border-b border-zinc-200 dark:border-zinc-800">
       <Link href="/" className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-lg flex items-center justify-center">
+        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
           <span className="text-white dark:text-zinc-900 font-bold text-xl">I</span>
         </div>
         <span className="font-bold text-xl tracking-tight">InvoiceFlow<span className="text-blue-600 dark:text-blue-500">Pro</span></span>
@@ -15,7 +15,7 @@ export async function MarketingNav() {
         <Link href="/pricing" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition">Pricing</Link>
         <Link href="/contact" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition">Contact</Link>
         {session ? (
-          <Link href="/app" className="text-sm font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg hover:bg-black dark:hover:bg-zinc-200 transition">
+          <Link href="/app" className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary-hover transition">
             Go to Dashboard
           </Link>
         ) : (
@@ -23,7 +23,7 @@ export async function MarketingNav() {
             <Link href="/sign-in" className="text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition">
               Log in
             </Link>
-            <Link href="/sign-up" className="text-sm font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg hover:bg-black dark:hover:bg-zinc-200 transition">
+            <Link href="/sign-up" className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary-hover transition">
               Get Started
             </Link>
           </>

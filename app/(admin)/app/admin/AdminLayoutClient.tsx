@@ -30,7 +30,7 @@ export default function AdminLayoutClient({
         </h1>
         <button 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="text-zinc-900 dark:text-white p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+          className="text-zinc-900 dark:text-primary-foreground p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-primary transition-colors"
         >
           {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
         </button>

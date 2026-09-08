@@ -104,7 +104,7 @@ export default function PortalClient({
       <header className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-4 sm:py-0 sm:h-16 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            <div className="w-10 h-10 bg-zinc-900 dark:bg-white dark:text-zinc-900 rounded-xl flex items-center justify-center text-white shadow-sm shrink-0">
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground shadow-sm shrink-0">
               <Building2 size={20} />
             </div>
             <div>
@@ -188,12 +188,12 @@ export default function PortalClient({
                         <tr key={invoice.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                           <td className="px-6 py-4 font-medium text-zinc-900 dark:text-zinc-100">
                             {invoice.invoiceNumber}
-                            <div className="text-xs text-zinc-500 mt-1">{format(new Date(invoice.date), 'MMM dd, yyyy')}</div>
+                            <div className="text-xs text-zinc-500 mt-1">{format(new Date(invoice.date), 'dd MMM yyyy')}</div>
                           </td>
                           <td className="px-6 py-4">
                             {invoice.dueDate ? (
                               <span className={new Date(invoice.dueDate) < new Date() ? 'text-red-600 dark:text-red-400 font-medium' : 'text-zinc-500'}>
-                                {format(new Date(invoice.dueDate), 'MMM dd, yyyy')}
+                                {format(new Date(invoice.dueDate), 'dd MMM yyyy')}
                               </span>
                             ) : '-'}
                           </td>
@@ -208,7 +208,7 @@ export default function PortalClient({
                               <Link href={`/pay/${invoice.id}`} target="_blank" className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 p-1.5 transition-colors" title="View Invoice">
                                 <FileText size={18} />
                               </Link>
-                              <Link href={`/pay/${invoice.id}`} className="px-3 py-1.5 bg-zinc-900 dark:bg-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-1.5 ml-2">
+                              <Link href={`/pay/${invoice.id}`} className="px-3 py-1.5 bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-1.5 ml-2">
                                 <CreditCard size={14} /> Pay Now
                               </Link>
                             </div>
@@ -246,7 +246,7 @@ export default function PortalClient({
                       {paidInvoices.map(invoice => (
                         <tr key={invoice.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                           <td className="px-6 py-4 font-medium text-zinc-900 dark:text-zinc-100">{invoice.invoiceNumber}</td>
-                          <td className="px-6 py-4 text-zinc-500">{format(new Date(invoice.updatedAt), 'MMM dd, yyyy')}</td>
+                          <td className="px-6 py-4 text-zinc-500">{format(new Date(invoice.updatedAt), 'dd MMM yyyy')}</td>
                           <td className="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-100">
                             {invoice.currency} {invoice.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </td>
@@ -289,7 +289,7 @@ export default function PortalClient({
                         </span>
                       </div>
                       <p className="text-sm text-zinc-500">
-                        Total: {estimate.currency} {estimate.total.toLocaleString()} • Date: {format(new Date(estimate.date), 'MMM dd, yyyy')}
+                        Total: {estimate.currency} {estimate.total.toLocaleString()} • Date: {format(new Date(estimate.date), 'dd MMM yyyy')}
                       </p>
                     </div>
                     
@@ -353,7 +353,7 @@ export default function PortalClient({
                               <div key={stage} className="flex flex-col items-center w-full relative">
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold z-10 ${
                                   isPast ? 'bg-green-500 text-white' :
-                                  isCurrent ? 'bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white ring-4 ring-zinc-200 dark:ring-zinc-800' :
+                                  isCurrent ? 'bg-primary text-primary-foreground ring-4 ring-zinc-200 dark:ring-zinc-800' :
                                   'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'
                                 }`}>
                                   {isPast ? <CheckCircle size={16} /> : idx + 1}
@@ -383,7 +383,7 @@ export default function PortalClient({
                                 Digitally Signed by {project.contractSignedBy || "Client"}
                               </div>
                               <div className="text-[11px] text-green-700/80 font-mono ml-5 border-l-2 border-green-600/20 pl-2">
-                                {format(new Date(project.contractApprovedAt), "MMM dd, yyyy 'at' hh:mm a")}   IP Verified
+                                {format(new Date(project.contractApprovedAt), 'dd MMM yyyy, hh:mm a')}   IP Verified
                               </div>
                             </div>
                           ) : (
@@ -393,7 +393,7 @@ export default function PortalClient({
                               projectId: project.id,
                               projectName: project.name,
                               contractText: project.contractText
-                            })} className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-semibold w-full transition-colors">
+                            })} className="px-4 py-2 bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg text-xs font-semibold w-full transition-colors">
                               Sign Contract
                             </button>
                           )}
@@ -403,7 +403,7 @@ export default function PortalClient({
                           <p className="text-xs text-zinc-500 mb-3">Sign off on the final deliverables.</p>
                           {project.projectClosedAt ? (
                             <div className="flex items-center gap-2 text-xs font-medium text-green-600">
-                              <CheckCircle size={14} /> Closed on {format(new Date(project.projectClosedAt), 'MMM dd, yyyy')}
+                              <CheckCircle size={14} /> Closed on {format(new Date(project.projectClosedAt), 'dd MMM yyyy')}
                             </div>
                           ) : (
                             <button onClick={() => setSignatureModal({
@@ -411,7 +411,7 @@ export default function PortalClient({
                               type: 'handover',
                               projectId: project.id,
                               projectName: project.name
-                            })} disabled={project.stage !== 'REVIEW'} className="px-4 py-2 bg-zinc-900 dark:bg-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white rounded-lg text-xs font-semibold w-full transition-colors disabled:opacity-50">
+                            })} disabled={project.stage !== 'REVIEW'} className="px-4 py-2 bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg text-xs font-semibold w-full transition-colors disabled:opacity-50">
                               {project.stage !== 'REVIEW' ? 'Not Ready for Closure' : 'Sign-Off Project'}
                             </button>
                           )}
@@ -520,7 +520,7 @@ export default function PortalClient({
               </div>
               
               <div className="mt-8">
-                <button type="submit" disabled={isUpdating} className="bg-zinc-900 dark:bg-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-70">
+                <button type="submit" disabled={isUpdating} className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-70">
                   {isUpdating ? 'Saving...' : 'Save Details'}
                 </button>
               </div>

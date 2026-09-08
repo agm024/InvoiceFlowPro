@@ -57,7 +57,7 @@ function SignInForm() {
           <label htmlFor="remember" className="text-sm text-zinc-600 dark:text-zinc-400">Remember me</label>
         </div>
         
-        <button disabled={loading} type="submit" className="w-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-3 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-white/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+        <button disabled={loading} type="submit" className="w-full bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
           {loading ? <Loader2 className="animate-spin" size={18} /> : <>Sign in <ArrowRight size={18} /></>}
         </button>
       </form>

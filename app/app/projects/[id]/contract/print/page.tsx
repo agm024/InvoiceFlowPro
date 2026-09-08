@@ -188,7 +188,7 @@ ANNEXURE A: ADDITIONAL SITE CHANGES & ADD-ON MENU (All prices are fixed and bill
                     <span>Digitally Signed by {project.contractSignedBy || "Client"}</span>
                   </div>
                   <span className="text-xs text-green-700 font-mono">
-                    {format(new Date(project.contractApprovedAt), "MMM dd, yyyy 'at' hh:mm a")} • IP Verified
+                    {format(new Date(project.contractApprovedAt), 'dd MMM yyyy, hh:mm a')} • IP Verified
                   </span>
                 </div>
               ) : (

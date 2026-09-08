@@ -19,6 +19,7 @@ export default async function BillingPage() {
   })
 
   const isWarningStatus = subscription?.status === 'past_due' || subscription?.status === 'canceled'
+  const isPaused = subscription?.status === 'paused'
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-8">
@@ -29,7 +30,19 @@ export default async function BillingPage() {
         </p>
       </div>
 
-      {isWarningStatus && (
+      {isPaused && (
+        <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-md flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5" />
+          <div>
+            <h3 className="text-amber-800 font-semibold">Subscription Paused</h3>
+            <p className="text-amber-700 mt-1 text-sm">
+              Your premium subscription is currently <strong>PAUSED</strong>. Your account limits have been temporarily restricted to the Free tier. If you wish to restore your premium features, please resume your subscription.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {isWarningStatus && !isPaused && (
         <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
           <div>
@@ -50,7 +63,7 @@ export default async function BillingPage() {
               <p><strong>Status:</strong> <span className={`capitalize font-medium ${subscription.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>{subscription.status.replace('_', ' ')}</span></p>
               <p><strong>Billing Interval:</strong> <span className="capitalize">{subscription.billingInterval || 'Month'}</span></p>
               {subscription.currentPeriodEnd && (
-                <p><strong>Renews on:</strong> {format(new Date(subscription.currentPeriodEnd), 'MMM dd, yyyy')}</p>
+                <p><strong>Renews on:</strong> {format(new Date(subscription.currentPeriodEnd), 'dd MMM yyyy')}</p>
               )}
             </div>
           ) : (

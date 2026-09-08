@@ -130,7 +130,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
 
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold tracking-tight text-foreground">Chronological Project Roadmap</h2>
-        <Link href={`/app/projects/new?clientId=${client.id}`} className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-colors">
+        <Link href={`/app/projects/new?clientId=${client.id}`} className="bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-colors">
           + New Project
         </Link>
       </div>
@@ -326,7 +326,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
 
       <div className="mt-12 mb-6 flex justify-between items-center">
         <h2 className="text-xl font-bold tracking-tight text-foreground">Client Invoices</h2>
-        <Link href={`/app/invoices/new?clientId=${client.id}`} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-colors">
+        <Link href={`/app/invoices/new?clientId=${client.id}`} className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-colors">
           + New Invoice
         </Link>
       </div>

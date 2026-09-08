@@ -90,9 +90,9 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
     const formattedAmount = '₹ ' + total.toFixed(2)
     const res = await sendPaymentReminder(clientEmail!, clientName, invoiceNumber, invoiceId, formattedAmount)
     if (res.success) {
-      toast.success('Reminder sent successfully!')
+      toast.success(`Reminder sent successfully to ${clientEmail}!`)
     } else {
-      toast.error('Failed to send reminder.')
+      toast.error('Something went wrong. Try again.')
     }
     setIsSendingReminder(false)
     setIsOpen(false)
@@ -111,12 +111,12 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
     const formattedAmount = '₹ ' + total.toFixed(2)
     const res = await sendInvoiceEmail(clientEmail!, clientName, invoiceNumber, invoiceId, formattedAmount)
     if (res.success) {
-      toast.success('Invoice sent successfully!')
+      toast.success(`Invoice sent successfully to ${clientEmail}!`)
       if (status === 'draft') {
         await updateInvoiceStatus(invoiceId, 'sent')
       }
     } else {
-      toast.error('Failed to send invoice.')
+      toast.error('Something went wrong. Try again.')
     }
     setIsSendingInvoice(false)
     setIsOpen(false)
@@ -128,9 +128,9 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
     const formattedAmount = '₹ ' + total.toFixed(2)
     const res = await sendPaymentReminder(clientEmail!, clientName, invoiceNumber, invoiceId, formattedAmount)
     if (res.success) {
-      toast.success('Reminder sent successfully!')
+      toast.success(`Reminder sent successfully to ${clientEmail}!`)
     } else {
-      toast.error('Failed to send reminder.')
+      toast.error('Something went wrong. Try again.')
     }
     setIsSendingReminder(false)
   }
@@ -141,12 +141,12 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
     const formattedAmount = '₹ ' + total.toFixed(2)
     const res = await sendInvoiceEmail(clientEmail!, clientName, invoiceNumber, invoiceId, formattedAmount)
     if (res.success) {
-      toast.success('Invoice sent successfully!')
+      toast.success(`Invoice sent successfully to ${clientEmail}!`)
       if (status === 'draft') {
         await updateInvoiceStatus(invoiceId, 'sent')
       }
     } else {
-      toast.error('Failed to send invoice.')
+      toast.error('Something went wrong. Try again.')
     }
     setIsSendingInvoice(false)
   }

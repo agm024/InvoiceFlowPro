@@ -12,11 +12,11 @@
   --card-border: #e2e8f0;
   
   /* Primary Deep Indigo / Electric Blue */
-  --primary: #4f46e5;
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --primary-hover: #4338ca;
-  --accent: #eef2ff;
-  --accent-foreground: #4f46e5;
+  --primary-hover: #1d4ed8;
+  --accent: #eff6ff;
+  --accent-foreground: #2563eb;
 }
 
 @theme inline {
@@ -106,5 +106,5 @@ select:hover {
 select:focus {
   border-color: var(--primary) !important;
   outline: none !important;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2) !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
 }

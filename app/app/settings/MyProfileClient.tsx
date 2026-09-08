@@ -128,7 +128,7 @@ export default function MyProfileClient({ currentUser, subscription }: { current
           <div className="flex justify-end pt-4">
             <button 
               type="submit" disabled={loading}
-              className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-lg font-medium hover:bg-black dark:hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-sm shadow-zinc-900/20 disabled:opacity-50"
+              className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-primary-hover transition-colors flex items-center gap-2 shadow-sm shadow-primary/20 disabled:opacity-50"
             >
               {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
               Update Password

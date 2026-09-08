@@ -1,10 +1,23 @@
 "use client"
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 import Link from 'next/link'
 import { CheckCircle2, XCircle } from 'lucide-react'
 
-export function PricingClient({ plans }: { plans: any[] }) {
+export function PricingClient({ plans, user }: { plans: any[], user?: any }) {
+  const router = useRouter();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleSubscribe = async (planId: string, isAnnual: boolean, price: number) => {
+    if (price <= 0) {
+      toast.error('To downgrade, please go to your Billing Dashboard in the App');
+      router.push('/app/billing');
+      return;
+    }
+    router.push(`/checkout/${planId}?interval=${isAnnual ? 'year' : 'month'}`);
+  };
   const [isAnnual, setIsAnnual] = useState(true)
 
   if (plans.length === 0) {
@@ -68,7 +81,7 @@ export function PricingClient({ plans }: { plans: any[] }) {
                   <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> Advanced Reporting</li>
                   <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> Dedicated Client Portal</li>
                 </ul>
-                <Link href="/sign-up" className="block text-center w-full py-3 rounded-xl bg-white text-blue-600 font-bold hover:bg-zinc-50 transition shadow-sm">Start Free Trial</Link>
+                <button onClick={() => !user && router.push('/sign-up')} className="block text-center w-full py-3 rounded-xl bg-white text-blue-600 font-bold hover:bg-zinc-50 transition shadow-sm">{user ? 'Current Plan' : 'Start Free Trial'}</button>
               </div>
             )
           }
