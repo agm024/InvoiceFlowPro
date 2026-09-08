@@ -367,7 +367,7 @@ export function BusinessDetailsClient({
                     <span className="text-xs text-zinc-400 font-semibold uppercase"> / {company.subscription?.billingInterval || "month"}</span>
                   </p>
                   <p className="text-xs text-zinc-500 mt-2">
-                    Status: <span className="font-semibold text-emerald-500 capitalize">{company.subscription?.status || "active"}</span>
+                    Status: <span className={`font-semibold capitalize ${company.subscription?.status === 'active' ? 'text-emerald-500' : company.subscription?.status === 'paused' ? 'text-amber-500' : 'text-red-500'}`}>{company.subscription?.status || "active"}</span>
                   </p>
                 </div>
               </div>

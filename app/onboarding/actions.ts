@@ -56,7 +56,7 @@ export async function completeGoogleOnboardingAction(data: any) {
         name: userName,
         email: userEmail,
         companyId: company.id,
-        role: 'admin',
+        role: 'owner',
         isSuperAdmin: false
       }
     })

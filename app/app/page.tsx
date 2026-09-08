@@ -4,6 +4,7 @@ import prisma from '@/utils/prisma'
 import Link from 'next/link'
 import { format, subDays, addDays, startOfMonth, subMonths, endOfMonth, startOfYear } from 'date-fns'
 import { RevenueChart } from '@/components/DashboardCharts'
+import OnboardingWidget from './OnboardingWidget'
 import { requireCompany } from '@/lib/auth-context'
 
 export default async function DashboardPage({
@@ -51,11 +52,32 @@ export default async function DashboardPage({
   // 2. DB QUERIES
   const allInvoices = await prisma.invoice.findMany({
     where: { companyId, invoiceType: { not: 'QUOTATION' } },
-    include: { client: true }
+    select: {
+      id: true,
+      status: true,
+      date: true,
+      dueDate: true,
+      total: true,
+      taxTotal: true,
+      exchangeRate: true,
+      invoiceNumber: true,
+      updatedAt: true,
+      client: { select: { id: true, name: true } }
+    }
   })
 
   const allExpenses = await prisma.expense.findMany({
-    where: { companyId }
+    where: { companyId },
+    select: {
+      id: true,
+      category: true,
+      date: true,
+      totalAmount: true,
+      taxAmount: true,
+      itcEligible: true,
+      vendorName: true,
+      createdAt: true
+    }
   })
 
   const allProjects = await prisma.project.findMany({
@@ -205,60 +227,23 @@ export default async function DashboardPage({
     'ytd': 'Year To Date'
   }
 
-  const isNewTenant = allInvoices.length === 0 && allClientsCount === 0
-
-  if (isNewTenant) {
-    return (
-      <div className="p-6 md:p-12 max-w-4xl mx-auto w-full text-zinc-950 dark:text-zinc-50 flex flex-col items-center justify-center min-h-[70vh] animate-in fade-in duration-500">
-        <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-6 border border-blue-100 dark:border-blue-800">
-          <span className="text-4xl">👋</span>
-        </div>
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-center mb-4">Welcome to InvoiceFlow!</h1>
-        <p className="text-lg text-zinc-500 dark:text-zinc-400 text-center max-w-xl mb-12">
-          Let's get your business ready to send its first invoice. Create your first professional invoice in less than a minute.
-        </p>
-        
-        <div className="w-full max-w-md bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-xl mb-8">
-          <h3 className="font-bold text-lg mb-6 flex items-center justify-between">
-            <span>Get your account ready</span>
-            <span className="text-sm font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full">Step 1 of 5</span>
-          </h3>
-          <ul className="space-y-4">
-            <li className="flex items-center gap-3 text-zinc-900 dark:text-zinc-100 font-medium">
-              <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs">✓</div>
-              Create account
-            </li>
-            <li className="flex items-center gap-3 text-zinc-500">
-              <div className="w-6 h-6 rounded-full border-2 border-zinc-200 dark:border-zinc-700"></div>
-              Add business information
-            </li>
-            <li className="flex items-center gap-3 text-zinc-500">
-              <div className="w-6 h-6 rounded-full border-2 border-zinc-200 dark:border-zinc-700"></div>
-              Configure GST/Tax settings
-            </li>
-            <li className="flex items-center gap-3 text-zinc-500">
-              <div className="w-6 h-6 rounded-full border-2 border-zinc-200 dark:border-zinc-700"></div>
-              Add your first client
-            </li>
-            <li className="flex items-center gap-3 text-zinc-500">
-              <div className="w-6 h-6 rounded-full border-2 border-zinc-200 dark:border-zinc-700"></div>
-              Create your first invoice
-            </li>
-          </ul>
-        </div>
-
-        <Link href="/app/invoices/new" className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:scale-105 flex items-center gap-2">
-          <span className="text-xl">+</span> Create Your First Invoice
-        </Link>
-      </div>
-    )
-  }
+  const company = await prisma.company.findUnique({ where: { id: companyId }, include: { settings: true } });
+  const getStr = (s: string | null | undefined) => (s || '').trim();
+  const hasBusinessInfo = Boolean(getStr(company?.settings?.address) || getStr(company?.address));
+  const hasGst = Boolean(getStr(company?.settings?.gstin) || getStr(company?.gstin) || getStr(company?.settings?.panNo) || getStr(company?.pan));
+  const hasClient = allClientsCount > 0;
+  const hasInvoice = allInvoices.length > 0;
+  
+  // Only hide the checklist when they have actually created their first invoice
+  const isNewTenant = !hasInvoice;
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto w-full text-zinc-950 dark:text-zinc-50 space-y-8 animate-in fade-in duration-500">
       
       {/* Header & Filter Controls */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      {!(hasBusinessInfo && hasGst && hasClient && hasInvoice) && <OnboardingWidget hasBusinessInfo={hasBusinessInfo} hasGst={hasGst} hasClient={hasClient} hasInvoice={hasInvoice} />}
+
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Your Financial Overview</h1>
           <p className="text-zinc-500 dark:text-zinc-400 mt-1">Monitor real-time transactions and business health.</p>

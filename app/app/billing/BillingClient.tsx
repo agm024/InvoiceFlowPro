@@ -114,7 +114,7 @@ export default function BillingClient({ plans, subscription }: { plans: any[], s
                 className={`w-full py-2.5 px-4 rounded-lg font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.isPopular && !isCurrentPlan ? 'bg-blue-600 text-white hover:bg-blue-700 border-blue-600' : 'bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-zinc-700'} disabled:bg-gray-100 disabled:text-gray-500 disabled:border-gray-200 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 dark:disabled:border-zinc-700`}
               >
                 {loadingPlan === plan.id ? 'Processing...' : isCurrentPlan 
-                  ? (subscription?.status === 'active' && subscription?.billingInterval === intervalLabel ? 'Current Plan' : 'Update Plan') 
+                  ? ((subscription?.status === 'active' || subscription?.status === 'paused' || price === 0) ? 'Current Plan' : 'Update Plan') 
                   : 'Subscribe'}
               </button>
             </div>

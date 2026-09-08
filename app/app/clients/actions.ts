@@ -32,7 +32,7 @@ async function generateUniqueSlug(name: string, model: any, companyId: string, e
   let slug = baseSlug
   let count = 1
   while (true) {
-    const existing = await model.findFirst({ where: { slug, companyId } })
+    const existing = await model.findFirst({ where: { slug } })
     if (!existing || existing.id === existingId) break
     slug = `${baseSlug}-${count}`
     count++
