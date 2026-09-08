@@ -21,6 +21,7 @@ export default async function AdminLayout({
     <AdminLayoutClient 
       sidebar={<AdminSidebar />} 
       header={<AdminHeader user={user} signOutAction={signOutAction} />}
+      user={user}
     >
       {children}
     </AdminLayoutClient>

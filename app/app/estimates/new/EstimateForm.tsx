@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Plus, Trash2, Loader2, Save } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createEstimate } from '../actions'
+import posthog from 'posthog-js'
 
 type Client = { id: string, name: string, currency?: string }
 type Product = { id: string, name: string, price: number, gstRate: number, description?: string | null }
@@ -125,6 +126,13 @@ export default function EstimateForm({
       toast.error(res.error)
       setLoading(false)
     } else {
+      if (posthog.__loaded) {
+        posthog.capture('estimate_created', {
+          currency: formData.currency,
+          item_count: items.length,
+          total_amount: total,
+        })
+      }
       toast.success('Estimate created successfully!')
       router.push('/app/estimates')
     }

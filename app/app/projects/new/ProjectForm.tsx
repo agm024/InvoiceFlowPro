@@ -6,6 +6,7 @@ import { createProject } from '../actions'
 import { Client } from '@prisma/client'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import posthog from 'posthog-js'
 
 type MilestoneEntry = {
   id: string
@@ -96,6 +97,13 @@ export default function ProjectForm({ clients, initialClientId = '' }: { clients
     if (res.error) {
       toast.error(res.error, { id: 'save_project' })
     } else {
+      if (posthog.__loaded) {
+        posthog.capture('project_created', {
+          currency,
+          milestone_count: calculatedMilestones.length,
+          total_value: projectCost,
+        })
+      }
       toast.success('Project finalized & locked!', { id: 'save_project' })
       if (res.project) {
         router.push(`/app/projects/${res.project.id}`)

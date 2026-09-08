@@ -4,15 +4,23 @@ import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
+import posthog from 'posthog-js'
 import GlobalCreateMenu from './GlobalCreateMenu'
 import GlobalSearch from './GlobalSearch'
 
 export default function AppLayoutClient({
   sidebar,
-  children
+  children,
+  user
 }: {
   sidebar: React.ReactNode,
-  children: React.ReactNode
+  children: React.ReactNode,
+  user: {
+    id?: string,
+    email?: string | null,
+    name?: string | null,
+    role?: string | null,
+  }
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const pathname = usePathname()
@@ -21,6 +29,16 @@ export default function AppLayoutClient({
   useEffect(() => {
     setIsSidebarOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    if (user.id && posthog.__loaded) {
+      posthog.identify(user.id, {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      })
+    }
+  }, [user.id, user.email, user.name, user.role])
 
   return (
     <div className="flex h-screen overflow-hidden bg-background relative print:h-auto print:overflow-visible print:block">

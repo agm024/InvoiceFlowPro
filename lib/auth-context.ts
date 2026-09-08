@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { cookies } from 'next/headers'
 
-const BYPASS_AUTH = true; // BYPASS_AUTH TEMPORARILY ENABLED
+const BYPASS_AUTH = false; // BYPASS_AUTH TEMPORARILY ENABLED
 
 export async function getCurrentUser() {
   if (BYPASS_AUTH) {
@@ -65,7 +65,7 @@ export async function getCurrentUser() {
   }
 
   return {
-    id: session.user.id,
+    id: session.user.id || "",
     email: session.user.email,
     name: session.user.name,
     role: (session.user as any).role,

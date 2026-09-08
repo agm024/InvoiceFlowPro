@@ -5,6 +5,7 @@ import { Plus, Trash2, Edit2, ShieldAlert } from 'lucide-react'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
 import { createExpense, updateExpense, deleteExpense } from './actions'
+import posthog from 'posthog-js'
 
 type Expense = any
 
@@ -88,6 +89,17 @@ export default function ExpensesClient({ initialExpenses, banks = [] }: { initia
     }
 
     if (res.success) {
+      const recordCategory = String(formData.get('category'))
+      if (posthog.__loaded) {
+        posthog.capture('expense_saved', {
+          record_type: recordCategory === 'GST_PAYMENT' ? 'gst_payment' : 'expense',
+          category: recordCategory,
+          total_amount: Number(formData.get('totalAmount')),
+          is_update: Boolean(editingExpense),
+          is_rcm: isRcm,
+          itc_eligible: itcEligible,
+        })
+      }
       toast.success(editingExpense ? 'Record updated successfully!' : 'Record saved successfully!')
       setActiveForm('NONE')
       setEditingExpense(null)

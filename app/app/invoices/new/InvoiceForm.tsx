@@ -9,6 +9,7 @@ import { Search, Plus, X, Trash2, Edit2, FileText, Banknote, Eye } from 'lucide-
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
 import CustomDatePicker from '@/components/CustomDatePicker'
+import posthog from 'posthog-js'
 
 type Client = { id: string, name: string, email?: string | null, phone?: string | null, gstin?: string | null, panNo?: string | null, address?: string | null }
 type Product = { id: string, name: string, price: number, gstRate: number, hsn?: string | null, taxInclusive?: boolean, category?: string | null }
@@ -358,6 +359,17 @@ export default function InvoiceForm({
     }
 
     if (res.success) {
+      if (posthog.__loaded) {
+        posthog.capture('invoice_saved', {
+          document_type: invoiceType.toLowerCase(),
+          status: payload.status,
+          currency,
+          item_count: items.length,
+          total_amount: finalTotal,
+          is_update: Boolean(existingInvoice),
+        })
+      }
+
       const redirectPath = '/app/invoices'
       if (submitAction === 'sent_and_print') {
         const num = existingInvoice ? existingInvoice.invoiceNumber : (res.invoice?.invoiceNumber || invoiceNumber);

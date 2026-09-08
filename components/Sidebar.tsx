@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard, Users, FolderKanban, Box, FileText, Receipt, CreditCard, ArrowRightLeft, PieChart, Download, Settings, Plus, LogOut, MessageSquare } from 'lucide-react'
 import { signOutAction } from '@/app/sign-out-action'
+import posthog from 'posthog-js'
 
 export default function Sidebar() {
   const pathname = usePathname()
@@ -90,7 +91,9 @@ export default function Sidebar() {
       </div>
       
       <div className="p-4 border-t border-sidebar-border shrink-0">
-        <form action={signOutAction}>
+        <form action={signOutAction} onSubmit={() => {
+          if (posthog.__loaded) posthog.reset()
+        }}>
           <button type="submit" className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
             <LogOut size={18} className="shrink-0" />
             Sign Out

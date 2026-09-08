@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Loader2, FileText } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { convertToInvoice } from '../actions'
+import posthog from 'posthog-js'
 
 export default function ConvertToInvoiceButton({ estimateId }: { estimateId: string }) {
   const [loading, setLoading] = useState(false)
@@ -16,6 +17,9 @@ export default function ConvertToInvoiceButton({ estimateId }: { estimateId: str
     setLoading(true)
     const res = await convertToInvoice(estimateId)
     if (res.success && res.invoiceId) {
+      if (posthog.__loaded) {
+        posthog.capture('estimate_converted_to_invoice')
+      }
       toast.success('Converted to Invoice successfully!')
       router.push(`/app/invoices/${res.invoiceId}`)
     } else {

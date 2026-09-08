@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Loader2, Save, Trash2, AlertTriangle, Key } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { signOut } from 'next-auth/react'
+import posthog from 'posthog-js'
 import { changePasswordAction, deleteAccountAction } from './profile-actions'
 import ConfirmationModal from '@/components/ConfirmationModal'
 
@@ -52,6 +53,7 @@ export default function MyProfileClient({ currentUser, subscription }: { current
       toast.error(res.error)
       setDeleting(false)
     } else {
+      if (posthog.__loaded) posthog.reset()
       signOut({ callbackUrl: '/' })
     }
   }

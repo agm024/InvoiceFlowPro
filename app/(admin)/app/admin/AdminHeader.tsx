@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Search, Bell, HelpCircle, LogOut, ArrowLeft, ArrowUpRight, ShieldCheck, User, Settings } from "lucide-react"
 import Link from "next/link"
 import { stopImpersonation } from "./impersonate-actions"
+import posthog from "posthog-js"
 
 interface AdminHeaderProps {
   user: {
@@ -127,7 +128,10 @@ export function AdminHeader({ user, signOutAction }: AdminHeaderProps) {
               </ul>
               <div className="border-t border-zinc-100 dark:border-zinc-900 mt-1 pt-1">
                 <button
-                  onClick={() => signOutAction()}
+                  onClick={() => {
+                    if (posthog.__loaded) posthog.reset()
+                    void signOutAction()
+                  }}
                   className="w-full text-left px-4 py-2 text-red-600 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors flex items-center gap-2"
                 >
                   <LogOut size={14} />

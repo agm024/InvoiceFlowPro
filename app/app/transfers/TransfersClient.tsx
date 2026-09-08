@@ -5,6 +5,7 @@ import { Plus, Trash2, ArrowRight } from 'lucide-react'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
 import { createTransfer, deleteTransfer } from './actions'
+import posthog from 'posthog-js'
 
 type Bank = {
   id: string
@@ -46,6 +47,11 @@ export default function TransfersClient({
 
     const res = await createTransfer(formData)
     if (res.success) {
+      if (posthog.__loaded) {
+        posthog.capture('transfer_recorded', {
+          amount: Number(formData.get('amount')),
+        })
+      }
       toast.success('Transfer recorded successfully!')
       setShowForm(false)
       window.location.reload()

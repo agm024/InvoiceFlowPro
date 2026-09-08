@@ -202,7 +202,7 @@ model Bank {
 
 model Invoice {
   id              String        @id @default(cuid())
-  invoiceNumber   String        @unique
+  invoiceNumber   String
   date            DateTime      @default(now())
   dueDate         DateTime?
   status          String        @default("draft")
@@ -233,6 +233,8 @@ model Invoice {
   milestone       Milestone?
   creditNotes     CreditNote[]
   debitNotes      DebitNote[]
+
+  @@unique([companyId, invoiceNumber])
 }
 
 model InvoiceItem {
@@ -334,7 +336,7 @@ model InternalTransfer {
 
 model Estimate {
   id             String         @id @default(cuid())
-  estimateNumber String         @unique
+  estimateNumber String
   date           DateTime       @default(now())
   expiryDate     DateTime?
   status         String         @default("draft")
@@ -355,6 +357,8 @@ model Estimate {
   items          EstimateItem[]
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+
+  @@unique([companyId, estimateNumber])
 }
 
 model EstimateItem {

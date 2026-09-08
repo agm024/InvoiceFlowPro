@@ -3,15 +3,23 @@
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import posthog from 'posthog-js'
 
 export default function AdminLayoutClient({
   sidebar,
   header,
-  children
+  children,
+  user
 }: {
   sidebar: React.ReactNode,
   header: React.ReactNode,
-  children: React.ReactNode
+  children: React.ReactNode,
+  user: {
+    id?: string,
+    email?: string | null,
+    name?: string | null,
+    role?: string | null,
+  }
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const pathname = usePathname()
@@ -20,6 +28,16 @@ export default function AdminLayoutClient({
   useEffect(() => {
     setIsSidebarOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    if (user.id && posthog.__loaded) {
+      posthog.identify(user.id, {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      })
+    }
+  }, [user.id, user.email, user.name, user.role])
 
   return (
     <div className="flex min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100 overflow-hidden relative">

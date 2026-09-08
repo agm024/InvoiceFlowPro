@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import CustomDropdown from '@/components/CustomDropdown'
 import { ArrowLeft, Save, IndianRupee, Percent, Package, Tag, FileText } from 'lucide-react'
+import posthog from 'posthog-js'
 
 type ProductFormProps = {
   initialData?: any
@@ -40,6 +41,14 @@ export default function ProductForm({ initialData, action, title }: ProductFormP
       setError(res.error)
       setLoading(false)
     } else {
+      if (posthog.__loaded) {
+        posthog.capture('product_saved', {
+          is_update: Boolean(initialData),
+          gst_rate: Number(gstRate),
+          tax_inclusive: taxInclusive === 'true',
+          update_drafts: updateDrafts,
+        })
+      }
       router.push('/app/products')
       router.refresh()
     }

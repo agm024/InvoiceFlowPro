@@ -1,14 +1,21 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 
+const posthogCspSources = [
+  process.env.NEXT_PUBLIC_POSTHOG_ASSETS_HOST,
+  process.env.NEXT_PUBLIC_POSTHOG_HOST,
+]
+  .filter(Boolean)
+  .join(" ");
+
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://o4512011724587008.ingest.us.sentry.io https://va.vercel-scripts.com https://checkout.razorpay.com https://cdn.razorpay.com; frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://o4512011724587008.ingest.us.sentry.io https://va.vercel-scripts.com https://checkout.razorpay.com https://cdn.razorpay.com ${posthogCspSources}; frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com;
     worker-src 'self' blob:;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src 'self' https://fonts.gstatic.com;
   img-src 'self' blob: data: https:;
-  connect-src 'self' https://o4512011724587008.ingest.us.sentry.io https://accounts.google.com https://vitals.vercel-insights.com https://api.razorpay.com https://checkout.razorpay.com https://lumberjack.razorpay.com;
+  connect-src 'self' https://o4512011724587008.ingest.us.sentry.io https://accounts.google.com https://vitals.vercel-insights.com https://api.razorpay.com https://checkout.razorpay.com https://lumberjack.razorpay.com ${posthogCspSources};
   object-src 'none';
   base-uri 'self';
   form-action 'self';
@@ -17,6 +24,7 @@ const cspHeader = `
 `.replace(/\n/g, '').replace(/\s{2,}/g, ' ').trim();
 
 const nextConfig: NextConfig = {
+  
   poweredByHeader: false,
   async headers() {
     return [
@@ -106,21 +114,16 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
-
-/* 
 export default withSentryConfig(nextConfig, {
   org: "siteradiant",
   project: "invoicing",
   silent: !process.env.CI,
   widenClientFileUpload: true,
   tunnelRoute: "/monitoring",
-  webpack: {
-    automaticVercelMonitors: true,
-    treeshake: {
-      removeDebugLogging: true,
-    },
+  reactComponentAnnotation: {
+    enabled: true,
   },
+  sourcemaps: { disable: true },
+  disableLogger: true
 });
-*/
 
