@@ -245,7 +245,7 @@ model InvoiceItem {
   invoiceId String
   productId String
   invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Expense {
@@ -369,7 +369,7 @@ model EstimateItem {
   estimateId String
   productId  String
   estimate   Estimate @relation(fields: [estimateId], references: [id], onDelete: Cascade)
-  product    Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model ActivityLog {
