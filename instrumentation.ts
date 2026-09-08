@@ -17,11 +17,9 @@ export async function register() {
       resource: resourceFromAttributes({
         'service.name': 'invoiceflow-pro',
       }),
+      processors: [new SimpleLogRecordProcessor(exporter as any)],
     })
 
-    ;(loggerProvider as any).addLogRecordProcessor ? (loggerProvider as any).addLogRecordProcessor(new SimpleLogRecordProcessor(exporter as any)) : (loggerProvider as any).addProcessor(new SimpleLogRecordProcessor(exporter as any));
-
-    // make the logger available globally
     ;(globalThis as any).__posthogLogger = loggerProvider.getLogger('invoiceflow-pro')
   }
 
