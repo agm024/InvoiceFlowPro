@@ -86,7 +86,7 @@ export default async function LandingPage() {
                    <div className="h-8 w-28 bg-blue-600 rounded-lg flex items-center justify-center text-xs text-white font-semibold shadow-sm">+ New Invoice</div>
                  </div>
 
-                 <div className="grid grid-cols-3 gap-4">
+                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="p-4 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-[#18181b]">
                        <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Revenue</div>
                        <div className="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">₹4,52,310</div>
@@ -104,17 +104,17 @@ export default async function LandingPage() {
                  <div className="flex-1 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-[#121214]">
                     <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 font-semibold text-sm">Recent Invoices</div>
                     <div className="p-4 space-y-4">
-                       <div className="flex justify-between items-center">
+                       <div className="flex sm:flex-row flex-col sm:items-center items-start justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800/50 pb-3 last:border-0 last:pb-0">
                           <div className="flex flex-col"><span className="text-sm font-bold">Global Freight Co.</span><span className="text-xs text-zinc-500">INV-0042</span></div>
                           <div className="text-sm font-bold">₹85,000</div>
                           <div className="text-xs font-bold text-amber-600 bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 px-2 py-1 rounded">Pending</div>
                        </div>
-                       <div className="flex justify-between items-center">
+                       <div className="flex sm:flex-row flex-col sm:items-center items-start justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800/50 pb-3 last:border-0 last:pb-0">
                           <div className="flex flex-col"><span className="text-sm font-bold">Apex Distribution</span><span className="text-xs text-zinc-500">INV-0041</span></div>
                           <div className="text-sm font-bold">₹1,12,500</div>
                           <div className="text-xs font-bold text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-1 rounded">Paid</div>
                        </div>
-                       <div className="flex justify-between items-center">
+                       <div className="flex sm:flex-row flex-col sm:items-center items-start justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800/50 pb-3 last:border-0 last:pb-0">
                           <div className="flex flex-col"><span className="text-sm font-bold">North Star Logistics</span><span className="text-xs text-zinc-500">INV-0040</span></div>
                           <div className="text-sm font-bold">₹42,000</div>
                           <div className="text-xs font-bold text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-1 rounded">Paid</div>
@@ -130,7 +130,7 @@ export default async function LandingPage() {
         <section className="w-full bg-zinc-50 dark:bg-[#121214] py-12 border-y border-zinc-200 dark:border-zinc-800">
           <div className="max-w-7xl mx-auto px-6 text-center">
             <p className="text-sm font-bold text-zinc-400 uppercase tracking-widest mb-8">Everything you need to manage your billing</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-zinc-600 dark:text-zinc-300 font-medium">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-zinc-600 dark:text-zinc-300 font-medium">
               <div className="flex items-center justify-center gap-2"><Zap className="text-blue-500 w-5 h-5"/> Create invoices in seconds</div>
               <div className="flex items-center justify-center gap-2"><PieChart className="text-blue-500 w-5 h-5"/> Track paid & pending</div>
               <div className="flex items-center justify-center gap-2"><Users className="text-blue-500 w-5 h-5"/> Manage customers</div>
