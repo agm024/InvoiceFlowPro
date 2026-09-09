@@ -29,6 +29,10 @@ export default function SignUpPage() {
     state: ''
   })
 
+  const has8Chars = formData.password.length >= 8;
+  const hasNumber = /\d/.test(formData.password);
+  const passwordsMatch = formData.password.length > 0 && formData.password === formData.confirmPassword;
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
@@ -36,7 +40,8 @@ export default function SignUpPage() {
   const handleSendOtp = async () => {
     if (!formData.name || !formData.email || !formData.password) return toast.error('Please fill all fields')
     if (formData.password !== formData.confirmPassword) return toast.error('Passwords do not match')
-    if (formData.password.length < 8) return toast.error('Password must be at least 8 characters')
+    if (!has8Chars) return toast.error('Password must be at least 8 characters')
+      if (!hasNumber) return toast.error('Password must contain at least one number')
     
     setLoading(true)
     const res = await sendOtpAction(formData.email, formData.name)
@@ -146,9 +151,24 @@ export default function SignUpPage() {
                     <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-9 text-zinc-500">
                       {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
+                    </div>
                   </div>
-                </div>
-                <button onClick={handleSendOtp} disabled={loading} className="w-full mt-4 bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2">
+                  <div className="mt-2 space-y-1.5 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800">
+                    <div className="flex items-center gap-2 text-xs">
+                      {has8Chars ? <CheckCircle2 size={14} className="text-emerald-500" /> : <div className="w-3.5 h-3.5 rounded-full border border-zinc-300 dark:border-zinc-700" />}
+                      <span className={has8Chars ? "text-emerald-600 dark:text-emerald-400" : "text-zinc-500"}>At least 8 characters</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      {hasNumber ? <CheckCircle2 size={14} className="text-emerald-500" /> : <div className="w-3.5 h-3.5 rounded-full border border-zinc-300 dark:border-zinc-700" />}
+                      <span className={hasNumber ? "text-emerald-600 dark:text-emerald-400" : "text-zinc-500"}>Contains a number</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      {passwordsMatch ? <CheckCircle2 size={14} className="text-emerald-500" /> : <div className="w-3.5 h-3.5 rounded-full border border-zinc-300 dark:border-zinc-700" />}
+                      <span className={passwordsMatch ? "text-emerald-600 dark:text-emerald-400" : "text-zinc-500"}>Passwords match</span>
+                    </div>
+                  </div>
+
+                  <button onClick={handleSendOtp} disabled={loading} className="w-full mt-4 bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2">
                   {loading ? <Loader2 size={18} className="animate-spin" /> : <>Verify Email <ArrowRight size={18} /></>}
                 </button>
 

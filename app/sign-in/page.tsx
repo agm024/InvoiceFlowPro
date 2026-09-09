@@ -9,16 +9,18 @@ import { useSearchParams } from 'next/navigation'
 
 function SignInForm() {
   const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState('')
   const searchParams = useSearchParams()
   const registered = searchParams.get('registered')
   const authError = searchParams.get('error')
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
+    setFormError('')
     try {
       const result = await signInAction(formData)
       if (result?.error) {
-        toast.error(result.error)
+        setFormError(result.error)
         setLoading(false)
       }
     } catch (e) {
@@ -42,14 +44,17 @@ function SignInForm() {
       <form action={handleSubmit} className="space-y-5">
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Email address</label>
-          <input type="email" name="email" required placeholder="you@company.com" className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 focus:outline-none focus:border-blue-500 dark:focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+          <input type="email" name="email" required placeholder="you@company.com" className={`w-full px-4 py-2.5 rounded-xl border ${formError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500'} bg-zinc-50/50 dark:bg-zinc-900/50 focus:outline-none focus:ring-1 transition-all`} />
         </div>
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Password</label>
             <Link href="#" className="text-sm text-blue-600 dark:text-blue-500 hover:underline">Forgot password?</Link>
           </div>
-          <input type="password" name="password" required placeholder="••••••••" className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 focus:outline-none focus:border-blue-500 dark:focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+          <input type="password" name="password" required placeholder="••••••••" className={`w-full px-4 py-2.5 rounded-xl border ${formError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500'} bg-zinc-50/50 dark:bg-zinc-900/50 focus:outline-none focus:ring-1 transition-all`} />
+          {formError && (
+            <p className="text-sm text-red-500 font-medium mt-1.5">{formError}</p>
+          )}
         </div>
         
         <div className="flex items-center gap-2">
