@@ -1,5 +1,8 @@
 'use server'
 
+import { checkRateLimit } from '@/lib/rate-limit'
+
+
 import { SendMailClient } from 'zeptomail'
 
 const url = "api.zeptomail.in/";
@@ -21,6 +24,9 @@ export async function sendEmail({
   subject: string;
   html: string;
 }) {
+  const rl = await checkRateLimit('send-email', 20, 60 * 1000);
+  if (!rl.success) return { success: false, error: "Rate limit exceeded. Try again later." };
+
   if (!client) {
     console.error("Zeptomail token not configured");
     return { success: false, error: "Email configuration missing" };

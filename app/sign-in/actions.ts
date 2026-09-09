@@ -1,3 +1,4 @@
+import { checkRateLimit, clearRateLimit } from '@/lib/rate-limit'
 'use server'
 
 import { signIn } from '@/auth'
@@ -5,6 +6,9 @@ import { AuthError } from 'next-auth'
 import prisma from '@/utils/prisma'
 
 export async function signInAction(formData: FormData) {
+  const rl = await checkRateLimit('signin', 5, 5 * 60 * 1000); // 5 attempts per 5 mins
+  if (!rl.success) return { error: `Too many login attempts. Try again in ${rl.resetInSeconds} seconds.` };
+
   const email = formData.get('email') as string
   let redirectTo = '/app'
   
@@ -15,6 +19,7 @@ export async function signInAction(formData: FormData) {
   }
 
   try {
+    await clearRateLimit('signin');
     await signIn('credentials', {
       email: formData.get('email'),
       password: formData.get('password'),
@@ -34,5 +39,8 @@ export async function signInAction(formData: FormData) {
 }
 
 export async function signInWithGoogleAction() {
+  const rl = await checkRateLimit('signin-google', 10, 5 * 60 * 1000);
+  if (!rl.success) throw new Error(`Too many login attempts. Try again in ${rl.resetInSeconds} seconds.`);
+
   await signIn('google', { redirectTo: '/app' })
 }
