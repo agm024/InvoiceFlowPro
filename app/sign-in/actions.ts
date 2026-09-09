@@ -1,6 +1,6 @@
-import { checkRateLimit, clearRateLimit } from '@/lib/rate-limit'
 'use server'
 
+import { checkRateLimit, clearRateLimit } from '@/lib/rate-limit'
 import { signIn } from '@/auth'
 import { AuthError } from 'next-auth'
 import prisma from '@/utils/prisma'
