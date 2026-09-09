@@ -158,10 +158,16 @@ export async function POST(req: Request) {
         // Fallback to free plan logic (or mark status as past_due / cancelled)
         const freePlan = await prisma.plan.findFirst({ where: { name: 'Free' } });
         if (freePlan) {
-          await prisma.subscription.update({
-            where: { companyId },
-            data: { planId: freePlan.id, status: event.event === 'subscription.cancelled' ? 'cancelled' : 'past_due' }
-          });
+          await prisma.$transaction([
+              prisma.subscription.update({
+                where: { companyId },
+                data: { planId: freePlan.id, status: event.event === 'subscription.cancelled' ? 'cancelled' : 'past_due' }
+              }),
+              prisma.company.update({
+                where: { id: companyId },
+                data: { status: 'SUSPENDED' }
+              })
+            ]);
         }
       }
     }
