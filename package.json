@@ -13,7 +13,7 @@
     "@opentelemetry/exporter-logs-otlp-http": "^0.222.0",
     "@opentelemetry/resources": "^2.11.0",
     "@opentelemetry/sdk-logs": "^0.222.0",
-    "@prisma/client": "^7.10.0",
+    "@prisma/client": "6.12.0",
     "@sentry/nextjs": "^10.73.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.4",
@@ -55,7 +55,7 @@
     "@types/sanitize-html": "^2.16.1",
     "eslint": "^9",
     "eslint-config-next": "^16.2.12",
-    "prisma": "^8.0.0-rc.13",
+    "prisma": "6.12.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
