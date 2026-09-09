@@ -4,6 +4,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 
 
 import { SendMailClient } from 'zeptomail'
+import sanitizeHtml from 'sanitize-html'
 
 const url = "api.zeptomail.in/";
 const token = process.env.ZEPTOMAIL_SEND_MAIL_TOKEN;
@@ -47,7 +48,15 @@ export async function sendEmail({
         },
       ],
       subject: subject,
-      htmlbody: html,
+      htmlbody: sanitizeHtml(html, {
+          allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2', 'h3', 'hr']),
+          allowedAttributes: {
+            ...sanitizeHtml.defaults.allowedAttributes,
+            '*': ['style', 'class'],
+            'a': ['href', 'target'],
+            'img': ['src', 'alt', 'width', 'height']
+          }
+        }),
     });
     
     return { success: true, data: response };

@@ -23,6 +23,14 @@ export async function POST(req: Request) {
     const event = JSON.parse(textBody)
     const eventId = req.headers.get('x-razorpay-event-id') || event.id || `webhook_${Date.now()}`;
 
+    // Idempotency check: prevent duplicate webhooks from double-crediting
+    const existingEvent = await prisma.webhookEvent.findUnique({
+      where: { eventId }
+    });
+    if (existingEvent) {
+      return NextResponse.json({ success: true, message: 'Event already processed' });
+    }
+
     try {
       await prisma.webhookEvent.create({
         data: {
