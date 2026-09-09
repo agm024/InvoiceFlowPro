@@ -51,7 +51,9 @@ export default async function DashboardPage({
 
   // 2. DB QUERIES
   const allInvoices = await prisma.invoice.findMany({
-    where: { companyId, invoiceType: { not: 'QUOTATION' } },
+    where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' }, date: { gte: prevDateLimitStart } },
+    take: 2000,
+    orderBy: { date: 'desc' },
     select: {
       id: true,
       status: true,
@@ -67,7 +69,9 @@ export default async function DashboardPage({
   })
 
   const allExpenses = await prisma.expense.findMany({
-    where: { companyId },
+    where: { companyId, date: { gte: prevDateLimitStart } },
+    take: 2000,
+    orderBy: { date: 'desc' },
     select: {
       id: true,
       category: true,
@@ -82,6 +86,7 @@ export default async function DashboardPage({
 
   const allProjects = await prisma.project.findMany({
     where: { companyId, status: 'ACTIVE' },
+    take: 2000,
     include: { milestones: true, client: true }
   })
 
