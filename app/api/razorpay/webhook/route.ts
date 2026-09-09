@@ -1,3 +1,4 @@
+import { sendSubscriptionDowngradedEmail } from '@/app/actions/email'
 import { NextResponse } from 'next/server'
 import crypto from 'crypto'
 import prisma from '@/utils/prisma'
@@ -161,13 +162,18 @@ export async function POST(req: Request) {
           await prisma.$transaction([
               prisma.subscription.update({
                 where: { companyId },
-                data: { planId: freePlan.id, status: event.event === 'subscription.cancelled' ? 'cancelled' : 'past_due' }
+                data: { planId: freePlan.id, status: 'active' }
               }),
               prisma.company.update({
                 where: { id: companyId },
-                data: { status: 'SUSPENDED' }
-              })
-            ]);
+                data: { status: 'ACTIVE' }
+                })
+              ]);
+
+              const owner = await prisma.user.findFirst({ where: { companyId, role: 'owner' } });
+              if (owner) {
+                await sendSubscriptionDowngradedEmail(owner.email, owner.name || 'Admin');
+              }
         }
       }
     }

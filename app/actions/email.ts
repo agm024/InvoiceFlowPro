@@ -199,9 +199,8 @@ export async function sendInvoiceEmail(clientEmail: string, clientName: string, 
 
 
 
-export async function sendSubscriptionSuspendedEmail(companyEmail: string, companyName: string, gracePeriodEnd?: Date) {
-  const loginUrl = `https://invoice.siteradiant.co.in/sign-in`;
-  const graceMsg = gracePeriodEnd ? `You have a grace period until ${gracePeriodEnd.toLocaleDateString()} before data restriction.` : 'Your account has been restricted immediately.';
+export async function sendSubscriptionDowngradedEmail(companyEmail: string, companyName: string) {
+  const loginUrl = `https://invoice.siteradiant.co.in/app/settings/billing`;
   
   const html = `
     <div style="background-color: #f4f4f5; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
@@ -212,19 +211,19 @@ export async function sendSubscriptionSuspendedEmail(companyEmail: string, compa
         <div style="padding: 40px;">
           <h2 style="color: #18181b; margin-top: 0; font-size: 20px; font-weight: 600;">Hello ${companyName},</h2>
           <p style="color: #52525b; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-            Your InvoiceFlowPro subscription has expired or was cancelled due to a billing issue.
+            Your InvoiceFlowPro Premium subscription has expired or was cancelled due to a billing issue.
           </p>
-          <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 20px; margin-bottom: 32px;">
-            <div style="margin-bottom: 12px; color: #b91c1c;">
-              <strong>Account Status: Suspended</strong>
+          <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 20px; margin-bottom: 32px;">
+            <div style="margin-bottom: 12px; color: #b45309;">
+              <strong>Account Status: Downgraded to Free Tier</strong>
             </div>
-            <div style="color: #991b1b; font-size: 14px;">
-              ${graceMsg}
+            <div style="color: #92400e; font-size: 14px;">
+              You still have full access to your account and past data, but you are now subject to the limits of the Free tier. You will not be able to create new invoices if you are over the free limit.
             </div>
           </div>
           <div style="text-align: center; margin: 40px 0 20px 0;">
             <a href="${loginUrl}" style="display: inline-block; background-color: #18181b; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
-              Update Billing & Reactivate
+              Update Billing & Upgrade
             </a>
           </div>
         </div>
@@ -237,7 +236,7 @@ export async function sendSubscriptionSuspendedEmail(companyEmail: string, compa
   
   return await sendEmail({
     to: companyEmail,
-    subject: "Action Required: Subscription Suspended",
+    subject: "Notice: Account Downgraded to Free Tier",
     html
   });
 }

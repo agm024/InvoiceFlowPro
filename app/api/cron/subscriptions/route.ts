@@ -1,7 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import prisma from '@/utils/prisma';
-import { sendSubscriptionSuspendedEmail } from '@/app/actions/email';
+import { sendSubscriptionDowngradedEmail } from '@/app/actions/email';
 
 export async function GET(req: Request) {
   // Vercel Cron Authentication
@@ -21,20 +21,25 @@ export async function GET(req: Request) {
       }
     });
 
+    const freePlan = await prisma.plan.findFirst({ where: { name: 'Free' } });
+    if (!freePlan) return NextResponse.json({ error: 'Free plan not found' }, { status: 500 });
+
     for (const sub of expiredSubs) {
       await prisma.subscription.update({
         where: { id: sub.id },
-        data: { status: 'expired' }
+        data: { status: 'active', planId: freePlan.id } // Downgrade to free
       });
-      // Also suspend the company to restrict access
+      
+      // Ensure company remains active
       await prisma.company.update({
         where: { id: sub.companyId },
-        data: { status: 'SUSPENDED' }
+        data: { status: 'ACTIVE' }
       });
       
       const owner = await prisma.user.findFirst({ where: { companyId: sub.companyId, role: 'owner' } });
       if (owner) {
-        await sendSubscriptionSuspendedEmail(owner.email, owner.name || 'Admin');
+        // Yes, this email is delivered automatically right here!
+        await sendSubscriptionDowngradedEmail(owner.email, owner.name || 'Admin');
       }
     }
 
