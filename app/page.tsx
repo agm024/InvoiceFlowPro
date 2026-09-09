@@ -72,7 +72,7 @@ export default async function LandingPage() {
                      <div className="h-8 w-full rounded-md bg-transparent"></div>
                    </div>
                    <div className="col-span-1 md:col-span-3 flex flex-col gap-6">
-                     <div className="grid grid-cols-3 gap-4">
+                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="p-4 rounded-xl border border-zinc-200/50 dark:border-zinc-800/50 bg-white/50 dark:bg-zinc-900/50">
                            <div className="text-xs font-medium text-zinc-500 mb-1">Revenue</div>
                            <div className="text-2xl font-bold tracking-tight">₹45,231</div>

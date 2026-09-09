@@ -11,7 +11,7 @@ export async function MarketingNav() {
         </div>
         <span className="font-bold text-xl tracking-tight">InvoiceFlow<span className="text-blue-600 dark:text-blue-500">Pro</span></span>
       </Link>
-      <div className="flex gap-4 items-center">
+      <div className="flex flex-wrap gap-4 items-center justify-center">
         <Link href="/pricing" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition">Pricing</Link>
         <Link href="/contact" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition">Contact</Link>
         {session ? (
