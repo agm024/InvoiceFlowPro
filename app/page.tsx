@@ -77,76 +77,69 @@ export default async function LandingPage() {
                </div>
                
                {/* App Body - Original UI Replica */}
-               <div className="p-6 md:p-8 flex flex-col gap-6 w-full flex-1">
+               <div className="p-4 md:p-6 flex flex-col gap-5 w-full flex-1">
                   
                   {/* Header & Filter Controls */}
-                  <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-4">
+                  <div className="flex justify-between items-start gap-2">
                     <div>
-                      <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Your Financial Overview</h1>
-                      <p className="text-zinc-500 dark:text-zinc-400 mt-1 text-sm md:text-base">Monitor real-time transactions and business health.</p>
+                      <h1 className="text-xl md:text-2xl font-extrabold tracking-tight">Your Financial Overview</h1>
+                      <p className="text-zinc-500 dark:text-zinc-400 mt-1 text-xs md:text-sm">Monitor real-time transactions.</p>
                     </div>
                     
                     {/* Timeframe Controls */}
-                    <div className="hidden sm:flex flex-wrap gap-1.5 bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                      <span className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm">30d</span>
-                      <span className="px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-500">90d</span>
-                      <span className="px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-500">YTD</span>
+                    <div className="hidden sm:flex gap-1 bg-zinc-100 dark:bg-zinc-900 p-1 rounded-lg border border-zinc-200 dark:border-zinc-800 shrink-0">
+                      <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm">30d</span>
+                      <span className="px-2.5 py-1 rounded-md text-[10px] font-bold text-zinc-500">90d</span>
                     </div>
                   </div>
 
-                  {/* Primary KPI Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {/* Primary KPI Grid - Reduced to 2 columns for mockup */}
+                  <div className="grid grid-cols-2 gap-3">
                     {/* KPI: Collected */}
-                    <div className="bg-white dark:bg-zinc-950 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
-                      <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Collected Revenue</span>
-                      <h2 className="text-3xl font-black mt-2 text-emerald-600 dark:text-emerald-400">₹3,21,000</h2>
-                      <div className="mt-4 flex items-center gap-1 text-[10px] font-bold">
-                        <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400">+ 12.4%</span>
-                        <span className="text-zinc-400">vs prev period</span>
+                    <div className="bg-white dark:bg-zinc-950 p-3 md:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between overflow-hidden">
+                      <span className="text-[9px] md:text-[10px] font-bold text-zinc-400 uppercase tracking-wider truncate">Collected Revenue</span>
+                      <h2 className="text-xl md:text-2xl font-black mt-1 text-emerald-600 dark:text-emerald-400 truncate">₹3,21,000</h2>
+                      <div className="mt-3 flex items-center gap-1 text-[9px] md:text-[10px] font-bold truncate">
+                        <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400">+ 12.4%</span>
+                        <span className="text-zinc-400 hidden lg:inline">vs prev</span>
                       </div>
                     </div>
 
                     {/* KPI: Outstanding */}
-                    <div className="bg-white dark:bg-zinc-950 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
-                      <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Outstanding Balance</span>
-                      <h2 className="text-3xl font-black mt-2 text-red-500 dark:text-red-400">₹1,31,310</h2>
-                      <div className="mt-4 flex items-center gap-1 text-[10px] font-bold">
-                        <span className="px-2 py-0.5 rounded bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400">- 4.1%</span>
-                        <span className="text-zinc-400">vs prev period</span>
+                    <div className="bg-white dark:bg-zinc-950 p-3 md:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between overflow-hidden">
+                      <span className="text-[9px] md:text-[10px] font-bold text-zinc-400 uppercase tracking-wider truncate">Outstanding Balance</span>
+                      <h2 className="text-xl md:text-2xl font-black mt-1 text-red-500 dark:text-red-400 truncate">₹1,31,310</h2>
+                      <div className="mt-3 flex items-center gap-1 text-[9px] md:text-[10px] font-bold truncate">
+                        <span className="px-1.5 py-0.5 rounded bg-red-50 text-red-700 dark:bg-red-950/20 dark:text-red-400">- 4.1%</span>
+                        <span className="text-zinc-400 hidden lg:inline">vs prev</span>
                       </div>
-                    </div>
-
-                    {/* KPI: Empty for visual balance on lg screens */}
-                    <div className="hidden xl:flex bg-white dark:bg-zinc-950 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex-col justify-between opacity-50">
-                      <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Total Expenses</span>
-                      <h2 className="text-3xl font-black mt-2 text-zinc-900 dark:text-zinc-100">₹42,500</h2>
                     </div>
                   </div>
 
                   {/* Top Clients Table Replica */}
-                  <div className="bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden flex-1 flex flex-col hidden sm:flex">
-                    <div className="p-5 border-b border-zinc-200 dark:border-zinc-800">
-                      <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-500">Top Clients (Revenue Generated)</h2>
+                  <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden flex-1 flex flex-col hidden sm:flex">
+                    <div className="p-3 md:p-4 border-b border-zinc-200 dark:border-zinc-800">
+                      <h2 className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Top Clients (Revenue)</h2>
                     </div>
-                    <table className="whitespace-nowrap w-full text-left text-xs">
+                    <table className="whitespace-nowrap w-full text-left text-[11px] md:text-xs">
                       <thead className="bg-zinc-50 dark:bg-zinc-900/50 text-zinc-500 font-semibold border-b border-zinc-200 dark:border-zinc-800 uppercase tracking-wider">
                         <tr>
-                          <th className="px-6 py-3">Client</th>
-                          <th className="px-6 py-3 text-right">Revenue Paid</th>
+                          <th className="px-4 py-2.5">Client</th>
+                          <th className="px-4 py-2.5 text-right">Revenue Paid</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 font-medium text-zinc-900 dark:text-zinc-100">
                         <tr className="hover:bg-zinc-50/50">
-                          <td className="px-6 py-3 font-bold">Global Freight Co.</td>
-                          <td className="px-6 py-3 text-right text-emerald-600 dark:text-emerald-400 font-bold">₹2,85,000</td>
+                          <td className="px-4 py-2.5 font-bold truncate max-w-[120px]">Global Freight Co.</td>
+                          <td className="px-4 py-2.5 text-right text-emerald-600 dark:text-emerald-400 font-bold">₹2,85,000</td>
                         </tr>
                         <tr className="hover:bg-zinc-50/50">
-                          <td className="px-6 py-3 font-bold">Apex Distribution</td>
-                          <td className="px-6 py-3 text-right text-emerald-600 dark:text-emerald-400 font-bold">₹1,12,500</td>
+                          <td className="px-4 py-2.5 font-bold truncate max-w-[120px]">Apex Distribution</td>
+                          <td className="px-4 py-2.5 text-right text-emerald-600 dark:text-emerald-400 font-bold">₹1,12,500</td>
                         </tr>
                         <tr className="hover:bg-zinc-50/50">
-                          <td className="px-6 py-3 font-bold">North Star Logistics</td>
-                          <td className="px-6 py-3 text-right text-emerald-600 dark:text-emerald-400 font-bold">₹42,000</td>
+                          <td className="px-4 py-2.5 font-bold truncate max-w-[120px]">North Star Logistics</td>
+                          <td className="px-4 py-2.5 text-right text-emerald-600 dark:text-emerald-400 font-bold">₹42,000</td>
                         </tr>
                       </tbody>
                     </table>
