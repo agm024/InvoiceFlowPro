@@ -1,6 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import prisma from '@/utils/prisma';
+import { sendSubscriptionSuspendedEmail } from '@/app/actions/email';
 
 export async function GET(req: Request) {
   // Vercel Cron Authentication
@@ -30,6 +31,11 @@ export async function GET(req: Request) {
         where: { id: sub.companyId },
         data: { status: 'SUSPENDED' }
       });
+      
+      const owner = await prisma.user.findFirst({ where: { companyId: sub.companyId, role: 'owner' } });
+      if (owner) {
+        await sendSubscriptionSuspendedEmail(owner.email, owner.name || 'Admin');
+      }
     }
 
     return NextResponse.json({ 

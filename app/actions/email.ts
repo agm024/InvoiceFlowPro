@@ -198,3 +198,46 @@ export async function sendInvoiceEmail(clientEmail: string, clientName: string, 
 }
 
 
+
+export async function sendSubscriptionSuspendedEmail(companyEmail: string, companyName: string, gracePeriodEnd?: Date) {
+  const loginUrl = `https://invoice.siteradiant.co.in/sign-in`;
+  const graceMsg = gracePeriodEnd ? `You have a grace period until ${gracePeriodEnd.toLocaleDateString()} before data restriction.` : 'Your account has been restricted immediately.';
+  
+  const html = `
+    <div style="background-color: #f4f4f5; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+      <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <div style="background-color: #18181b; padding: 32px 40px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">InvoiceFlowPro</h1>
+        </div>
+        <div style="padding: 40px;">
+          <h2 style="color: #18181b; margin-top: 0; font-size: 20px; font-weight: 600;">Hello ${companyName},</h2>
+          <p style="color: #52525b; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+            Your InvoiceFlowPro subscription has expired or was cancelled due to a billing issue.
+          </p>
+          <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 20px; margin-bottom: 32px;">
+            <div style="margin-bottom: 12px; color: #b91c1c;">
+              <strong>Account Status: Suspended</strong>
+            </div>
+            <div style="color: #991b1b; font-size: 14px;">
+              ${graceMsg}
+            </div>
+          </div>
+          <div style="text-align: center; margin: 40px 0 20px 0;">
+            <a href="${loginUrl}" style="display: inline-block; background-color: #18181b; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+              Update Billing & Reactivate
+            </a>
+          </div>
+        </div>
+        <div style="background-color: #fafafa; padding: 24px 40px; text-align: center; border-top: 1px solid #e4e4e7;">
+          <p style="color: #a1a1aa; font-size: 13px; margin: 0;">InvoiceFlowPro by SiteRadiant</p>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  return await sendEmail({
+    to: companyEmail,
+    subject: "Action Required: Subscription Suspended",
+    html
+  });
+}
