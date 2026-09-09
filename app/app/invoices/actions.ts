@@ -15,7 +15,8 @@ export async function getInvoices() {
         include: { product: true }
       }
     },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'desc' },
+      take: 500 // Hard cap to prevent memory exhaustion (Pagination safeguard)
   })
 }
 
