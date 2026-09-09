@@ -211,6 +211,7 @@ model Bank {
 }
 
 model Invoice {
+  isDeleted Boolean @default(false)
   id              String        @id @default(cuid())
   invoiceNumber   String
   date            DateTime      @default(now())

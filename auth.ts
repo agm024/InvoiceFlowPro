@@ -115,5 +115,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: "/sign-in",
   },
-  secret: process.env.NEXTAUTH_SECRET || "super-secret-key-for-local-dev-only",
+  secret: process.env.NEXTAUTH_SECRET,
 })

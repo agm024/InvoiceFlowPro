@@ -9,12 +9,14 @@ export async function POST(req: Request) {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET
 
     if (!secret) {
-      console.warn('RAZORPAY_WEBHOOK_SECRET not set, accepting webhook without validation (UNSAFE)')
-    } else if (signature) {
-      const expectedSignature = crypto.createHmac('sha256', secret).update(textBody).digest('hex')
-      if (expectedSignature !== signature) {
-        return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
-      }
+      return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
+    }
+    if (!signature) {
+      return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
+    }
+    const expectedSignature = crypto.createHmac('sha256', secret).update(textBody).digest('hex');
+    if (expectedSignature !== signature) {
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
     

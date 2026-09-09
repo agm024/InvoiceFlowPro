@@ -8,7 +8,7 @@ import { checkFeatureLimit } from '@/lib/billing'
 export async function getInvoices() {
   const { companyId } = await requireCompany()
   return await prisma.invoice.findMany({
-    where: { companyId },
+    where: { companyId, isDeleted: false },
     include: { 
       client: true,
       items: {
@@ -200,7 +200,7 @@ export async function deleteInvoice(id: string) {
       data: { invoiceId: null, status: 'UNBILLED' }
     })
 
-    await prisma.invoice.delete({ where: { id } })
+    await prisma.invoice.update({ where: { id }, data: { isDeleted: true } })
     revalidatePath('/app/invoices')
     return { success: true }
   } catch (error) {
@@ -388,7 +388,8 @@ export async function deleteInvoices(ids: string[]) {
   await requireWriteAccess()
 
   try {
-    await prisma.invoice.deleteMany({
+    await prisma.invoice.updateMany({
+      data: { isDeleted: true },
       where: {
         id: { in: ids },
         companyId

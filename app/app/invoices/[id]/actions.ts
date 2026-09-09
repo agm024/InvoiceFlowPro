@@ -10,7 +10,7 @@ export async function updateInvoiceStatus(id: string, status: string) {
   try {
     // Prisma extended where allows filtering by companyId
     await prisma.invoice.updateMany({
-      where: { id, companyId },
+      where: { id, companyId, isDeleted: false },
       data: { status }
     })
     revalidatePath(`/app/invoices/${id}`)
