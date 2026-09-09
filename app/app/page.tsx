@@ -102,7 +102,7 @@ export default async function DashboardPage({
   const gstCollected = paidInvoices.reduce((sum, i) => sum + (i.taxTotal * i.exchangeRate), 0)
   const itcAmount = expensesInTimeframe.filter(e => e.itcEligible).reduce((sum, e) => sum + e.taxAmount, 0)
   const gstLiability = Math.max(0, gstCollected - itcAmount)
-  const gstPaid = allExpenses.filter(e => e.category === 'GST_PAYMENT' && e.date >= dateLimit).reduce((sum, e) => sum + e.totalAmount, 0)
+  const gstPaid = expensesInTimeframe.filter(e => e.category === 'GST_PAYMENT').reduce((sum, e) => sum + e.totalAmount, 0)
   const gstBalance = Math.max(0, gstLiability - gstPaid)
 
   // Historical calculations (for trend percentages)
@@ -178,14 +178,22 @@ export default async function DashboardPage({
     .slice(0, 5)
 
   const allClientsCount = await prisma.client.count({ where: { companyId } })
-  const topClients = (await prisma.client.findMany({ where: { companyId }, include: { invoices: true } }))
-    .map(client => {
-      const revenue = client.invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
-      const outstanding = client.invoices.filter(i => ['draft', 'sent'].includes(i.status)).reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
-      return { ...client, revenue, outstanding }
-    })
-    .sort((a, b) => b.revenue - a.revenue)
-    .slice(0, 5)
+  const topClientsRaw = await prisma.client.findMany({
+    where: { companyId, status: 'ACTIVE' },
+    select: {
+      id: true, name: true,
+      invoices: {
+        where: { isDeleted: false },
+        select: { status: true, total: true, exchangeRate: true }
+      }
+    }
+  });
+
+  const topClients = topClientsRaw.map(client => {
+    const revenue = client.invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total * i.exchangeRate), 0);
+    const outstanding = client.invoices.filter(i => ['draft', 'sent'].includes(i.status)).reduce((sum, i) => sum + (i.total * i.exchangeRate), 0);
+    return { ...client, revenue, outstanding };
+  }).sort((a, b) => b.revenue - a.revenue).slice(0, 5)
 
   const recentExpenses = allExpenses
     .sort((a, b) => b.date.getTime() - a.date.getTime())
