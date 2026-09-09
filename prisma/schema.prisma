@@ -81,6 +81,8 @@ model Subscription {
   company  Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
   plan     Plan              @relation(fields: [planId], references: [id])
   payments PlatformPayment[]
+
+  @@index([companyId])
 }
 
 model User {
@@ -125,6 +127,8 @@ model Client {
   estimates    Estimate[]
   activityLogs ActivityLog[]
   contracts    Contract[]
+
+  @@index([companyId])
 }
 
 model Product {
@@ -147,6 +151,8 @@ model Product {
   category      String?
   invoiceItems  InvoiceItem[]
   estimateItems EstimateItem[]
+
+  @@index([companyId])
 }
 
 model CompanySettings {
@@ -170,6 +176,8 @@ model CompanySettings {
   website      String?
   stateCode    String?  @default("27")
   defaultCurrency String? @default("INR")
+
+  @@index([companyId])
 }
 
 model ExchangeRate {
@@ -198,6 +206,8 @@ model Bank {
   transfersOut  InternalTransfer[] @relation("TransferFrom")
   transfersIn   InternalTransfer[] @relation("TransferTo")
   expenses      Expense[]
+
+  @@index([companyId])
 }
 
 model Invoice {
@@ -235,6 +245,9 @@ model Invoice {
   debitNotes      DebitNote[]
 
   @@unique([companyId, invoiceNumber])
+
+  @@index([companyId])
+  @@index([clientId])
 }
 
 model InvoiceItem {
@@ -266,6 +279,8 @@ model Expense {
   updatedAt   DateTime @updatedAt
   bankId      String?
   bank        Bank?    @relation(fields: [bankId], references: [id])
+
+  @@index([companyId])
 }
 
 model Project {
@@ -287,6 +302,8 @@ model Project {
   projectClosedAt    DateTime?
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
+
+  @@index([companyId])
 }
 
 model Milestone {
@@ -303,6 +320,8 @@ model Milestone {
   orderIndex       Int       @default(0)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
+
+  @@index([companyId])
 }
 
 model ProjectTask {
@@ -359,6 +378,8 @@ model Estimate {
   updatedAt      DateTime       @updatedAt
 
   @@unique([companyId, estimateNumber])
+
+  @@index([companyId])
 }
 
 model EstimateItem {
@@ -381,6 +402,8 @@ model ActivityLog {
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
+
+  @@index([companyId])
 }
 
 model Comment {
@@ -416,6 +439,8 @@ model Contract {
   signedAt  DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  @@index([companyId])
 }
 
 model AuditLog {
@@ -524,6 +549,8 @@ model PlatformPayment {
 
   subscription Subscription @relation(fields: [subscriptionId], references: [id])
   company      Company      @relation(fields: [companyId], references: [id])
+
+  @@index([companyId])
 }
 
 model SystemSettings {
@@ -544,6 +571,8 @@ model CreditNote {
   taxAmount      Float    @default(0)
   reason         String
   createdAt      DateTime @default(now())
+
+  @@index([companyId])
 }
 
 model DebitNote {
@@ -557,6 +586,8 @@ model DebitNote {
   taxAmount      Float    @default(0)
   reason         String
   createdAt      DateTime @default(now())
+
+  @@index([companyId])
 }
 
 model GstExportHistory {
@@ -592,6 +623,8 @@ model CustomRole {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   users       User[]
+
+  @@index([companyId])
 }
 
 model PlatformRole {

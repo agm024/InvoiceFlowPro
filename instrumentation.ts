@@ -4,6 +4,13 @@ import { LoggerProvider, SimpleLogRecordProcessor } from '@opentelemetry/sdk-log
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
+    // Validate required environment variables on startup
+    const requiredEnvs = ['DATABASE_URL', 'NEXTAUTH_SECRET', 'NEXT_PUBLIC_SENTRY_DSN'];
+    const missingEnvs = requiredEnvs.filter(env => !process.env[env]);
+    if (missingEnvs.length > 0) {
+      console.warn('⚠️ WARNING: Missing required environment variables: ' + missingEnvs.join(', '));
+    }
+
     await import('./sentry.server.config');
 
     const exporter = new OTLPLogExporter({
