@@ -19,7 +19,6 @@ export async function signInAction(formData: FormData) {
   }
 
   try {
-    await clearRateLimit('signin');
     await signIn('credentials', {
       email: formData.get('email'),
       password: formData.get('password'),
