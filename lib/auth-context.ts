@@ -3,45 +3,9 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { cookies } from 'next/headers'
 
-const BYPASS_AUTH = false; // BYPASS_AUTH TEMPORARILY ENABLED
+
 
 export async function getCurrentUser() {
-  if (BYPASS_AUTH) {
-    const dummyUser = await prisma.user.findFirst({
-      include: {
-        company: true
-      }
-    });
-
-    if (dummyUser) {
-      let companyId = dummyUser.companyId;
-      let isSuperAdmin = dummyUser.isSuperAdmin || true;
-      let isImpersonating = false;
-      let writeAllowed = false;
-
-      if (isSuperAdmin) {
-        const cookieStore = await cookies()
-        const impersonatedId = cookieStore.get('impersonatedCompanyId')?.value
-        if (impersonatedId) {
-          companyId = impersonatedId
-          isImpersonating = true
-          writeAllowed = cookieStore.get('impersonateWriteEnabled')?.value === 'true'
-        }
-      }
-
-      return {
-        id: dummyUser.id,
-        email: dummyUser.email,
-        name: dummyUser.name,
-        role: dummyUser.role,
-        companyId,
-        isSuperAdmin,
-        isImpersonating,
-        writeAllowed
-      }
-    }
-  }
-
   const session = await auth()
   
   if (!session || !session.user) {
