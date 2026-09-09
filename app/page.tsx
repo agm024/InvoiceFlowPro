@@ -32,7 +32,7 @@ export default async function LandingPage() {
               Built for logistics, transport, distribution, and growing businesses.
             </div>
             
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-zinc-900 dark:text-white leading-[1.1] mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-zinc-900 dark:text-white leading-[1.1] mb-6">
               Invoice Faster. <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">Get Paid Sooner.</span>
             </h1>
@@ -94,7 +94,7 @@ export default async function LandingPage() {
                   </div>
 
                   {/* Primary KPI Grid - Reduced to 2 columns for mockup */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-3">
                     {/* KPI: Collected */}
                     <div className="bg-white dark:bg-zinc-950 p-3 md:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col justify-between overflow-hidden">
                       <span className="text-[9px] md:text-[10px] font-bold text-zinc-400 uppercase tracking-wider truncate">Collected Revenue</span>
@@ -154,7 +154,7 @@ export default async function LandingPage() {
         <section className="w-full bg-zinc-50 dark:bg-[#121214] py-12 border-y border-zinc-200 dark:border-zinc-800">
           <div className="max-w-7xl mx-auto px-6 text-center">
             <p className="text-sm font-bold text-zinc-400 uppercase tracking-widest mb-8">Everything you need to manage your billing</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-zinc-600 dark:text-zinc-300 font-medium">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-xs sm:text-sm md:text-base text-zinc-600 dark:text-zinc-300 font-medium">
               <div className="flex items-center justify-center gap-2"><Zap className="text-blue-500 w-5 h-5"/> Create invoices in seconds</div>
               <div className="flex items-center justify-center gap-2"><PieChart className="text-blue-500 w-5 h-5"/> Track paid & pending</div>
               <div className="flex items-center justify-center gap-2"><Users className="text-blue-500 w-5 h-5"/> Manage customers</div>

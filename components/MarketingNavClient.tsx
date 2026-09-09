@@ -47,7 +47,7 @@ export function MarketingNavClient({ isLoggedIn }: { isLoggedIn: boolean }) {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#09090b] p-6 flex flex-col gap-4">
+        <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#09090b] p-6 flex flex-col gap-4 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-xl">
           <Link href="#features" onClick={() => setIsOpen(false)} className="text-base font-medium">Features</Link>
           <Link href="#how-it-works" onClick={() => setIsOpen(false)} className="text-base font-medium">How It Works</Link>
           <Link href="#pricing" onClick={() => setIsOpen(false)} className="text-base font-medium">Pricing</Link>

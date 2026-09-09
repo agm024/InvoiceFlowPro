@@ -45,7 +45,7 @@ export function MarketingFooter() {
         </div>
       </div>
       
-      <div className="max-w-7xl mx-auto px-6 border-t border-zinc-200 dark:border-zinc-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-6 border-t border-zinc-200 dark:border-zinc-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
         <p className="text-zinc-500 dark:text-zinc-500 text-sm">
           &copy; {new Date().getFullYear()} InvoiceFlowPro is a product by Global One Logistics & Distribution.
         </p>
