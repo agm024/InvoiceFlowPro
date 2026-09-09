@@ -58,23 +58,24 @@ export async function POST(req: Request) {
 
         if (invoice) {
           // Update Invoice to PAID
-          await prisma.invoice.update({
+          await prisma.$transaction(async (tx) => {
+          await tx.invoice.update({
             where: { id: invoice.id },
             data: {
               status: 'paid',
               paymentId: payment.id,
-              amountPaid: payment.amount / 100, // Convert paise back to standard
+              amountPaid: payment.amount / 100,
               paymentMethod: 'Razorpay'
             }
-          })
-          
-          // Try to update milestone if attached
+          });
+
           if (invoice.invoiceType === 'MILESTONE') {
-            await prisma.milestone.updateMany({
+            await tx.milestone.updateMany({
               where: { invoiceId: invoice.id },
               data: { status: 'PAID' }
-            })
+            });
           }
+        });
         }
       }
     }
