@@ -7,10 +7,10 @@ const footerLinks = {
     { href: '/sign-in',  label: 'Sign in'  },
   ],
   legal: [
-    { href: '/terms',         label: 'Terms & Conditions'    },
-    { href: '/privacy',       label: 'Privacy Policy'        },
-    { href: '/refund-policy', label: 'Refund & Cancellation' },
-    { href: '/dpa',           label: 'Data Processing'       },
+    { href: '/terms',           label: 'Terms & Conditions'    },
+    { href: '/privacy-policy',  label: 'Privacy Policy'        },
+    { href: '/refund-policy',   label: 'Refund & Cancellation' },
+    { href: '/dpa',             label: 'Data Processing'       },
   ],
 }
 

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Script from 'next/script'
 import toast from 'react-hot-toast'
-import { CheckCircle2, Lock, ChevronDown, Smartphone, CreditCard, Landmark, ShieldCheck, FileText, RotateCcw } from 'lucide-react'
+import { CheckCircle2, Lock, ChevronDown, ShieldCheck, FileText, RotateCcw } from 'lucide-react'
 
 // ─── Indian States ────────────────────────────────────────────────────
 const INDIAN_STATES = [
@@ -146,7 +146,6 @@ export default function CheckoutClient({
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'netbanking'>('upi')
   const [invoiceNumber, setInvoiceNumber] = useState('')
 
   const [form, setForm] = useState({
@@ -322,48 +321,6 @@ export default function CheckoutClient({
               </div>
             </div>
 
-            {/* Payment Method */}
-            <div className="rounded-2xl overflow-hidden" style={{ background: '#fff', border: '1px solid rgba(21,21,21,0.10)' }}>
-              <div className="px-6 py-4" style={{ borderBottom: '1px solid rgba(21,21,21,0.06)', background: '#FAFAF8' }}>
-                <h2 className="text-sm font-bold" style={{ color: '#151515' }}>Payment method</h2>
-              </div>
-              <div className="p-6">
-                <div className="grid grid-cols-3 gap-3 mb-5">
-                  {([
-                    { id: 'upi',        label: 'UPI',         Icon: Smartphone  },
-                    { id: 'card',       label: 'Card',        Icon: CreditCard  },
-                    { id: 'netbanking', label: 'Net Banking',  Icon: Landmark    },
-                  ] as const).map(m => (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => setPaymentMethod(m.id)}
-                      className="flex flex-col items-center justify-center gap-1.5 p-3.5 rounded-xl transition-all"
-                      style={{
-                        border: paymentMethod === m.id ? '2px solid #151515' : '1px solid rgba(21,21,21,0.12)',
-                        background: paymentMethod === m.id ? 'rgba(21,21,21,0.04)' : '#FAFAF8',
-                        color: paymentMethod === m.id ? '#151515' : '#9B9B96',
-                      }}
-                    >
-                      <m.Icon size={18} />
-                      <span className="text-[11px] font-bold">{m.label}</span>
-                    </button>
-                  ))}
-                </div>
-                <div className="rounded-xl p-4 text-center text-xs" style={{ background: '#FAFAF8', border: '1px solid rgba(21,21,21,0.06)' }}>
-                  <p className="mb-2" style={{ color: '#6B6B67' }}>
-                    Your payment is processed securely by Razorpay.
-                  </p>
-                  <div className="flex justify-center gap-2">
-                    {['PCI Compliant', '256-bit SSL', 'RBI Regulated'].map(t => (
-                      <span key={t} className="px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider" style={{ background: '#fff', border: '1px solid rgba(21,21,21,0.10)', color: '#9B9B96' }}>
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
           </form>
         </div>
 
@@ -487,7 +444,7 @@ export default function CheckoutClient({
         </div>
         <div className="flex flex-wrap gap-6 mt-8 text-[11px]" style={{ color: '#C0C0BC' }}>
           <a href="/terms" className="hover:text-gray-600 transition-colors">Terms of Service</a>
-          <a href="/privacy" className="hover:text-gray-600 transition-colors">Privacy Policy</a>
+          <a href="/privacy-policy" className="hover:text-gray-600 transition-colors">Privacy Policy</a>
           <a href="/refund-policy" className="hover:text-gray-600 transition-colors">Refund & Cancellation Policy</a>
         </div>
       </div>
