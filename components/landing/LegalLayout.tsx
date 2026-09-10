@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { auth } from '@/auth'
 import { LandingNav } from '@/components/landing/LandingNav'
 import { LandingFooter } from '@/components/landing/LandingFooter'
-import '../landing.css'
+import '@/app/landing.css'
 
 const LEGAL_LINKS = [
   { href: '/terms',         label: 'Terms & Conditions'    },
