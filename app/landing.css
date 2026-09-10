@@ -1,0 +1,205 @@
+/* ─────────────────────────────────────────────────────────────────────
+   InvoiceFlowPro Landing Page — Brand System
+   Scoped to [data-landing="true"] to avoid polluting the app.
+   ───────────────────────────────────────────────────────────────────── */
+
+[data-landing="true"] {
+  --l-bg:           #F7F6F2;
+  --l-text:         #151515;
+  --l-muted:        #6B6B67;
+  --l-dark:         #111111;
+  --l-accent:       #20B26B;
+  --l-accent-dim:   rgba(32, 178, 107, 0.12);
+  --l-border:       rgba(21, 21, 21, 0.10);
+  --l-border-s:     rgba(21, 21, 21, 0.18);
+  --l-white:        #FFFFFF;
+
+  background-color: var(--l-bg);
+  color:            var(--l-text);
+  font-family:      var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* ─── Label / Overline ──────────────────────────────────────────────── */
+.land-label {
+  font-size:      10px;
+  font-weight:    700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color:          var(--l-accent);
+}
+
+/* ─── Fine horizontal rule ──────────────────────────────────────────── */
+.land-rule {
+  width:            100%;
+  height:           1px;
+  background:       var(--l-border);
+}
+
+/* ─── Accent pill / badge ───────────────────────────────────────────── */
+.land-pill {
+  display:          inline-flex;
+  align-items:      center;
+  gap:              6px;
+  padding:          4px 12px;
+  border-radius:    999px;
+  border:           1px solid var(--l-border-s);
+  font-size:        11px;
+  font-weight:      600;
+  color:            var(--l-muted);
+  background:       rgba(255,255,255,0.7);
+}
+
+/* ─── Status badges ─────────────────────────────────────────────────── */
+.land-badge-paid {
+  background: rgba(32, 178, 107, 0.12);
+  color:      #158A52;
+  border:     1px solid rgba(32, 178, 107, 0.25);
+  font-size:  10px;
+  font-weight: 700;
+  padding:    2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.land-badge-pending {
+  background: rgba(232, 169, 58, 0.12);
+  color:      #9B7214;
+  border:     1px solid rgba(232, 169, 58, 0.25);
+  font-size:  10px;
+  font-weight: 700;
+  padding:    2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.land-badge-draft {
+  background: rgba(107, 107, 103, 0.10);
+  color:      var(--l-muted);
+  border:     1px solid var(--l-border-s);
+  font-size:  10px;
+  font-weight: 700;
+  padding:    2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.land-badge-sent {
+  background: rgba(59, 130, 246, 0.10);
+  color:      #1D4ED8;
+  border:     1px solid rgba(59, 130, 246, 0.20);
+  font-size:  10px;
+  font-weight: 700;
+  padding:    2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ─── Primary CTA button ────────────────────────────────────────────── */
+.land-btn-primary {
+  display:          inline-flex;
+  align-items:      center;
+  gap:              8px;
+  background:       var(--l-text);
+  color:            var(--l-bg);
+  padding:          13px 28px;
+  border-radius:    10px;
+  font-size:        14px;
+  font-weight:      700;
+  letter-spacing:   -0.01em;
+  transition:       background 0.2s, transform 0.15s;
+  cursor:           pointer;
+  border:           none;
+  text-decoration:  none;
+}
+.land-btn-primary:hover {
+  background: #2a2a2a;
+  transform:  translateY(-1px);
+}
+.land-btn-primary:active {
+  transform: translateY(0);
+}
+
+/* ─── Secondary CTA button ──────────────────────────────────────────── */
+.land-btn-ghost {
+  display:          inline-flex;
+  align-items:      center;
+  gap:              8px;
+  background:       transparent;
+  color:            var(--l-muted);
+  padding:          13px 24px;
+  border-radius:    10px;
+  font-size:        14px;
+  font-weight:      600;
+  transition:       color 0.2s, background 0.2s;
+  cursor:           pointer;
+  border:           1px solid var(--l-border-s);
+  text-decoration:  none;
+}
+.land-btn-ghost:hover {
+  color:      var(--l-text);
+  background: rgba(21,21,21,0.04);
+}
+
+/* ─── Invoice card (used in hero + feature sections) ────────────────── */
+.land-invoice-card {
+  background:     var(--l-white);
+  border:         1px solid var(--l-border-s);
+  border-radius:  12px;
+  box-shadow:     0 4px 24px rgba(21,21,21,0.06), 0 1px 4px rgba(21,21,21,0.04);
+  overflow:       hidden;
+}
+
+/* ─── Dark section ──────────────────────────────────────────────────── */
+[data-landing="true"] .land-dark-section {
+  background:  var(--l-dark);
+  color:       #E8E8E4;
+}
+
+/* ─── Grid paper texture (ultra-subtle) ─────────────────────────────── */
+.land-grid-texture {
+  background-image:
+    linear-gradient(rgba(21,21,21,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21,21,21,0.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ─── Number monospace ──────────────────────────────────────────────── */
+.land-mono {
+  font-family:     var(--font-geist-mono), 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Keyframes ─────────────────────────────────────────────────────── */
+@keyframes land-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes land-blink-cursor {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes land-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+
+@keyframes land-draw-line {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes land-count-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Reduced motion overrides ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  [data-landing="true"] * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
