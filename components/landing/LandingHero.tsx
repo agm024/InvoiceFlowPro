@@ -195,14 +195,19 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
     timerRef.current = t
   }
 
-  // Loop: restart when we reset to idle
+  // Loop: skip animation for prefers-reduced-motion users — show 'paid' statically
   useEffect(() => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReduced) {
+      setPhase('paid')
+      return
+    }
     runSequence()
     return clearTimers
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Restart loop whenever idle
+  // Restart loop whenever idle (skipped if reduced motion)
   useEffect(() => {
     if (phase === 'idle') {
       const t = setTimeout(runSequence, 800)
@@ -213,11 +218,13 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
 
   return (
     <section
+      aria-label="InvoiceFlowPro hero"
       className="relative min-h-screen flex items-center pt-16"
       style={{ background: '#F7F6F2' }}
     >
-      {/* Fine grid texture */}
+      {/* Fine grid texture — decorative */}
       <div
+        aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage: `

@@ -7,27 +7,26 @@ const footerLinks = {
     { href: '/sign-in',  label: 'Sign in'  },
   ],
   legal: [
-    { href: '/terms',           label: 'Terms & Conditions'    },
-    { href: '/privacy-policy',  label: 'Privacy Policy'        },
-    { href: '/refund-policy',   label: 'Refund & Cancellation' },
-    { href: '/dpa',             label: 'Data Processing'       },
+    { href: '/terms',         label: 'Terms & Conditions'    },
+    { href: '/privacy',       label: 'Privacy Policy'        },
+    { href: '/refund-policy', label: 'Refund & Cancellation' },
+    { href: '/dpa',           label: 'Data Processing'       },
   ],
 }
 
 export function LandingFooter() {
   return (
-    <footer style={{ background: '#0D0D0D', color: '#6B6B67', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-      <style>{`
-        .land-footer-link { color: #6B6B67; text-decoration: none; transition: color 0.15s; }
-        .land-footer-link:hover { color: #E8E8E4; }
-      `}</style>
+    <footer
+      aria-label="Site footer"
+      style={{ background: '#0D0D0D', color: '#6B6B67', borderTop: '1px solid rgba(255,255,255,0.04)' }}
+    >
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4 w-fit land-footer-link">
+            <Link href="/" className="flex items-center gap-2 mb-4 w-fit land-footer-link" aria-label="InvoiceFlowPro home">
               <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#fff' }}>
-                <span className="font-black text-sm" style={{ color: '#20B26B' }}>I</span>
+                <span className="font-black text-sm" style={{ color: '#20B26B' }} aria-hidden="true">I</span>
               </div>
               <span className="font-black text-sm" style={{ color: '#E8E8E4' }}>
                 InvoiceFlow<span style={{ color: '#20B26B' }}>Pro</span>
@@ -39,38 +38,38 @@ export function LandingFooter() {
           </div>
 
           {/* Product */}
-          <div>
-            <h4 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Product</h4>
-            <ul className="space-y-3 text-sm">
+          <nav aria-label="Product links">
+            <h2 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Product</h2>
+            <ul className="space-y-3 text-sm" role="list">
               {footerLinks.product.map(l => (
                 <li key={l.label}>
                   <Link href={l.href} className="land-footer-link">{l.label}</Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Company */}
-          <div>
-            <h4 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Company</h4>
-            <ul className="space-y-3 text-sm">
+          <nav aria-label="Company links">
+            <h2 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Company</h2>
+            <ul className="space-y-3 text-sm" role="list">
               <li>
                 <a href="mailto:support@invoiceflowpro.in" className="land-footer-link">Contact</a>
               </li>
             </ul>
-          </div>
+          </nav>
 
           {/* Legal */}
-          <div>
-            <h4 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Legal</h4>
-            <ul className="space-y-3 text-sm">
+          <nav aria-label="Legal links">
+            <h2 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Legal</h2>
+            <ul className="space-y-3 text-sm" role="list">
               {footerLinks.legal.map(l => (
                 <li key={l.label}>
                   <Link href={l.href} className="land-footer-link">{l.label}</Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
         </div>
 
         <div
@@ -78,8 +77,8 @@ export function LandingFooter() {
           style={{ borderTop: '1px solid rgba(255,255,255,0.04)', color: '#444' }}
         >
           <p>&copy; {new Date().getFullYear()} Global One Logistics And Distribution. All rights reserved.</p>
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#20B26B' }} />
+          <div className="flex items-center gap-1.5" aria-label="System status: operational">
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#20B26B' }} aria-hidden="true" />
             <span style={{ color: '#6B6B67' }}>All systems operational</span>
           </div>
         </div>

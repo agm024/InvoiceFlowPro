@@ -444,7 +444,7 @@ export default function CheckoutClient({
         </div>
         <div className="flex flex-wrap gap-6 mt-8 text-[11px]" style={{ color: '#C0C0BC' }}>
           <a href="/terms" className="hover:text-gray-600 transition-colors">Terms of Service</a>
-          <a href="/privacy-policy" className="hover:text-gray-600 transition-colors">Privacy Policy</a>
+          <a href="/privacy" className="hover:text-gray-600 transition-colors">Privacy Policy</a>
           <a href="/refund-policy" className="hover:text-gray-600 transition-colors">Refund & Cancellation Policy</a>
         </div>
       </div>

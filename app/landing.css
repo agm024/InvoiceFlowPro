@@ -203,3 +203,22 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ─── Footer link hover (was inline style — moved here) ─────────────── */
+.land-footer-link {
+  color: #6B6B67;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.land-footer-link:hover,
+.land-footer-link:focus-visible {
+  color: #E8E8E4;
+}
+
+/* ─── Focus-visible ring for interactive elements ───────────────────── */
+[data-landing="true"] a:focus-visible,
+[data-landing="true"] button:focus-visible {
+  outline: 2px solid #20B26B;
+  outline-offset: 2px;
+  border-radius: 4px;
+}

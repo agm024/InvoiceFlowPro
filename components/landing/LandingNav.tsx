@@ -48,7 +48,7 @@ export function LandingNav({ isLoggedIn }: LandingNavProps) {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-1">
           {links.map(l => (
             <a
               key={l.href}
@@ -88,7 +88,9 @@ export function LandingNav({ isLoggedIn }: LandingNavProps) {
           className="md:hidden p-2 rounded-lg transition-colors"
           onClick={() => setOpen(!open)}
           style={{ color: '#151515' }}
-          aria-label="Toggle menu"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
         >
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -97,6 +99,9 @@ export function LandingNav({ isLoggedIn }: LandingNavProps) {
       {/* Mobile drawer */}
       {open && (
         <div
+          id="mobile-nav"
+          role="navigation"
+          aria-label="Mobile navigation"
           className="md:hidden px-6 pb-6 flex flex-col gap-1"
           style={{
             background: 'rgba(247,246,242,0.96)',
