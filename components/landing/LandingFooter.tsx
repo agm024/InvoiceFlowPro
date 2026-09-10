@@ -1,14 +1,32 @@
 import Link from 'next/link'
 
+const footerLinks = {
+  product: [
+    { href: '#features', label: 'Features' },
+    { href: '#pricing',  label: 'Pricing'  },
+    { href: '/sign-in',  label: 'Sign in'  },
+  ],
+  legal: [
+    { href: '/terms',         label: 'Terms & Conditions'    },
+    { href: '/privacy',       label: 'Privacy Policy'        },
+    { href: '/refund-policy', label: 'Refund & Cancellation' },
+    { href: '/dpa',           label: 'Data Processing'       },
+  ],
+}
+
 export function LandingFooter() {
   return (
     <footer style={{ background: '#0D0D0D', color: '#6B6B67', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+      <style>{`
+        .land-footer-link { color: #6B6B67; text-decoration: none; transition: color 0.15s; }
+        .land-footer-link:hover { color: #E8E8E4; }
+      `}</style>
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4 group w-fit" style={{ textDecoration: 'none' }}>
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: '#fff' }}>
+            <Link href="/" className="flex items-center gap-2 mb-4 w-fit land-footer-link">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#fff' }}>
                 <span className="font-black text-sm" style={{ color: '#20B26B' }}>I</span>
               </div>
               <span className="font-black text-sm" style={{ color: '#E8E8E4' }}>
@@ -24,19 +42,9 @@ export function LandingFooter() {
           <div>
             <h4 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Product</h4>
             <ul className="space-y-3 text-sm">
-              {[
-                { href: '#features', label: 'Features' },
-                { href: '#pricing',  label: 'Pricing'  },
-                { href: '/sign-in',  label: 'Sign in'  },
-              ].map(l => (
+              {footerLinks.product.map(l => (
                 <li key={l.label}>
-                  <Link href={l.href} style={{ color: '#6B6B67', textDecoration: 'none' }}
-                    className="hover:text-white transition-colors"
-                    onMouseEnter={e => ((e.target as HTMLElement).style.color = '#fff')}
-                    onMouseLeave={e => ((e.target as HTMLElement).style.color = '#6B6B67')}
-                  >
-                    {l.label}
-                  </Link>
+                  <Link href={l.href} className="land-footer-link">{l.label}</Link>
                 </li>
               ))}
             </ul>
@@ -47,9 +55,7 @@ export function LandingFooter() {
             <h4 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Company</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <a href="mailto:support@invoiceflowpro.in" style={{ color: '#6B6B67', textDecoration: 'none' }}>
-                  Contact
-                </a>
+                <a href="mailto:support@invoiceflowpro.in" className="land-footer-link">Contact</a>
               </li>
             </ul>
           </div>
@@ -58,16 +64,9 @@ export function LandingFooter() {
           <div>
             <h4 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Legal</h4>
             <ul className="space-y-3 text-sm">
-              {[
-                { href: '/terms',         label: 'Terms & Conditions'      },
-                { href: '/privacy',       label: 'Privacy Policy'          },
-                { href: '/refund-policy', label: 'Refund & Cancellation'   },
-                { href: '/dpa',           label: 'Data Processing'          },
-              ].map(l => (
+              {footerLinks.legal.map(l => (
                 <li key={l.label}>
-                  <Link href={l.href} style={{ color: '#6B6B67', textDecoration: 'none' }}>
-                    {l.label}
-                  </Link>
+                  <Link href={l.href} className="land-footer-link">{l.label}</Link>
                 </li>
               ))}
             </ul>

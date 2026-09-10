@@ -53,10 +53,8 @@ export function LandingNav({ isLoggedIn }: LandingNavProps) {
             <a
               key={l.href}
               href={l.href}
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-              style={{ color: '#6B6B67', textDecoration: 'none' }}
-              onMouseEnter={e => ((e.target as HTMLElement).style.color = '#151515')}
-              onMouseLeave={e => ((e.target as HTMLElement).style.color = '#6B6B67')}
+              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors text-[#6B6B67] hover:text-[#151515]"
+              style={{ textDecoration: 'none' }}
             >
               {l.label}
             </a>

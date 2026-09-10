@@ -116,10 +116,14 @@ export default async function DashboardPage({
   const expenseTrend = prevExpensesSum === 0 ? 100 : ((expensesTimeframe - prevExpensesSum) / prevExpensesSum) * 100
 
   // Balance Sheet Metrics (Current totals regardless of timeframe)
-  const outstandingInvoices = allInvoices.filter(i => ['draft', 'sent'].includes(i.status))
+  const globalUnpaidInvoices = await prisma.invoice.findMany({
+    where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' }, status: { in: ['draft', 'sent'] } },
+    select: { id: true, status: true, dueDate: true, total: true, exchangeRate: true, invoiceNumber: true, client: { select: { name: true } } }
+  })
+  const outstandingInvoices = globalUnpaidInvoices.filter(i => ['draft', 'sent'].includes(i.status))
   const totalOutstanding = outstandingInvoices.reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
   
-  const overdueInvoices = allInvoices.filter(i => i.status === 'sent' && i.dueDate && i.dueDate < today)
+  const overdueInvoices = globalUnpaidInvoices.filter(i => i.status === 'sent' && i.dueDate && i.dueDate < today)
   const totalOverdue = overdueInvoices.reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
 
   // 4. CHART DATA GENERATION
@@ -172,12 +176,13 @@ export default async function DashboardPage({
 
   // 5. OTHER SECTIONS DATA
   const sevenDaysFromNow = addDays(today, 7)
-  const upcomingPayments = allInvoices
+  const upcomingPayments = globalUnpaidInvoices
     .filter(i => i.status === 'sent' && i.dueDate && i.dueDate >= today && i.dueDate <= sevenDaysFromNow)
     .sort((a, b) => (a.dueDate!.getTime() - b.dueDate!.getTime()))
     .slice(0, 5)
 
   const allClientsCount = await prisma.client.count({ where: { companyId } })
+  const totalInvoicesCount = await prisma.invoice.count({ where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' } } })
   const topClientsRaw = await prisma.client.findMany({
     where: { companyId, status: 'ACTIVE' },
     select: {
@@ -245,7 +250,7 @@ export default async function DashboardPage({
   const hasBusinessInfo = Boolean(getStr(company?.settings?.address) || getStr(company?.address));
   const hasGst = Boolean(getStr(company?.settings?.gstin) || getStr(company?.gstin) || getStr(company?.settings?.panNo) || getStr(company?.pan));
   const hasClient = allClientsCount > 0;
-  const hasInvoice = allInvoices.length > 0;
+  const hasInvoice = totalInvoicesCount > 0;
   
   // Only hide the checklist when they have actually created their first invoice
   const isNewTenant = !hasInvoice;

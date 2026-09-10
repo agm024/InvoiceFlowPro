@@ -2,40 +2,58 @@ import { notFound } from 'next/navigation'
 import prisma from '@/utils/prisma'
 import CheckoutClient from './CheckoutClient'
 import { getCurrentUser } from '@/lib/auth-context'
+import Link from 'next/link'
+import { Lock } from 'lucide-react'
 
-export default async function CheckoutPage({ params, searchParams }: { params: Promise<{ planId: string }>, searchParams: Promise<{ interval?: string }> }) {
-  const { planId } = await params
+export default async function CheckoutPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ planId: string }>
+  searchParams: Promise<{ interval?: string }>
+}) {
+  const { planId }   = await params
   const { interval } = await searchParams
-  
-  const plan = await prisma.plan.findUnique({
-    where: { id: planId }
-  })
-  
+
+  const plan = await prisma.plan.findUnique({ where: { id: planId } })
   if (!plan) notFound()
-    
-  const user = await getCurrentUser().catch(() => null);
-  const company = user?.companyId ? await prisma.company.findUnique({ where: { id: user.companyId } }) : null;
+
+  const user    = await getCurrentUser().catch(() => null)
+  const company = user?.companyId
+    ? await prisma.company.findUnique({ where: { id: user.companyId } })
+    : null
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-100">
-      <header className="border-b bg-white">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl leading-none">S</span>
+    <div className="min-h-screen font-sans" style={{ background: '#F7F6F2', color: '#151515' }}>
+      {/* Header */}
+      <header
+        className="sticky top-0 z-40"
+        style={{
+          background: 'rgba(247,246,242,0.88)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(21,21,21,0.08)',
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: '#151515' }}>
+              <span className="font-black text-sm" style={{ color: '#20B26B' }}>I</span>
             </div>
-            <span className="font-bold text-xl tracking-tight text-slate-900">SiteRadiant</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span className="font-black text-sm tracking-tight" style={{ color: '#151515' }}>
+              InvoiceFlow<span style={{ color: '#20B26B' }}>Pro</span>
+            </span>
+          </Link>
+          <div className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: '#9B9B96' }}>
+            <Lock size={12} />
             Secure Checkout
           </div>
         </div>
       </header>
-      <main className="py-12 px-6 max-w-6xl mx-auto">
-        <CheckoutClient 
-          plan={plan} 
-          isAnnual={interval !== 'month'} 
+
+      <main className="py-10 px-6 max-w-6xl mx-auto">
+        <CheckoutClient
+          plan={plan}
+          isAnnual={interval !== 'month'}
           user={user}
           company={company}
         />
@@ -43,3 +61,4 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
     </div>
   )
 }
+
