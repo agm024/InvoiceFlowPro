@@ -36,7 +36,7 @@
     "posthog-js": "^1.428.6",
     "qrcode.react": "^4.2.0",
     "razorpay": "^2.9.8",
-    "react": "19.2.4",
+    "react": "19.2.8",
     "react-dom": "19.2.4",
     "react-hot-toast": "^2.6.0",
     "recharts": "^3.10.0",
