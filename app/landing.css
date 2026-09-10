@@ -199,8 +199,8 @@
 /* ─── Reduced motion overrides ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   [data-landing="true"] * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+    animation: none !important;
+    transition: none !important;
   }
 }
 
