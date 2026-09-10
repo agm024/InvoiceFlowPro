@@ -245,7 +245,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
           className="flex flex-col items-start"
         >
           <div className="land-pill mb-8">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#20B26B', animation: 'land-pulse-dot 4s ease-in-out infinite' }} />
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#20B26B', animation: 'land-pulse-dot 8s ease-in-out infinite' }} />
             GST-ready invoicing for Indian businesses
           </div>
 
@@ -329,7 +329,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6 }}
           >
-            <div className="w-2 h-2 rounded-full" style={{ background: '#20B26B', animation: 'land-pulse-dot 4s ease-in-out infinite' }} />
+            <div className="w-2 h-2 rounded-full" style={{ background: '#20B26B', animation: 'land-pulse-dot 8s ease-in-out infinite' }} />
             <span className="text-[11px] font-semibold" style={{ color: '#6B6B67' }}>Live invoice preview</span>
           </motion.div>
         </motion.div>
