@@ -196,13 +196,7 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── Reduced motion overrides ──────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  [data-landing="true"] * {
-    animation: none !important;
-    transition: none !important;
-  }
-}
+
 
 /* ─── Footer link hover (was inline style — moved here) ─────────────── */
 .land-footer-link {
