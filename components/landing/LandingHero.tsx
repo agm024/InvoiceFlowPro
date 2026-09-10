@@ -293,7 +293,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
               <span
                 key={t}
                 className="flex items-center gap-1.5 text-[12px] font-medium"
-                style={{ color: '#9B9B96' }}
+                style={{ color: '#6B6B67' }}
               >
                 <span style={{ color: '#20B26B' }}>✓</span> {t}
               </span>
