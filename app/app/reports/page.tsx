@@ -12,7 +12,7 @@ export default async function ReportsPage() {
   const { companyId } = await requireCompany()
 
   const invoices = await prisma.invoice.findMany({
-    where: { companyId, invoiceType: 'REGULAR', status: 'paid' }
+    where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' }, status: 'paid' }
   })
   
   const expenses = await prisma.expense.findMany({
@@ -24,7 +24,7 @@ export default async function ReportsPage() {
 
   const operatingExpenses = expenses.filter(exp => exp.category !== 'GST_PAYMENT')
   const totalExpenses = operatingExpenses.reduce((acc, exp) => acc + exp.totalAmount, 0)
-  const totalTaxPaid = operatingExpenses.reduce((acc, exp) => acc + (exp.taxAmount || 0), 0)
+  const totalTaxPaid = operatingExpenses.filter(exp => exp.itcEligible).reduce((acc, exp) => acc + (exp.taxAmount || 0), 0)
 
   const netProfit = totalRevenue - totalExpenses
   const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0

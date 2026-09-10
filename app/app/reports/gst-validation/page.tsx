@@ -16,7 +16,7 @@ export default async function GstValidationPage() {
   })
 
   const invoices = await prisma.invoice.findMany({
-    where: { companyId, invoiceType: 'REGULAR', status: 'paid' },
+    where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' }, status: 'paid' },
     include: { client: true }
   })
 
