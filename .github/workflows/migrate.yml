@@ -18,5 +18,9 @@ jobs:
       - name: Deploy Prisma Migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
-        run: npx prisma migrate deploy
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+        run: |
+          if [ -z "$DIRECT_URL" ]; then
+            export DIRECT_URL="$DATABASE_URL"
+          fi
+          npx prisma migrate deploy
