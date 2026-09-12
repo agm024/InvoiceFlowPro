@@ -314,7 +314,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
             style={{ background: 'rgba(21,21,21,0.08)', borderRadius: 24 }}
           />
 
-          <div className="relative">
+          <div className="relative min-h-[500px] w-full flex flex-col items-center justify-start pt-4">
             <InvoiceWorkspace phase={phase} />
 
             <AnimatePresence>

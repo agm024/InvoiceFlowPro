@@ -46,6 +46,29 @@ export function AdminHeader({ user, signOutAction }: AdminHeaderProps) {
           <HelpCircle size={18} />
         </Link>
 
+        {/* Notifications */}
+        <div className="relative">
+          <button
+            onClick={() => setShowNotifications(!showNotifications)}
+            className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-primary-foreground hover:bg-zinc-50 dark:hover:bg-primary transition-colors relative"
+            title="System alerts"
+          >
+            <Bell size={18} />
+          </button>
+
+          {showNotifications && (
+            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg py-2 z-50">
+              <div className="px-4 py-2 border-b border-zinc-100 dark:border-zinc-900 flex justify-between items-center">
+                <span className="font-semibold text-xs text-zinc-800 dark:text-zinc-200">Admin Notifications</span>
+                <span className="text-[10px] text-blue-500 hover:underline cursor-pointer">Mark all read</span>
+              </div>
+              <div className="p-6 text-center text-xs text-zinc-500">
+                You have no new notifications right now.
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Impersonation Banner Button if in progress */}
         {user?.isImpersonating && (
           <form action={stopImpersonation}>
