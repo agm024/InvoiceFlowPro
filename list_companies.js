@@ -1,0 +1,1 @@
+const { PrismaClient } = require('@prisma/client'); const p = new PrismaClient(); p.company.findMany({ select: { id: true, name: true, isTestAccount: true } }).then(console.log).finally(() => p.$disconnect());

@@ -55,6 +55,7 @@ export default async function CompanyDetailsPage({ params }: { params: Promise<{
     status: company.status,
     createdAt: company.createdAt.toISOString(),
     supportAccessGranted: company.supportAccessGranted,
+    isTestAccount: company.isTestAccount,
     subscription: company.subscription ? {
       id: company.subscription.id,
       status: company.subscription.status,
