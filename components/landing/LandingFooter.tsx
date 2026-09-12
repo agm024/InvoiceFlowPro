@@ -18,7 +18,7 @@ export function LandingFooter() {
   return (
     <footer
       aria-label="Site footer"
-      style={{ background: '#0D0D0D', color: '#6B6B67', borderTop: '1px solid rgba(255,255,255,0.04)' }}
+      style={{ background: '#0D0D0D', color: '#9B9B96', borderTop: '1px solid rgba(255,255,255,0.04)' }}
     >
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
@@ -32,7 +32,7 @@ export function LandingFooter() {
                 FlowRadiant<span style={{ color: '#20B26B' }}>Pro</span>
               </span>
             </Link>
-            <p className="text-xs leading-relaxed" style={{ color: '#444', maxWidth: 200 }}>
+            <p className="text-xs leading-relaxed" style={{ color: '#9B9B96', maxWidth: 200 }}>
               Modern invoicing and billing for Indian businesses.
             </p>
           </div>
@@ -74,12 +74,12 @@ export function LandingFooter() {
 
         <div
           className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.04)', color: '#444' }}
+          style={{ borderTop: '1px solid rgba(255,255,255,0.04)', color: '#9B9B96' }}
         >
           <p>&copy; {new Date().getFullYear()} Global One Logistics And Distribution. All rights reserved.</p>
           <div className="flex items-center gap-1.5" aria-label="System status: operational">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#20B26B' }} aria-hidden="true" />
-            <span style={{ color: '#6B6B67' }}>All systems operational</span>
+            <span style={{ color: '#9B9B96' }}>All systems operational</span>
           </div>
         </div>
       </div>
