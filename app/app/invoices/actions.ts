@@ -191,7 +191,7 @@ export async function deleteInvoice(id: string) {
   try {
     const invoice = await prisma.invoice.findFirst({ where: { id, companyId } })
     if (!invoice) return { error: 'Invoice not found' }
-    // if (invoice.status !== 'draft') {
+    // if (['paid', 'partially_paid'].includes(invoice.status)) {
     //   return { error: 'Issued or paid invoices cannot be deleted. You can cancel or void them instead.' }
     // }
     
@@ -255,8 +255,8 @@ export async function updateInvoice(id: string, data: {
       const invoice = await tx.invoice.findFirst({ where: { id, companyId } })
       if (!invoice) throw new Error('Invoice not found')
 
-      if (invoice.status !== 'draft') {
-        throw new Error('This invoice is already issued/paid and is locked. Please use Credit/Debit Notes for corrections.')
+      if (['paid', 'partially_paid'].includes(invoice.status)) {
+        throw new Error('This invoice is already paid and is locked. Please use Credit/Debit Notes for corrections.')
       }
 
       // 1. Delete existing items
