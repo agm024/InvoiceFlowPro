@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/navigation'
+import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import prisma from '@/utils/prisma'
 
