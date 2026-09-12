@@ -22,35 +22,35 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "FlowRadiantPro - Modern Invoicing for Indian Businesses",
+    default: "FlowRadiantPro - From invoices to business insights. All In One",
     template: "%s | FlowRadiantPro",
   },
-  description: "Generate GST-compliant invoices, track estimates, and get paid faster. Designed specifically for freelancers, agencies, and small businesses in India.",
+  description: "From invoices to business insights. All In One",
   keywords: ["invoicing software", "GST billing", "invoice generator", "business management", "FlowRadiantPro"],
   authors: [{ name: "FlowRadiant" }],
   creator: "FlowRadiant",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://flow.siteradiant.co.in'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://flowradiant.siteradiant.co.in'),
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "/",
+    url: "https://flowradiant.siteradiant.co.in",
     siteName: "FlowRadiantPro",
-    title: "FlowRadiantPro - Modern Invoicing for Indian Businesses",
-    description: "Generate GST-compliant invoices, track estimates, and get paid faster. Designed specifically for freelancers, agencies, and small businesses in India.",
+    title: "FlowRadiantPro - From invoices to business insights. All In One",
+    description: "From invoices to business insights. All In One",
     images: [
       {
-        url: "/logo.png",
-        width: 800,
-        height: 800,
-        alt: "FlowRadiantPro Logo",
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "FlowRadiantPro - From invoices to business insights. All In One",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FlowRadiantPro - Modern Invoicing",
-    description: "Generate GST-compliant invoices, track estimates, and get paid faster.",
-    images: ["/logo.png"],
+    title: "FlowRadiantPro - From invoices to business insights. All In One",
+    description: "From invoices to business insights. All In One",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
