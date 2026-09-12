@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     description: "From invoices to business insights. All In One",
     images: [
       {
-        url: "/og-image.png",
+        url: "https://flowradiant.siteradiant.co.in/og-image.png",
         width: 1200,
         height: 630,
         alt: "FlowRadiantPro - From invoices to business insights. All In One",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "FlowRadiantPro - From invoices to business insights. All In One",
     description: "From invoices to business insights. All In One",
-    images: ["/og-image.png"],
+    images: ["https://flowradiant.siteradiant.co.in/og-image.png"],
   },
   robots: {
     index: true,
