@@ -197,7 +197,15 @@ export default async function AdminDashboard({
                 Test Data
               </Link>
             </div>
-            <iframe src="https://status.siteradiant.co.in/badge?theme=dark" width="250" height="30" frameBorder="0" scrolling="no" style={{ colorScheme: 'normal' }}></iframe>
+            <a 
+              href="https://status.siteradiant.co.in" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 animate-fade-in hover:opacity-80 transition-opacity"
+            >
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+              System Normal
+            </a>
           </div>
         </div>
 
