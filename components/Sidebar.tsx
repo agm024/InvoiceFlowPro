@@ -48,10 +48,10 @@ export default function Sidebar() {
   return (
     <div className="w-64 border-r border-sidebar-border bg-sidebar-bg flex flex-col h-full shrink-0">
       <div className="h-16 flex items-center px-6 border-b border-sidebar-border shrink-0">
-        <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+        <Link href="/app" className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
           <img src="/logo.png" alt="FlowRadiant Logo" className="w-7 h-7 rounded" />
-          FlowRadiant<span className="text-cyan-500">Pro</span>
-        </h1>
+          <span>FlowRadiant<span className="text-cyan-500">Pro</span></span>
+        </Link>
       </div>
       
       <div className="p-4 shrink-0">

@@ -21,8 +21,48 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FlowRadiant",
-  description: "Modern Invoicing for Professionals",
+  title: {
+    default: "FlowRadiantPro - Modern Invoicing for Indian Businesses",
+    template: "%s | FlowRadiantPro",
+  },
+  description: "Generate GST-compliant invoices, track estimates, and get paid faster. Designed specifically for freelancers, agencies, and small businesses in India.",
+  keywords: ["invoicing software", "GST billing", "invoice generator", "business management", "FlowRadiantPro"],
+  authors: [{ name: "FlowRadiant" }],
+  creator: "FlowRadiant",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://flow.siteradiant.co.in'),
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "/",
+    siteName: "FlowRadiantPro",
+    title: "FlowRadiantPro - Modern Invoicing for Indian Businesses",
+    description: "Generate GST-compliant invoices, track estimates, and get paid faster. Designed specifically for freelancers, agencies, and small businesses in India.",
+    images: [
+      {
+        url: "/logo.png",
+        width: 800,
+        height: 800,
+        alt: "FlowRadiantPro Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FlowRadiantPro - Modern Invoicing",
+    description: "Generate GST-compliant invoices, track estimates, and get paid faster.",
+    images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export const viewport = {

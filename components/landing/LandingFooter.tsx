@@ -75,10 +75,7 @@ export function LandingFooter() {
           style={{ borderTop: '1px solid rgba(255,255,255,0.04)', color: '#9B9B96' }}
         >
           <p>&copy; {new Date().getFullYear()} Global One Logistics And Distribution. All rights reserved.</p>
-          <div className="flex items-center gap-1.5" aria-label="System status: operational">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#06B6D4' }} aria-hidden="true" />
-            <span style={{ color: '#9B9B96' }}>All systems operational</span>
-          </div>
+          <iframe src="https://status.siteradiant.co.in/badge?theme=dark" width="250" height="30" frameBorder="0" scrolling="no" style={{ colorScheme: 'normal' }}></iframe>
         </div>
       </div>
     </footer>

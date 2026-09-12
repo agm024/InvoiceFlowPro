@@ -96,15 +96,18 @@ export function AdminSidebar() {
       {/* Brand Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-zinc-200 dark:border-zinc-800">
         {!isCollapsed && (
-          <div className="flex flex-col">
-            <span className="font-bold text-sm tracking-tight text-zinc-900 dark:text-white">FlowRadiant</span>
-            <span className="text-[10px] text-zinc-500 uppercase font-semibold">Super Admin Panel</span>
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="FlowRadiant Logo" className="w-6 h-6 rounded" />
+            <div className="flex flex-col">
+              <span className="font-bold text-sm tracking-tight text-zinc-900 dark:text-white">
+                FlowRadiant<span className="text-cyan-500">Pro</span>
+              </span>
+              <span className="text-[10px] text-zinc-500 uppercase font-semibold">Super Admin Panel</span>
+            </div>
           </div>
         )}
         {isCollapsed && (
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-bold text-primary-foreground text-xs mx-auto">
-            IF
-          </div>
+          <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded mx-auto" />
         )}
         {!isCollapsed && (
           <button 
