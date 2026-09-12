@@ -203,7 +203,7 @@ export async function deleteInvoice(id: string) {
 
     await prisma.invoice.update({ where: { id }, data: { isDeleted: true } })
     revalidatePath('/app/invoices')
-    return { success: true }
+    revalidatePath('/app/invoices'); revalidatePath('/app/clients'); revalidatePath('/app/dashboard'); revalidatePath('/app'); return { success: true }
   } catch (error) {
     console.error('Failed to delete invoice:', error)
     return { error: 'Failed to delete invoice' }
@@ -333,7 +333,7 @@ export async function markInvoiceAsPaid(id: string) {
     revalidatePath('/app/invoices')
     revalidatePath(`/app/invoices/${id}`)
     revalidatePath('/')
-    return { success: true }
+    revalidatePath('/app/invoices'); revalidatePath('/app/clients'); revalidatePath('/app/dashboard'); revalidatePath('/app'); return { success: true }
   } catch (error) {
     console.error('Failed to mark invoice as paid:', error)
     return { error: 'Failed to mark invoice as paid' }
@@ -396,7 +396,7 @@ export async function deleteInvoices(ids: string[]) {
         companyId
       }
     })
-    return { success: true }
+    revalidatePath('/app/invoices'); revalidatePath('/app/clients'); revalidatePath('/app/dashboard'); revalidatePath('/app'); return { success: true }
   } catch (error) {
     console.error('Failed to delete invoices', error)
     return { error: 'Failed to delete invoices' }
