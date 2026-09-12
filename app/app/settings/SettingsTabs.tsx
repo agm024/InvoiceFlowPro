@@ -8,7 +8,8 @@ import SupportAccessToggle from './SupportAccessToggle'
 import RolesClient from './RolesClient'
 import TeamMembersClient from './TeamMembersClient'
 import MyProfileClient from './MyProfileClient'
-import { Building2, Landmark, Currency, Users, Shield, Receipt, Check, UserCircle } from 'lucide-react'
+import PaymentGatewaysClient from './PaymentGatewaysClient'
+import { Building2, Landmark, Currency, Users, Shield, Receipt, Check, UserCircle, CreditCard } from 'lucide-react'
 
 export default function SettingsTabs({ 
   settings, 
@@ -49,6 +50,7 @@ export default function SettingsTabs({
     { id: 'company', name: 'Company Profile', icon: Building2 },
     { id: 'banks', name: 'Bank Accounts', icon: Landmark },
     { id: 'currency', name: 'Exchange Rates', icon: Currency },
+    { id: 'payment-gateways', name: 'Payment Gateways', icon: CreditCard },
     { id: 'team', name: 'Team Members', icon: Users },
     { id: 'roles', name: 'Roles & Permissions', icon: Shield },
   ]
@@ -121,6 +123,10 @@ export default function SettingsTabs({
               <ExchangeRatesList initialRates={exchangeRates} />
             </section>
           </div>
+        )}
+
+        {activeTab === 'payment-gateways' && (
+          <PaymentGatewaysClient settings={settings} />
         )}
 
         {activeTab === 'team' && (

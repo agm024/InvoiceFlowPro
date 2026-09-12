@@ -177,6 +177,9 @@ model CompanySettings {
   stateCode    String?  @default("27")
   defaultCurrency String? @default("INR")
 
+  razorpayAccountId   String?
+  razorpayConnectedAt DateTime?
+
   @@index([companyId])
 }
 
