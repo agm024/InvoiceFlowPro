@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useSearchParams } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import { 
   Building2, Users, CreditCard, LayoutDashboard, Settings, Activity, 
@@ -13,9 +13,6 @@ import {
 
 export function AdminSidebar() {
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const mode = searchParams.get('mode')
-  const modeQuery = mode === 'test' ? '?mode=test' : ''
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   // Load collapse state from localStorage on client side
@@ -148,7 +145,7 @@ export function AdminSidebar() {
                 return (
                   <li key={i}>
                     <Link
-                      href={item.href + modeQuery}
+                      href={item.href}
                       title={isCollapsed ? item.title : undefined}
                       className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all ${
                         isActive 

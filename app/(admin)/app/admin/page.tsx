@@ -11,35 +11,26 @@ import DashboardCharts from "./DashboardCharts"
 
 export const dynamic = 'force-dynamic'
 
-export default async function AdminDashboard({
-  searchParams
-}: {
-  searchParams: Promise<{ mode?: string }>
-}) {
+export default async function AdminDashboard() {
   await requireSuperAdmin()
-  const resolvedParams = await searchParams
-  const isTestMode = resolvedParams.mode === 'test'
-  
-  // Filter condition for companies based on mode
-  const companyFilter = isTestMode ? { isTestAccount: true } : { isTestAccount: false }
   
   // 1. BUSINESS METRICS
-  const totalBusinesses = await prisma.company.count({ where: companyFilter })
-  const activeBusinesses = await prisma.company.count({ where: { status: "ACTIVE", ...companyFilter } })
+  const totalBusinesses = await prisma.company.count()
+  const activeBusinesses = await prisma.company.count({ where: { status: "ACTIVE" } })
   const newBusinesses30d = await prisma.company.count({
-    where: { createdAt: { gte: subDays(new Date(), 30) }, ...companyFilter }
+    where: { createdAt: { gte: subDays(new Date(), 30) } }
   })
-  const suspendedBusinesses = await prisma.company.count({ where: { status: "SUSPENDED", ...companyFilter } })
+  const suspendedBusinesses = await prisma.company.count({ where: { status: "SUSPENDED" } })
   
   // Users belong to companies
-  const activeUsers = await prisma.user.count({ where: { company: companyFilter } })
+  const activeUsers = await prisma.user.count({ where: {  } })
   const newUsers30d = await prisma.user.count({
-    where: { createdAt: { gte: subDays(new Date(), 30) }, company: companyFilter }
+    where: { createdAt: { gte: subDays(new Date(), 30) },  }
   })
 
   // 2. SUBSCRIPTION METRICS
   const activeSubs = await prisma.subscription.findMany({
-    where: { status: "active", company: companyFilter },
+    where: { status: "active",  },
     include: { plan: true }
   })
 
@@ -52,9 +43,9 @@ export default async function AdminDashboard({
   const arr = mrr * 12
 
   const activeSubscriptionsCount = activeSubs.length
-  const trialSubscriptionsCount = await prisma.subscription.count({ where: { status: "trialing", company: companyFilter } })
-  const cancelledSubscriptionsCount = await prisma.subscription.count({ where: { status: "canceled", company: companyFilter } })
-  const pastDueSubscriptionsCount = await prisma.subscription.count({ where: { status: "past_due", company: companyFilter } })
+  const trialSubscriptionsCount = await prisma.subscription.count({ where: { status: "trialing",  } })
+  const cancelledSubscriptionsCount = await prisma.subscription.count({ where: { status: "canceled",  } })
+  const pastDueSubscriptionsCount = await prisma.subscription.count({ where: { status: "past_due",  } })
   
   // Churn calculations
   const churnRate = activeSubscriptionsCount > 0 
@@ -68,11 +59,11 @@ export default async function AdminDashboard({
   // 3. REVENUE METRICS
   const successPaymentsAgg = await prisma.platformPayment.aggregate({
     _sum: { convertedAmountInr: true },
-    where: { status: "SUCCESS", company: companyFilter }
+    where: { status: "SUCCESS"}
   })
   const refundedPaymentsAgg = await prisma.platformPayment.aggregate({
     _sum: { convertedAmountInr: true },
-    where: { status: "REFUNDED", company: companyFilter }
+    where: { status: "REFUNDED",  }
   })
 
   const grossRevenue = successPaymentsAgg._sum.convertedAmountInr || 0
@@ -83,41 +74,32 @@ export default async function AdminDashboard({
 
   // 4. OPERATIONS METRICS
   const openTickets = await prisma.ticket.count({
-    where: { status: { in: ["OPEN", "PENDING", "IN_PROGRESS"] }, company: companyFilter }
+    where: { status: { in: ["OPEN", "PENDING", "IN_PROGRESS"] } }
   })
   const highPriorityTickets = await prisma.ticket.count({
     where: {
       priority: { in: ["HIGH", "URGENT"] },
-      status: { in: ["OPEN", "PENDING", "IN_PROGRESS"] },
-      company: companyFilter
+      status: { in: ["OPEN", "PENDING", "IN_PROGRESS"] }
     }
   })
-  const failedPayments = await prisma.platformPayment.count({ where: { status: "FAILED", company: companyFilter } })
+  const failedPayments = await prisma.platformPayment.count({ where: { status: "FAILED"} })
   const failedWebhooks = await prisma.webhookLog.count({ where: { status: "FAILED" } })
   const failedEmails = await prisma.emailLog.count({ where: { status: "FAILED" } })
   const systemIncidents = await prisma.backgroundJobLog.count({ where: { status: "FAILED" } })
 
   // 5. RECENT ACTIVITY FEED (Audit Logs)
-  const testCompanies = await prisma.company.findMany({ where: { isTestAccount: true }, select: { id: true } })
-  const testCompanyIds = testCompanies.map(c => c.id)
-  
-  const auditLogFilter = isTestMode 
-    ? { companyId: { in: testCompanyIds } }
-    : { companyId: { notIn: testCompanyIds } }
-
   const recentActivities = await prisma.auditLog.findMany({
-    where: auditLogFilter,
     orderBy: { createdAt: "desc" },
     take: 8
   })
 
   // 6. TIME SERIES CHART AGGREGATIONS (7d, 30d, 90d, 12m)
   const payments = await prisma.platformPayment.findMany({
-    where: { status: "SUCCESS", company: companyFilter },
+    where: { status: "SUCCESS"},
     select: { createdAt: true, convertedAmountInr: true }
   })
   const companies = await prisma.company.findMany({
-    where: companyFilter,
+    
     select: { createdAt: true }
   })
 
@@ -186,37 +168,23 @@ export default async function AdminDashboard({
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header Info */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">Platform Health & Analytics</h1>
-            <p className="text-xs text-zinc-500 mt-1">Real-time operations telemetry and financial performance metrics.</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg">
-              <Link 
-                href="/app/admin?mode=real" 
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${!isTestMode ? 'bg-white dark:bg-zinc-950 shadow-sm text-zinc-950 dark:text-white' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}
-              >
-                Real Data
-              </Link>
-              <Link 
-                href="/app/admin?mode=test" 
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${isTestMode ? 'bg-white dark:bg-zinc-950 shadow-sm text-zinc-950 dark:text-white' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}
-              >
-                Test Data
-              </Link>
-            </div>
-            <a 
-              href="https://status.siteradiant.co.in" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 animate-fade-in hover:opacity-80 transition-opacity"
-            >
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-              System Normal
-            </a>
-          </div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">Platform Health & Analytics</h1>
+          <p className="text-xs text-zinc-500 mt-1">Real-time operations telemetry and financial performance metrics.</p>
         </div>
+        <div className="flex items-center gap-4">
+          <a 
+            href="https://status.siteradiant.co.in" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 animate-fade-in hover:opacity-80 transition-opacity"
+          >
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+            System Normal
+          </a>
+        </div>
+      </div>
 
       {/* Grid of Metric Rows */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">

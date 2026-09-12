@@ -184,20 +184,3 @@ export async function cancelCompanySubscription(companyId: string, reason: strin
 
   revalidatePath(`/app/admin/businesses/${companyId}`)
 }
-export async function toggleTestAccount(companyId: string, isTestAccount: boolean) {
-  const admin = await requireSuperAdmin()
-  
-  await prisma.company.update({
-    where: { id: companyId },
-    data: { isTestAccount }
-  })
-
-  await logAudit({
-    action: isTestAccount ? "COMPANY_MARKED_AS_TEST" : "COMPANY_MARKED_AS_LIVE",
-    companyId,
-    reason: `Manually marked as ${isTestAccount ? 'test' : 'live'} account by admin`,
-  })
-
-  revalidatePath(`/app/admin/businesses/${companyId}`)
-  revalidatePath(`/app/admin`)
-}

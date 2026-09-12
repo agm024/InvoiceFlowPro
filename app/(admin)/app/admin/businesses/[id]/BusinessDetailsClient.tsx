@@ -10,7 +10,7 @@ import {
 import Link from "next/link"
 import { 
   suspendCompany, reactivateCompany, archiveCompany, 
-  changeCompanyPlan, cancelCompanySubscription, toggleTestAccount
+  changeCompanyPlan, cancelCompanySubscription 
 } from "../actions"
 import { impersonateCompany } from "../../impersonate-actions"
 
@@ -31,7 +31,6 @@ interface CompanyDetails {
   status: string
   createdAt: string
   supportAccessGranted: boolean
-  isTestAccount: boolean
   subscription?: {
     id: string
     plan: Plan
@@ -126,16 +125,6 @@ export function BusinessDetailsClient({
 
   const [showArchiveModal, setShowArchiveModal] = useState(false)
   const [archiveReason, setArchiveReason] = useState("")
-
-  const handleToggleTestMode = () => {
-    startTransition(async () => {
-      try {
-        await toggleTestAccount(company.id, !company.isTestAccount)
-      } catch (err: any) {
-        alert(err.message)
-      }
-    })
-  }
 
   // Form handlers
   const handleImpersonate = () => {
@@ -249,20 +238,7 @@ export function BusinessDetailsClient({
           </div>
 
           {/* Quick Management Buttons */}
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Mark as Test */}
-            <button
-              onClick={handleToggleTestMode}
-              disabled={isPending}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition shadow-sm ${
-                company.isTestAccount 
-                  ? "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800 hover:bg-orange-100" 
-                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-              }`}
-            >
-              {company.isTestAccount ? "Remove Test Status" : "Mark as Test Account"}
-            </button>
-
+          <div className="flex items-center gap-2">
             {/* View as Company (Impersonate) */}
             <button
               onClick={() => setShowImpersonateModal(true)}
