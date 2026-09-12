@@ -50,7 +50,7 @@ export async function inviteTeamMember(email: string, customRoleId: string) {
   })
 
   // Send Email
-  const inviteLink = `https://invoice.siteradiant.co.in/invite?token=${token}`
+  const inviteLink = `https://flow.siteradiant.co.in/invite?token=${token}`
   
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">

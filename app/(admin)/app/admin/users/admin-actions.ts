@@ -34,7 +34,7 @@ export async function inviteSuperAdmin(email: string, platformRoleId: string) {
   })
 
   // Send Email
-  const inviteLink = `https://invoice.siteradiant.co.in/admin-invite?token=${token}`
+  const inviteLink = `https://flow.siteradiant.co.in/admin-invite?token=${token}`
   
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">

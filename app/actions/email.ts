@@ -67,7 +67,7 @@ export async function sendEmail({
 }
 
 export async function sendPortalLink(clientEmail: string, clientName: string, portalToken: string, customSubject?: string, customMessage?: string) {
-  const portalUrl = `https://invoice.siteradiant.co.in/portal/${portalToken}`;
+  const portalUrl = `https://flow.siteradiant.co.in/portal/${portalToken}`;
   
   const defaultMessage = `Here is the link to access your dedicated Client Portal. You can view your active projects, estimates, outstanding invoices, and statement of accounts.`;
   const messageBody = customMessage ? customMessage.replace(/\n/g, '<br/>') : defaultMessage;
@@ -108,7 +108,7 @@ export async function sendPortalLink(clientEmail: string, clientName: string, po
 }
 
 export async function sendPaymentReminder(clientEmail: string, clientName: string, invoiceNumber: string, invoiceId: string, amount: string) {
-  const paymentUrl = `https://invoice.siteradiant.co.in/pay/${invoiceId}`;
+  const paymentUrl = `https://flow.siteradiant.co.in/pay/${invoiceId}`;
   const html = `
     <div style="background-color: #f4f4f5; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
       <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
@@ -151,7 +151,7 @@ export async function sendPaymentReminder(clientEmail: string, clientName: strin
 }
 
 export async function sendInvoiceEmail(clientEmail: string, clientName: string, invoiceNumber: string, invoiceId: string, amount: string, customSubject?: string, customMessage?: string) {
-  const paymentUrl = `https://invoice.siteradiant.co.in/pay/${invoiceId}`;
+  const paymentUrl = `https://flow.siteradiant.co.in/pay/${invoiceId}`;
   
   const defaultMessage = `A new invoice has been generated for you and is now available for review and payment.`;
   const messageBody = customMessage ? customMessage.replace(/\n/g, '<br/>') : defaultMessage;
@@ -200,7 +200,7 @@ export async function sendInvoiceEmail(clientEmail: string, clientName: string, 
 
 
 export async function sendSubscriptionDowngradedEmail(companyEmail: string, companyName: string) {
-  const loginUrl = `https://invoice.siteradiant.co.in/app/settings/billing`;
+  const loginUrl = `https://flow.siteradiant.co.in/app/settings/billing`;
   
   const html = `
     <div style="background-color: #f4f4f5; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
