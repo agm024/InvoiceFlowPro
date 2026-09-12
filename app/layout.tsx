@@ -29,17 +29,17 @@ export const metadata: Metadata = {
   keywords: ["invoicing software", "GST billing", "invoice generator", "business management", "FlowRadiantPro"],
   authors: [{ name: "FlowRadiant" }],
   creator: "FlowRadiant",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://flowradiant.siteradiant.co.in'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://flow.siteradiant.co.in'),
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://flowradiant.siteradiant.co.in",
+    url: "https://flow.siteradiant.co.in",
     siteName: "FlowRadiantPro",
     title: "FlowRadiantPro - From invoices to business insights. All In One",
     description: "From invoices to business insights. All In One",
     images: [
       {
-        url: "https://flowradiant.siteradiant.co.in/og-image.png",
+        url: "https://flow.siteradiant.co.in/og-image.png",
         width: 1200,
         height: 630,
         alt: "FlowRadiantPro - From invoices to business insights. All In One",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "FlowRadiantPro - From invoices to business insights. All In One",
     description: "From invoices to business insights. All In One",
-    images: ["https://flowradiant.siteradiant.co.in/og-image.png"],
+    images: ["https://flow.siteradiant.co.in/og-image.png"],
   },
   robots: {
     index: true,
