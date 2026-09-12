@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation'
 
 import { useState, useTransition } from 'react'
 import { CheckCircle2 } from 'lucide-react'
-import { createCheckoutSession } from './actions'
+import { createCheckoutSession, adminBypassSubscribe } from './actions'
 
-export default function BillingClient({ plans, subscription }: { plans: any[], subscription: any }) {
+export default function BillingClient({ plans, subscription, isAdmin }: { plans: any[], subscription: any, isAdmin?: boolean }) {
   const router = useRouter()
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
   const [isAnnual, setIsAnnual] = useState(true)
@@ -30,6 +30,25 @@ export default function BillingClient({ plans, subscription }: { plans: any[], s
       }
       return;
     }
+
+    if (isAdmin) {
+      if (confirm('Super Admin Bypass: Activate this premium plan for free without Razorpay?')) {
+        setLoadingPlan(planId);
+        try {
+          const res = await adminBypassSubscribe(planId, isAnnual ? 'year' : 'month');
+          if (res.success) {
+            toast.success('Premium plan activated for free!');
+            router.refresh();
+          }
+        } catch (e: any) {
+          toast.error(e.message || 'Failed to bypass subscribe');
+        } finally {
+          setLoadingPlan(null);
+        }
+      }
+      return;
+    }
+
     router.push(`/checkout/${planId}?interval=${isAnnual ? 'year' : 'month'}`);
   };
 

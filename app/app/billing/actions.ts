@@ -84,3 +84,38 @@ export async function downgradeToFree() {
   revalidatePath('/app/billing');
   return { success: true };
 }
+export async function adminBypassSubscribe(planId: string, interval: 'month' | 'year') {
+  const { companyId, user } = await requireCompany()
+  if (!user.isSuperAdmin) {
+    throw new Error('Unauthorized: Only Super Admins can bypass billing')
+  }
+
+  const plan = await prisma.plan.findUnique({
+    where: { id: planId }
+  })
+  if (!plan) throw new Error("Plan not found");
+
+  const days = interval === 'year' ? 365 : 30;
+  
+  await prisma.subscription.upsert({
+    where: { companyId },
+    update: {
+      planId,
+      status: "active",
+      billingInterval: interval,
+      currentPeriodEnd: new Date(Date.now() + days * 24 * 60 * 60 * 1000),
+      rzpSubscriptionId: "bypass_admin_" + Date.now()
+    },
+    create: {
+      companyId,
+      planId,
+      status: "active",
+      billingInterval: interval,
+      currentPeriodEnd: new Date(Date.now() + days * 24 * 60 * 60 * 1000),
+      rzpSubscriptionId: "bypass_admin_" + Date.now()
+    }
+  });
+
+  revalidatePath('/app/billing')
+  return { success: true };
+}

@@ -6,7 +6,7 @@ import { cancelSubscription } from './actions'
 import { format } from 'date-fns'
 
 export default async function BillingPage() {
-  const { companyId } = await requireCompany()
+  const { companyId, user } = await requireCompany()
 
   const subscription = await prisma.subscription.findUnique({
     where: { companyId },
@@ -84,7 +84,7 @@ export default async function BillingPage() {
         )}
       </div>
 
-      <BillingClient plans={plans} subscription={subscription} />
+      <BillingClient plans={plans} subscription={subscription} isAdmin={user.isSuperAdmin} />
     </div>
   )
 }
