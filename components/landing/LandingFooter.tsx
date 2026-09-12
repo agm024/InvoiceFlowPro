@@ -25,9 +25,7 @@ export function LandingFooter() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4 w-fit land-footer-link" aria-label="FlowRadiant home">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#fff' }}>
-                <span className="font-black text-sm" style={{ color: '#20B26B' }} aria-hidden="true">I</span>
-              </div>
+              <img src="/logo.png" alt="FlowRadiant Logo" className="w-7 h-7 rounded-lg shrink-0" />
               <span className="font-black text-sm" style={{ color: '#E8E8E4' }}>
                 FlowRadiant<span style={{ color: '#20B26B' }}>Pro</span>
               </span>

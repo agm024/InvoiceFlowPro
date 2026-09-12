@@ -49,9 +49,7 @@ export default function Sidebar() {
     <div className="w-64 border-r border-sidebar-border bg-sidebar-bg flex flex-col h-full shrink-0">
       <div className="h-16 flex items-center px-6 border-b border-sidebar-border shrink-0">
         <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
-          <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
-            <Receipt className="w-4 h-4 text-primary-foreground" />
-          </div>
+          <img src="/logo.png" alt="FlowRadiant Logo" className="w-7 h-7 rounded" />
           FlowRadiant
         </h1>
       </div>

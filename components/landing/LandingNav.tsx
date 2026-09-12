@@ -35,17 +35,12 @@ export function LandingNav({ isLoggedIn }: LandingNavProps) {
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group" style={{ textDecoration: 'none' }}>
-          <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center"
-            style={{ background: '#151515' }}
-          >
-            <span className="font-black text-sm" style={{ color: '#20B26B' }}>I</span>
-          </div>
-          <span className="font-black text-[15px] tracking-tight" style={{ color: '#151515' }}>
-            FlowRadiant<span style={{ color: '#20B26B' }}>Pro</span>
-          </span>
-        </Link>
+          <Link href="/" className="flex items-center gap-2.5 group" style={{ textDecoration: 'none' }}>
+            <img src="/logo.png" alt="FlowRadiantPro" className="w-8 h-8 rounded-lg" />
+            <span className="font-black text-[15px] tracking-tight" style={{ color: '#151515' }}>
+              FlowRadiant<span style={{ color: '#20B26B' }}>Pro</span>
+            </span>
+          </Link>
 
         {/* Desktop Nav */}
         <nav aria-label="Main navigation" className="hidden md:flex items-center gap-1">

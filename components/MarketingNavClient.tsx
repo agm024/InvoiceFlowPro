@@ -29,9 +29,7 @@ export function MarketingNavClient({ isLoggedIn }: { isLoggedIn: boolean }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
-            <span className="text-white font-black text-base leading-none">I</span>
-          </div>
+          <img src="/logo.png" alt="FlowRadiantPro" className="w-8 h-8 rounded-xl shadow-md group-hover:scale-110 transition-transform" />
           <span className="font-black text-lg tracking-tight text-zinc-900 dark:text-white">
             FlowRadiant<span className="text-blue-600 dark:text-blue-500">Pro</span>
           </span>

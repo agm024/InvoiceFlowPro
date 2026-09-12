@@ -95,19 +95,15 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 p-4">
-      <div className="w-full max-w-[500px]">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-zinc-900 dark:bg-zinc-100 rounded-xl flex items-center justify-center shadow-sm">
-              <span className="text-white dark:text-zinc-900 font-bold text-xl">I</span>
-            </div>
-            <span className="font-bold text-2xl tracking-tight">FlowRadiant<span className="text-blue-600">Pro</span></span>
-          </Link>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Create your account</h1>
-          <p className="text-zinc-500 dark:text-zinc-400">Join thousands of businesses managing invoices</p>
-        </div>
+      <div className="w-full max-w-[500px] mt-12 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <Link href="/" className="flex items-center gap-3 mb-8 w-fit mx-auto">
+          <img src="/logo.png" alt="FlowRadiant Logo" className="w-10 h-10 rounded-xl shadow-sm" />
+          <span className="font-bold text-2xl tracking-tight">FlowRadiant<span className="text-blue-600">Pro</span></span>
+        </Link>
+        <h1 className="text-3xl font-bold tracking-tight mb-2">Create your account</h1>
+        <p className="text-zinc-500 dark:text-zinc-400">Join thousands of businesses managing invoices</p>
 
-        <div className="bg-white dark:bg-zinc-900/50 p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm backdrop-blur-xl overflow-hidden">
+        <div className="bg-white dark:bg-zinc-900/50 p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm backdrop-blur-xl overflow-hidden mt-8">
           
           {/* Progress */}
           {step < 5 && (
