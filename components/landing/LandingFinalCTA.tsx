@@ -88,7 +88,7 @@ export function LandingFinalCTA({ signupHref }: { signupHref: string }) {
 
           <p
             className="text-lg mb-12 leading-relaxed mx-auto"
-            style={{ color: '#6B6B67', maxWidth: 480 }}
+            style={{ color: '#9B9B96', maxWidth: 480 }}
           >
             Everything you need to create, manage and track invoices — in one beautifully simple workspace.
           </p>
@@ -123,7 +123,7 @@ export function LandingFinalCTA({ signupHref }: { signupHref: string }) {
             </Link>
           </div>
 
-          <p className="mt-8 text-sm" style={{ color: '#444' }}>
+          <p className="mt-8 text-sm" style={{ color: '#9B9B96' }}>
             No credit card required · Unlimited invoices on free plan · Cancel anytime
           </p>
         </motion.div>

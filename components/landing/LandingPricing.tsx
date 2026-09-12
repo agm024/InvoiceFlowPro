@@ -151,7 +151,7 @@ export function LandingPricing({ plans }: { plans: Plan[] }) {
                         <Minus
                           size={14}
                           className="shrink-0 mt-0.5"
-                          style={{ color: isRecommended ? '#444' : '#d4d4d4' }}
+                          style={{ color: isRecommended ? '#6B6B67' : '#d4d4d4' }}
                         />
                       )}
                       <span
@@ -159,7 +159,7 @@ export function LandingPricing({ plans }: { plans: Plan[] }) {
                         style={{
                           color: f.available
                             ? (isRecommended ? '#E8E8E4' : '#151515')
-                            : (isRecommended ? '#555' : '#b0b0b0'),
+                            : (isRecommended ? '#6B6B67' : '#b0b0b0'),
                           fontWeight: 500,
                         }}
                       >
