@@ -14,7 +14,7 @@ export async function getClients() {
     where: { companyId },
     orderBy: { createdAt: 'desc' },
     include: {
-      invoices: {
+      invoices: { where: { isDeleted: false },
         select: {
           total: true,
           status: true,

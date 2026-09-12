@@ -317,10 +317,8 @@ export default function InvoiceForm({
     e.preventDefault()
     if (isSubmitting) return;
     setIsSubmitting(true)
-    if (isSubmitting) return;
-    setIsSubmitting(true)
-    if (!clientId) { toast.error('Please select a client'); return }
-    if (items.length === 0 || !items[0].productId) { toast.error('Please add at least one product'); return }
+    if (!clientId) { toast.error('Please select a client'); setIsSubmitting(false); return }
+    if (items.length === 0 || !items[0].productId) { toast.error('Please add at least one product'); setIsSubmitting(false); return }
 
     const payload = {
       clientId,
