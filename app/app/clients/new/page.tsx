@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { createClient } from '../actions'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import SubmitButton from './SubmitButton'
 
 export default function NewClientPage() {
   async function handleSubmit(formData: FormData) {
@@ -68,9 +69,7 @@ export default function NewClientPage() {
           </div>
 
           <div className="flex justify-end pt-4 border-t border-card-border">
-            <button type="submit" className="bg-foreground text-background px-6 py-2 rounded-md font-medium hover:opacity-90 transition-opacity">
-              Save Client
-            </button>
+            <SubmitButton />
           </div>
         </form>
       </div>
