@@ -38,7 +38,7 @@ export function LandingNav({ isLoggedIn }: LandingNavProps) {
           <Link href="/" className="flex items-center gap-2.5 group" style={{ textDecoration: 'none' }}>
             <img src="/logo.png" alt="FlowRadiantPro" className="w-8 h-8 rounded-lg" />
             <span className="font-black text-[15px] tracking-tight" style={{ color: '#151515' }}>
-              FlowRadiant<span style={{ color: '#20B26B' }}>Pro</span>
+              FlowRadiant<span style={{ color: '#06B6D4' }}>Pro</span>
             </span>
           </Link>
 

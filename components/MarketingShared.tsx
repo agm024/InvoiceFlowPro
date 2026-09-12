@@ -19,7 +19,7 @@ export function MarketingFooter() {
                 <span className="text-white font-black text-base leading-none">I</span>
               </div>
               <span className="font-black text-lg tracking-tight text-white">
-                FlowRadiant<span className="text-blue-500">Pro</span>
+                FlowRadiant<span className="text-cyan-500">Pro</span>
               </span>
             </Link>
             <p className="text-sm leading-relaxed text-zinc-500 max-w-xs">
@@ -53,7 +53,7 @@ export function MarketingFooter() {
 
         <div className="border-t border-zinc-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-600">
           <p>&copy; {new Date().getFullYear()} FlowRadiant — a product by Global One Logistics &amp; Distribution.</p>
-          <Link href="/sign-up" className="text-blue-500 hover:text-blue-400 font-semibold transition-colors">
+          <Link href="/sign-up" className="text-cyan-500 hover:text-blue-400 font-semibold transition-colors">
             Start Free →
           </Link>
         </div>

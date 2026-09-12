@@ -50,7 +50,7 @@ function SignInForm() {
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Password</label>
-            <Link href="#" className="text-sm text-blue-600 dark:text-blue-500 hover:underline">Forgot password?</Link>
+            <Link href="#" className="text-sm text-cyan-500 dark:text-blue-500 hover:underline">Forgot password?</Link>
           </div>
           <input type="password" name="password" required placeholder="••••••••" className={`w-full px-4 py-2.5 rounded-xl border ${formError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-zinc-200 dark:border-zinc-800 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500'} bg-zinc-50/50 dark:bg-zinc-900/50 focus:outline-none focus:ring-1 transition-all`} />
           {formError && (
@@ -59,7 +59,7 @@ function SignInForm() {
         </div>
         
         <div className="flex items-center gap-2">
-          <input type="checkbox" id="remember" className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500 h-4 w-4" />
+          <input type="checkbox" id="remember" className="rounded border-zinc-300 text-cyan-500 focus:ring-blue-500 h-4 w-4" />
           <label htmlFor="remember" className="text-sm text-zinc-600 dark:text-zinc-400">Remember me</label>
         </div>
         
@@ -90,7 +90,7 @@ export default function SignInPage() {
       <div className="w-full max-w-[400px] mt-12 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <Link href="/" className="flex items-center gap-3 mb-8 w-fit mx-auto">
           <img src="/logo.png" alt="FlowRadiant Logo" className="w-10 h-10 rounded-xl shadow-sm" />
-          <span className="font-bold text-2xl tracking-tight">FlowRadiant<span className="text-blue-600">Pro</span></span>
+          <span className="font-bold text-2xl tracking-tight">FlowRadiant<span className="text-cyan-500">Pro</span></span>
         </Link>
         <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome back</h1>
         <p className="text-zinc-500 dark:text-zinc-400 mb-8">Please enter your details to sign in.</p>

@@ -98,7 +98,7 @@ export default function SignUpPage() {
       <div className="w-full max-w-[500px] mt-12 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <Link href="/" className="flex items-center gap-3 mb-8 w-fit mx-auto">
           <img src="/logo.png" alt="FlowRadiant Logo" className="w-10 h-10 rounded-xl shadow-sm" />
-          <span className="font-bold text-2xl tracking-tight">FlowRadiant<span className="text-blue-600">Pro</span></span>
+          <span className="font-bold text-2xl tracking-tight">FlowRadiant<span className="text-cyan-500">Pro</span></span>
         </Link>
         <h1 className="text-3xl font-bold tracking-tight mb-2">Create your account</h1>
         <p className="text-zinc-500 dark:text-zinc-400">Join thousands of businesses managing invoices</p>
@@ -123,7 +123,7 @@ export default function SignUpPage() {
             {step === 1 && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="flex items-center gap-2 mb-6 text-zinc-800 dark:text-zinc-200">
-                  <User size={20} className="text-blue-600" />
+                  <User size={20} className="text-cyan-500" />
                   <h2 className="text-xl font-semibold">Account Details</h2>
                 </div>
                 <div className="space-y-1.5">
@@ -194,7 +194,7 @@ export default function SignUpPage() {
             {step === 2 && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="flex items-center gap-2 mb-6 text-zinc-800 dark:text-zinc-200">
-                  <Mail size={20} className="text-blue-600" />
+                  <Mail size={20} className="text-cyan-500" />
                   <h2 className="text-xl font-semibold">Verify Email</h2>
                 </div>
                 <p className="text-sm text-zinc-500 mb-4">We've sent a 6-digit verification code to <strong>{formData.email}</strong>. Please enter it below.</p>
@@ -216,7 +216,7 @@ export default function SignUpPage() {
             {step === 3 && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="flex items-center gap-2 mb-6 text-zinc-800 dark:text-zinc-200">
-                  <Building size={20} className="text-blue-600" />
+                  <Building size={20} className="text-cyan-500" />
                   <h2 className="text-xl font-semibold">Business Profile</h2>
                 </div>
                 <div className="space-y-1.5">
@@ -257,7 +257,7 @@ export default function SignUpPage() {
             {step === 4 && (
               <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="flex items-center gap-2 mb-6 text-zinc-800 dark:text-zinc-200">
-                  <FileText size={20} className="text-blue-600" />
+                  <FileText size={20} className="text-cyan-500" />
                   <h2 className="text-xl font-semibold">Tax & Address (Optional)</h2>
                 </div>
                 <div className="grid grid-cols-2 gap-4">

@@ -31,7 +31,7 @@ export function MarketingNavClient({ isLoggedIn }: { isLoggedIn: boolean }) {
         <Link href="/" className="flex items-center gap-2.5 group">
           <img src="/logo.png" alt="FlowRadiantPro" className="w-8 h-8 rounded-xl shadow-md group-hover:scale-110 transition-transform" />
           <span className="font-black text-lg tracking-tight text-zinc-900 dark:text-white">
-            FlowRadiant<span className="text-blue-600 dark:text-blue-500">Pro</span>
+            FlowRadiant<span className="text-cyan-500 dark:text-cyan-400">Pro</span>
           </span>
         </Link>
 

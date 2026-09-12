@@ -27,7 +27,7 @@ export function LandingFooter() {
             <Link href="/" className="flex items-center gap-2 mb-4 w-fit land-footer-link" aria-label="FlowRadiant home">
               <img src="/logo.png" alt="FlowRadiant Logo" className="w-7 h-7 rounded-lg shrink-0" />
               <span className="font-black text-sm" style={{ color: '#E8E8E4' }}>
-                FlowRadiant<span style={{ color: '#20B26B' }}>Pro</span>
+                FlowRadiant<span style={{ color: '#06B6D4' }}>Pro</span>
               </span>
             </Link>
             <p className="text-xs leading-relaxed" style={{ color: '#9B9B96', maxWidth: 200 }}>
@@ -76,7 +76,7 @@ export function LandingFooter() {
         >
           <p>&copy; {new Date().getFullYear()} Global One Logistics And Distribution. All rights reserved.</p>
           <div className="flex items-center gap-1.5" aria-label="System status: operational">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#20B26B' }} aria-hidden="true" />
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#06B6D4' }} aria-hidden="true" />
             <span style={{ color: '#9B9B96' }}>All systems operational</span>
           </div>
         </div>

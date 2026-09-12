@@ -70,7 +70,7 @@ export default async function PublicInvoicePage({ params }: { params: Promise<{ 
         {isFree && (
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-0 select-none overflow-hidden">
              <div className="border-[8px] border-zinc-100 rounded-[2rem] px-16 py-8 -rotate-[25deg] flex flex-col items-center justify-center opacity-70">
-                <span className="text-zinc-200 font-black text-6xl tracking-widest uppercase">FlowRadiant<span className="text-zinc-100">Pro</span></span>
+                <span className="text-zinc-200 font-black text-6xl tracking-widest uppercase">FlowRadiant<span className="text-cyan-500">Pro</span></span>
                 <span className="text-zinc-300 font-bold text-xl tracking-[0.3em] uppercase mt-3">Invoicing Software</span>
              </div>
           </div>

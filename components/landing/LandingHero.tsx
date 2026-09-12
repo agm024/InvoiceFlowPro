@@ -47,7 +47,7 @@ function InvoiceWorkspace({ phase }: { phase: Phase }) {
           </div>
         </div>
         <div className="text-right">
-          <div className="font-black text-sm tracking-tight" style={{ color: '#151515' }}>FlowRadiant<span style={{ color: '#20B26B' }}>Pro</span></div>
+          <div className="font-black text-sm tracking-tight" style={{ color: '#151515' }}>FlowRadiant<span style={{ color: '#06B6D4' }}>Pro</span></div>
           <AnimatePresence mode="wait">
             <motion.div
               key={statusLabel}
@@ -134,7 +134,7 @@ function InvoiceWorkspace({ phase }: { phase: Phase }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="land-mono"
-                style={{ color: '#20B26B' }}
+                style={{ color: '#06B6D4' }}
               >
                 {fmt(total)}
               </motion.span>
@@ -169,7 +169,7 @@ function PaymentNotification() {
     >
       <span style={{ fontSize: 18 }}>✓</span>
       <div>
-        <div style={{ color: '#20B26B', fontWeight: 800 }}>Payment received</div>
+        <div style={{ color: '#06B6D4', fontWeight: 800 }}>Payment received</div>
         <div style={{ color: '#9B9B96', fontSize: 11 }}>₹45,430 · Apex Distribution</div>
       </div>
     </motion.div>
@@ -245,7 +245,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
           className="flex flex-col items-start"
         >
           <div className="land-pill mb-8">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#20B26B', animation: 'land-pulse-dot 4s ease-in-out infinite' }} />
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#06B6D4', animation: 'land-pulse-dot 4s ease-in-out infinite' }} />
             GST-ready invoicing for Indian businesses
           </div>
 
@@ -264,7 +264,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
                 color: 'transparent',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
-                backgroundImage: 'linear-gradient(135deg, #151515 0%, #20B26B 100%)',
+                backgroundImage: 'linear-gradient(135deg, #151515 0%, #06B6D4 100%)',
               }}
             >
               beautifully.
@@ -295,7 +295,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
                 className="flex items-center gap-1.5 text-[12px] font-medium"
                 style={{ color: '#6B6B67' }}
               >
-                <span style={{ color: '#20B26B' }}>✓</span> {t}
+                <span style={{ color: '#06B6D4' }}>✓</span> {t}
               </span>
             ))}
           </div>
@@ -329,7 +329,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6 }}
           >
-            <div className="w-2 h-2 rounded-full" style={{ background: '#20B26B', animation: 'land-pulse-dot 4s ease-in-out infinite' }} />
+            <div className="w-2 h-2 rounded-full" style={{ background: '#06B6D4', animation: 'land-pulse-dot 4s ease-in-out infinite' }} />
             <span className="text-[11px] font-semibold" style={{ color: '#6B6B67' }}>Live invoice preview</span>
           </motion.div>
         </motion.div>
