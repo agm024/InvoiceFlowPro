@@ -251,17 +251,18 @@ export default async function DashboardPage({
   const hasGst = Boolean(getStr(company?.settings?.gstin) || getStr(company?.gstin) || getStr(company?.settings?.panNo) || getStr(company?.pan));
   const hasClient = allClientsCount > 0;
   const hasInvoice = totalInvoicesCount > 0;
+  const hasPaymentGateway = Boolean(getStr(company?.settings?.upiId) || getStr(company?.settings?.razorpayAccountId));
   
-  // Only hide the checklist when they have actually created their first invoice
-  const isNewTenant = !hasInvoice;
+  // Only hide the checklist when they have actually created their first invoice and setup payments
+  const isNewTenant = !(hasInvoice && hasPaymentGateway);
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto w-full text-zinc-950 dark:text-zinc-50 space-y-8 animate-in fade-in duration-500">
       
       {/* Header & Filter Controls */}
-      {!(hasBusinessInfo && hasGst && hasClient && hasInvoice) && <OnboardingWidget hasBusinessInfo={hasBusinessInfo} hasGst={hasGst} hasClient={hasClient} hasInvoice={hasInvoice} />}
+      {!(hasBusinessInfo && hasGst && hasClient && hasInvoice && hasPaymentGateway) && <OnboardingWidget hasBusinessInfo={hasBusinessInfo} hasGst={hasGst} hasClient={hasClient} hasInvoice={hasInvoice} hasPaymentGateway={hasPaymentGateway} />}
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Your Financial Overview</h1>
           <p className="text-zinc-500 dark:text-zinc-400 mt-1">Monitor real-time transactions and business health.</p>

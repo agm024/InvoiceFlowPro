@@ -3,11 +3,11 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
-export default function OnboardingWidget({ hasBusinessInfo, hasGst, hasClient, hasInvoice }: { hasBusinessInfo: boolean, hasGst: boolean, hasClient: boolean, hasInvoice: boolean }) {
+export default function OnboardingWidget({ hasBusinessInfo, hasGst, hasClient, hasInvoice, hasPaymentGateway }: { hasBusinessInfo: boolean, hasGst: boolean, hasClient: boolean, hasInvoice: boolean, hasPaymentGateway: boolean }) {
   const [expanded, setExpanded] = useState(!hasInvoice)
   
-  const stepsCompleted = 1 + (hasBusinessInfo ? 1 : 0) + (hasGst ? 1 : 0) + (hasClient ? 1 : 0) + (hasInvoice ? 1 : 0);
-  const totalSteps = 5;
+  const stepsCompleted = 1 + (hasBusinessInfo ? 1 : 0) + (hasGst ? 1 : 0) + (hasClient ? 1 : 0) + (hasInvoice ? 1 : 0) + (hasPaymentGateway ? 1 : 0);
+  const totalSteps = 6;
 
   if (stepsCompleted === totalSteps) return null; // Fully completed
 
@@ -51,6 +51,10 @@ export default function OnboardingWidget({ hasBusinessInfo, hasGst, hasClient, h
             <li className={`flex items-center gap-3 ${hasGst ? 'text-zinc-900 dark:text-zinc-100 font-medium' : 'text-zinc-500'}`}>
               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${hasGst ? 'bg-blue-600 text-white' : 'border-2 border-zinc-200 dark:border-zinc-700'}`}>{hasGst ? '✓' : ''}</div>
               {hasGst ? <span>Configure GST/Tax settings</span> : <Link href="/app/settings" className="hover:underline">Configure GST/Tax settings</Link>}
+            </li>
+            <li className={`flex items-center gap-3 ${hasPaymentGateway ? 'text-zinc-900 dark:text-zinc-100 font-medium' : 'text-zinc-500'}`}>
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${hasPaymentGateway ? 'bg-blue-600 text-white' : 'border-2 border-zinc-200 dark:border-zinc-700'}`}>{hasPaymentGateway ? '✓' : ''}</div>
+              {hasPaymentGateway ? <span>Setup UPI or Payment Gateway</span> : <Link href="/app/settings" className="hover:underline text-blue-600 dark:text-blue-400 font-semibold">Setup UPI or Payment Gateway</Link>}
             </li>
             <li className={`flex items-center gap-3 ${hasClient ? 'text-zinc-900 dark:text-zinc-100 font-medium' : 'text-zinc-500'}`}>
               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${hasClient ? 'bg-blue-600 text-white' : 'border-2 border-zinc-200 dark:border-zinc-700'}`}>{hasClient ? '✓' : ''}</div>

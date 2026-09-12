@@ -47,7 +47,7 @@ export async function completeGoogleOnboardingAction(data: any) {
         gstin: company.gstin,
         panNo: company.pan,
         address: company.address,
-        upiId: 'demo@upi'
+        upiId: data.upiId || null
       }
     })
 

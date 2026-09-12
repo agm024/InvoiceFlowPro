@@ -18,7 +18,8 @@ export default function OnboardingPage() {
     pan: '',
     address: '',
     city: '',
-    state: ''
+    state: '',
+    upiId: ''
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -142,6 +143,10 @@ export default function OnboardingPage() {
                     <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">State</label>
                     <input type="text" name="state" value={formData.state} onChange={handleChange} placeholder="Maharashtra" className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
                   </div>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">UPI ID for Payments</label>
+                  <input type="text" name="upiId" value={formData.upiId} onChange={handleChange} placeholder="yourname@bank" className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
                 </div>
                 
                 <div className="flex gap-3 pt-2">
