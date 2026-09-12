@@ -46,37 +46,6 @@ export function AdminHeader({ user, signOutAction }: AdminHeaderProps) {
           <HelpCircle size={18} />
         </Link>
 
-        {/* Notifications */}
-        <div className="relative">
-          <button
-            onClick={() => setShowNotifications(!showNotifications)}
-            className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-primary-foreground hover:bg-zinc-50 dark:hover:bg-primary transition-colors relative"
-            title="System alerts"
-          >
-            <Bell size={18} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-500 rounded-full"></span>
-          </button>
-
-          {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg py-2 z-50">
-              <div className="px-4 py-2 border-b border-zinc-100 dark:border-zinc-900 flex justify-between items-center">
-                <span className="font-semibold text-xs text-zinc-800 dark:text-zinc-200">Admin Notifications</span>
-                <span className="text-[10px] text-blue-500 hover:underline cursor-pointer">Mark all read</span>
-              </div>
-              <div className="max-h-64 overflow-y-auto divide-y divide-zinc-100 dark:divide-zinc-900">
-                <div className="p-3 text-xs hover:bg-zinc-50 dark:hover:bg-zinc-900/50 cursor-pointer">
-                  <p className="font-medium text-zinc-800 dark:text-zinc-200">ZeptoMail Connection Warning</p>
-                  <p className="text-zinc-500 mt-1">Provider is reporting missing environment variables.</p>
-                </div>
-                <div className="p-3 text-xs hover:bg-zinc-50 dark:hover:bg-zinc-900/50 cursor-pointer">
-                  <p className="font-medium text-zinc-800 dark:text-zinc-200">Razorpay Webhook Fired</p>
-                  <p className="text-zinc-500 mt-1">Mock transaction simulation was registered.</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Impersonation Banner Button if in progress */}
         {user?.isImpersonating && (
           <form action={stopImpersonation}>
