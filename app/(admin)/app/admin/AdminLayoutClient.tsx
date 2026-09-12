@@ -44,7 +44,7 @@ export default function AdminLayoutClient({
       {/* Mobile Top Bar */}
       <div className="lg:hidden absolute top-0 left-0 right-0 h-16 bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 z-50 flex items-center justify-between px-4 shrink-0">
         <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white flex items-center gap-2">
-          InvoiceFlow Admin
+          FlowRadiant Admin
         </h1>
         <button 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}

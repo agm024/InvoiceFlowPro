@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { LegalLayout } from '@/components/landing/LegalLayout'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — InvoiceFlowPro',
-  description: 'How InvoiceFlowPro collects, uses, and protects your personal data.',
+  title: 'Privacy Policy — FlowRadiant',
+  description: 'How FlowRadiant collects, uses, and protects your personal data.',
 }
 
 export default function PrivacyPage() {
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
       <p>We may use third-party payment processors (e.g., Razorpay). Your payment information is securely transmitted directly to these processors and is never stored on our servers. We never sell your personal or client data to third parties.</p>
 
       <h2>5. Your Rights</h2>
-      <p>You have the right to access, update, or delete your personal information at any time from your account settings. For GDPR/CCPA specific requests (such as a &ldquo;Right to be Forgotten&rdquo; request), please contact our Data Protection Officer at <a href="mailto:privacy@invoiceflowpro.in">privacy@invoiceflowpro.in</a>.</p>
+      <p>You have the right to access, update, or delete your personal information at any time from your account settings. For GDPR/CCPA specific requests (such as a &ldquo;Right to be Forgotten&rdquo; request), please contact our Data Protection Officer at <a href="mailto:privacy@flowradiant.in">privacy@flowradiant.in</a>.</p>
     </LegalLayout>
   )
 }

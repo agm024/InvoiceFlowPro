@@ -6,7 +6,7 @@ import { Suspense } from 'react'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: 'Client Portal | InvoiceFlowPro',
+  title: 'Client Portal | FlowRadiant',
 }
 
 export default async function ClientPortalPage({ params }: { params: Promise<{ portalToken: string }> }) {

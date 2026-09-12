@@ -5,7 +5,7 @@ import { requireCompany } from '@/lib/auth-context'
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Reports | InvoiceFlowPro',
+  title: 'Reports | FlowRadiant',
 }
 
 export default async function ReportsPage() {

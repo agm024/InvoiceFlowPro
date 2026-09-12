@@ -142,7 +142,7 @@ export function EmailsClient({ templates, logs }: EmailsClientProps) {
                       type="text" 
                       name="subject" 
                       defaultValue={editingTemplate?.subject || ""}
-                      placeholder="Welcome to InvoiceFlowPro!" 
+                      placeholder="Welcome to FlowRadiant!" 
                       required 
                       className="w-full bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 focus:outline-none"
                     />
@@ -154,7 +154,7 @@ export function EmailsClient({ templates, logs }: EmailsClientProps) {
                       rows={12} 
                       name="htmlBody" 
                       defaultValue={editingTemplate?.htmlBody || ""}
-                      placeholder="<h1>Hello {{name}}</h1><p>Welcome to InvoiceFlowPro...</p>" 
+                      placeholder="<h1>Hello {{name}}</h1><p>Welcome to FlowRadiant...</p>" 
                       required 
                       className="w-full bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 font-mono focus:outline-none"
                     />

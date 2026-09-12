@@ -100,7 +100,7 @@ export default function SignUpPage() {
             <div className="w-10 h-10 bg-zinc-900 dark:bg-zinc-100 rounded-xl flex items-center justify-center shadow-sm">
               <span className="text-white dark:text-zinc-900 font-bold text-xl">I</span>
             </div>
-            <span className="font-bold text-2xl tracking-tight">InvoiceFlow<span className="text-blue-600">Pro</span></span>
+            <span className="font-bold text-2xl tracking-tight">FlowRadiant<span className="text-blue-600">Pro</span></span>
           </Link>
           <h1 className="text-3xl font-bold tracking-tight mb-2">Create your account</h1>
           <p className="text-zinc-500 dark:text-zinc-400">Join thousands of businesses managing invoices</p>

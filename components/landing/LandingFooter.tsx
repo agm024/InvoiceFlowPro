@@ -24,12 +24,12 @@ export function LandingFooter() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4 w-fit land-footer-link" aria-label="InvoiceFlowPro home">
+            <Link href="/" className="flex items-center gap-2 mb-4 w-fit land-footer-link" aria-label="FlowRadiant home">
               <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: '#fff' }}>
                 <span className="font-black text-sm" style={{ color: '#20B26B' }} aria-hidden="true">I</span>
               </div>
               <span className="font-black text-sm" style={{ color: '#E8E8E4' }}>
-                InvoiceFlow<span style={{ color: '#20B26B' }}>Pro</span>
+                FlowRadiant<span style={{ color: '#20B26B' }}>Pro</span>
               </span>
             </Link>
             <p className="text-xs leading-relaxed" style={{ color: '#444', maxWidth: 200 }}>
@@ -54,7 +54,7 @@ export function LandingFooter() {
             <h2 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Company</h2>
             <ul className="space-y-3 text-sm" role="list">
               <li>
-                <a href="mailto:support@invoiceflowpro.in" className="land-footer-link">Contact</a>
+                <a href="mailto:support@flowradiant.in" className="land-footer-link">Contact</a>
               </li>
             </ul>
           </nav>

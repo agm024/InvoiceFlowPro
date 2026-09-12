@@ -33,7 +33,7 @@ export function MarketingNavClient({ isLoggedIn }: { isLoggedIn: boolean }) {
             <span className="text-white font-black text-base leading-none">I</span>
           </div>
           <span className="font-black text-lg tracking-tight text-zinc-900 dark:text-white">
-            InvoiceFlow<span className="text-blue-600 dark:text-blue-500">Pro</span>
+            FlowRadiant<span className="text-blue-600 dark:text-blue-500">Pro</span>
           </span>
         </Link>
 

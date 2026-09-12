@@ -84,7 +84,7 @@ export default async function BusinessesPage({
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">Businesses</h1>
-          <p className="text-xs text-zinc-500 mt-1">Directory of all tenant companies registered on InvoiceFlowPro.</p>
+          <p className="text-xs text-zinc-500 mt-1">Directory of all tenant companies registered on FlowRadiant.</p>
         </div>
         <Link 
           href="/app/admin/businesses/new" 

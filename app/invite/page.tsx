@@ -63,7 +63,7 @@ function InviteContent() {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
         <div className="p-8">
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Join InvoiceFlowPro</h1>
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Join FlowRadiant</h1>
           
           {loading ? (
             <div className="flex flex-col items-center justify-center py-12">

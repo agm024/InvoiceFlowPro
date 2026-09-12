@@ -39,7 +39,7 @@ export async function inviteSuperAdmin(email: string, platformRoleId: string) {
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
       <h2>Admin Invitation</h2>
-      <p>You have been invited to join the System Administration team on InvoiceFlowPro.</p>
+      <p>You have been invited to join the System Administration team on FlowRadiant.</p>
       <p>Click the link below to securely accept the invitation:</p>
       <a href="${inviteLink}" style="display: inline-block; padding: 10px 20px; background: #000; color: #fff; text-decoration: none; border-radius: 5px;">Accept Admin Invitation</a>
       <p>This link will expire in 7 days.</p>
@@ -48,7 +48,7 @@ export async function inviteSuperAdmin(email: string, platformRoleId: string) {
 
   await sendEmail({
     to: email,
-    subject: "Admin Invitation for InvoiceFlowPro",
+    subject: "Admin Invitation for FlowRadiant",
     html
   })
 

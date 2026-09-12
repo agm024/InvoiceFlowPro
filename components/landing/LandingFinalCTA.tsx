@@ -119,7 +119,7 @@ export function LandingFinalCTA({ signupHref }: { signupHref: string }) {
                 border: '1px solid rgba(255,255,255,0.08)',
               }}
             >
-              Open InvoiceFlowPro
+              Open FlowRadiant
             </Link>
           </div>
 

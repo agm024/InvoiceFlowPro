@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import DeleteEstimateButton from './DeleteEstimateButton'
 
 export const metadata = {
-  title: 'Estimates | InvoiceFlowPro',
+  title: 'Estimates | FlowRadiant',
 }
 
 export default async function EstimatesPage() {

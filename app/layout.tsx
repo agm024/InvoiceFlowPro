@@ -21,7 +21,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "InvoiceFlowPro",
+  title: "FlowRadiant",
   description: "Modern Invoicing for Professionals",
 };
 

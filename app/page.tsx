@@ -11,11 +11,11 @@ import { LandingFinalCTA }    from '@/components/landing/LandingFinalCTA'
 import { LandingFooter }      from '@/components/landing/LandingFooter'
 
 export const metadata = {
-  title: 'InvoiceFlowPro — Your business, billed beautifully',
+  title: 'FlowRadiant — Your business, billed beautifully',
   description:
     'Create professional GST-ready invoices, manage customers, track payments, and run your billing operation without the spreadsheet chaos. Built for Indian businesses.',
   openGraph: {
-    title: 'InvoiceFlowPro — Your business, billed beautifully',
+    title: 'FlowRadiant — Your business, billed beautifully',
     description: 'Professional invoicing for Indian businesses. GST-ready, multi-currency, real-time tracking.',
     type: 'website',
   },

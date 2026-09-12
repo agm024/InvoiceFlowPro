@@ -22,12 +22,12 @@ export async function register() {
 
     const loggerProvider = new LoggerProvider({
       resource: resourceFromAttributes({
-        'service.name': 'invoiceflow-pro',
+        'service.name': 'flowradiant-pro',
       }),
       processors: [new SimpleLogRecordProcessor(exporter as any)],
     })
 
-    ;(globalThis as any).__posthogLogger = loggerProvider.getLogger('invoiceflow-pro')
+    ;(globalThis as any).__posthogLogger = loggerProvider.getLogger('flowradiant-pro')
   }
 
   if (process.env.NEXT_RUNTIME === 'edge') {

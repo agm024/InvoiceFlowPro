@@ -37,7 +37,7 @@ export async function sendEmail({
     const response = await client.sendMail({
       from: {
         address: "noreply@siteradiant.co.in",
-        name: "InvoiceFlowPro",
+        name: "FlowRadiant",
       },
       to: [
         {
@@ -76,7 +76,7 @@ export async function sendPortalLink(clientEmail: string, clientName: string, po
     <div style="background-color: #f4f4f5; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
       <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
         <div style="background-color: #18181b; padding: 32px 40px; text-align: center;">
-          <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">InvoiceFlowPro</h1>
+          <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">FlowRadiant</h1>
         </div>
         <div style="padding: 40px;">
           <h2 style="color: #18181b; margin-top: 0; font-size: 20px; font-weight: 600;">Hello ${clientName},</h2>
@@ -94,7 +94,7 @@ export async function sendPortalLink(clientEmail: string, clientName: string, po
           </p>
         </div>
         <div style="background-color: #fafafa; padding: 24px 40px; text-align: center; border-top: 1px solid #e4e4e7;">
-          <p style="color: #a1a1aa; font-size: 13px; margin: 0;">InvoiceFlowPro by SiteRadiant</p>
+          <p style="color: #a1a1aa; font-size: 13px; margin: 0;">FlowRadiant by SiteRadiant</p>
         </div>
       </div>
     </div>
@@ -113,7 +113,7 @@ export async function sendPaymentReminder(clientEmail: string, clientName: strin
     <div style="background-color: #f4f4f5; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
       <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
         <div style="background-color: #18181b; padding: 32px 40px; text-align: center;">
-          <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">InvoiceFlowPro</h1>
+          <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">FlowRadiant</h1>
         </div>
         <div style="padding: 40px;">
           <h2 style="color: #18181b; margin-top: 0; font-size: 20px; font-weight: 600;">Hello ${clientName},</h2>
@@ -137,7 +137,7 @@ export async function sendPaymentReminder(clientEmail: string, clientName: strin
           </div>
         </div>
         <div style="background-color: #fafafa; padding: 24px 40px; text-align: center; border-top: 1px solid #e4e4e7;">
-          <p style="color: #a1a1aa; font-size: 13px; margin: 0;">InvoiceFlowPro by SiteRadiant</p>
+          <p style="color: #a1a1aa; font-size: 13px; margin: 0;">FlowRadiant by SiteRadiant</p>
         </div>
       </div>
     </div>
@@ -160,7 +160,7 @@ export async function sendInvoiceEmail(clientEmail: string, clientName: string, 
     <div style="background-color: #f4f4f5; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
       <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
         <div style="background-color: #18181b; padding: 32px 40px; text-align: center;">
-          <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">InvoiceFlowPro</h1>
+          <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">FlowRadiant</h1>
         </div>
         <div style="padding: 40px;">
           <h2 style="color: #18181b; margin-top: 0; font-size: 20px; font-weight: 600;">Hello ${clientName},</h2>
@@ -184,7 +184,7 @@ export async function sendInvoiceEmail(clientEmail: string, clientName: string, 
           </div>
         </div>
         <div style="background-color: #fafafa; padding: 24px 40px; text-align: center; border-top: 1px solid #e4e4e7;">
-          <p style="color: #a1a1aa; font-size: 13px; margin: 0;">InvoiceFlowPro by SiteRadiant</p>
+          <p style="color: #a1a1aa; font-size: 13px; margin: 0;">FlowRadiant by SiteRadiant</p>
         </div>
       </div>
     </div>
@@ -206,12 +206,12 @@ export async function sendSubscriptionDowngradedEmail(companyEmail: string, comp
     <div style="background-color: #f4f4f5; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
       <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
         <div style="background-color: #18181b; padding: 32px 40px; text-align: center;">
-          <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">InvoiceFlowPro</h1>
+          <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">FlowRadiant</h1>
         </div>
         <div style="padding: 40px;">
           <h2 style="color: #18181b; margin-top: 0; font-size: 20px; font-weight: 600;">Hello ${companyName},</h2>
           <p style="color: #52525b; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-            Your InvoiceFlowPro Premium subscription has expired or was cancelled due to a billing issue.
+            Your FlowRadiant Premium subscription has expired or was cancelled due to a billing issue.
           </p>
           <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 20px; margin-bottom: 32px;">
             <div style="margin-bottom: 12px; color: #b45309;">
@@ -228,7 +228,7 @@ export async function sendSubscriptionDowngradedEmail(companyEmail: string, comp
           </div>
         </div>
         <div style="background-color: #fafafa; padding: 24px 40px; text-align: center; border-top: 1px solid #e4e4e7;">
-          <p style="color: #a1a1aa; font-size: 13px; margin: 0;">InvoiceFlowPro by SiteRadiant</p>
+          <p style="color: #a1a1aa; font-size: 13px; margin: 0;">FlowRadiant by SiteRadiant</p>
         </div>
       </div>
     </div>

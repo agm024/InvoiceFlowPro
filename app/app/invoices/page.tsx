@@ -5,7 +5,7 @@ import { getCompanySettings, getBanks } from '../settings/actions'
 import InvoiceListClient from './InvoiceListClient'
 
 export const metadata = {
-  title: 'Invoices - InvoiceFlowPro'
+  title: 'Invoices - FlowRadiant'
 }
 
 export default async function InvoicesPage() {

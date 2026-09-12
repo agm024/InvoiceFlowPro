@@ -43,7 +43,7 @@ export function LandingNav({ isLoggedIn }: LandingNavProps) {
             <span className="font-black text-sm" style={{ color: '#20B26B' }}>I</span>
           </div>
           <span className="font-black text-[15px] tracking-tight" style={{ color: '#151515' }}>
-            InvoiceFlow<span style={{ color: '#20B26B' }}>Pro</span>
+            FlowRadiant<span style={{ color: '#20B26B' }}>Pro</span>
           </span>
         </Link>
 

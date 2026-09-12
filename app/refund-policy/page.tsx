@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { LegalLayout } from '@/components/landing/LegalLayout'
 
 export const metadata: Metadata = {
-  title: 'Refund & Cancellation Policy — InvoiceFlowPro',
-  description: 'InvoiceFlowPro refund, cancellation, and chargeback policy.',
+  title: 'Refund & Cancellation Policy — FlowRadiant',
+  description: 'FlowRadiant refund, cancellation, and chargeback policy.',
 }
 
 export default function RefundPage() {
@@ -23,10 +23,10 @@ export default function RefundPage() {
       </ul>
 
       <h2>4. Chargeback Procedures</h2>
-      <p>If you initiate a chargeback or dispute with your credit card provider or bank without first contacting us to seek a resolution, your InvoiceFlowPro account will be immediately suspended pending the outcome of the dispute. Fraudulent chargebacks will result in a permanent ban.</p>
+      <p>If you initiate a chargeback or dispute with your credit card provider or bank without first contacting us to seek a resolution, your FlowRadiant account will be immediately suspended pending the outcome of the dispute. Fraudulent chargebacks will result in a permanent ban.</p>
 
       <h2>5. Contact</h2>
-      <p>For refund requests or billing queries, contact us at <a href="mailto:billing@invoiceflowpro.in">billing@invoiceflowpro.in</a>.</p>
+      <p>For refund requests or billing queries, contact us at <a href="mailto:billing@flowradiant.in">billing@flowradiant.in</a>.</p>
     </LegalLayout>
   )
 }

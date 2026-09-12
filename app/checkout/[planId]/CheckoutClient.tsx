@@ -103,7 +103,7 @@ function SuccessScreen({ plan, total, invoiceNumber, isAnnual, onDash }: {
           <div className="flex justify-between py-3" style={{ borderBottom: '1px solid rgba(21,21,21,0.06)' }}>
             <span className="text-xs font-semibold" style={{ color: '#9B9B96' }}>Plan</span>
             <span className="text-xs font-bold" style={{ color: '#151515' }}>
-              InvoiceFlowPro {plan.name} · {isAnnual ? 'Annual' : 'Monthly'}
+              FlowRadiant {plan.name} · {isAnnual ? 'Annual' : 'Monthly'}
             </span>
           </div>
           <div className="flex justify-between pt-3">
@@ -182,7 +182,7 @@ export default function CheckoutClient({
 
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        name: 'InvoiceFlowPro',
+        name: 'FlowRadiant',
         description: `${plan.name} · ${isAnnual ? 'Annual' : 'Monthly'}`,
         subscription_id: data.subscription.id,
         handler: async (response: any) => {
@@ -248,7 +248,7 @@ export default function CheckoutClient({
               Complete your purchase
             </h1>
             <p className="text-sm" style={{ color: '#6B6B67' }}>
-              Subscribe to InvoiceFlowPro {plan.name} and start billing professionally.
+              Subscribe to FlowRadiant {plan.name} and start billing professionally.
             </p>
           </div>
 
@@ -339,7 +339,7 @@ export default function CheckoutClient({
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#9B9B96' }}>
-                    InvoiceFlowPro
+                    FlowRadiant
                   </div>
                   <div className="text-xl font-black tracking-tight" style={{ color: '#151515' }}>{plan.name}</div>
                   <div className="text-xs mt-0.5" style={{ color: '#6B6B67' }}>

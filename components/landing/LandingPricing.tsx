@@ -22,7 +22,7 @@ export function LandingPricing({ plans }: { plans: Plan[] }) {
   const [hovered, setHovered] = useState<string | null>(null)
 
   const descriptions: Record<string, string> = {
-    Free: 'Try InvoiceFlowPro at no cost. Everything you need to start invoicing.',
+    Free: 'Try FlowRadiant at no cost. Everything you need to start invoicing.',
     Pro:  'For growing businesses that need professional, watermark-free output.',
     Max:  'No limits. Designed for high-volume billing operations.',
   }

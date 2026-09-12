@@ -18,7 +18,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-bold text-lg">Physical Address</h3>
                 <p className="text-zinc-600 dark:text-zinc-400 mt-2">
-                  InvoiceFlowPro Solutions<br/>
+                  FlowRadiant Solutions<br/>
                   123 Business Hub, 4th Floor<br/>
                   Koramangala, Bengaluru<br/>
                   Karnataka 560034, India
@@ -33,7 +33,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-bold text-lg">Email Support</h3>
                 <p className="text-zinc-600 dark:text-zinc-400 mt-2">
-                  support@invoiceflowpro.com<br/>
+                  support@flowradiant.com<br/>
                   <span className="text-sm">We aim to reply within 24 hours.</span>
                 </p>
               </div>

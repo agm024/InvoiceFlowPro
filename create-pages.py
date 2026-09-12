@@ -15,7 +15,7 @@ export async function MarketingNav() {
         <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-lg flex items-center justify-center">
           <span className="text-white dark:text-zinc-900 font-bold text-xl">I</span>
         </div>
-        <span className="font-bold text-xl tracking-tight">InvoiceFlow<span className="text-blue-600 dark:text-blue-500">Pro</span></span>
+        <span className="font-bold text-xl tracking-tight">FlowRadiant<span className="text-blue-600 dark:text-blue-500">Pro</span></span>
       </Link>
       <div className="flex gap-4 items-center">
         <Link href="/pricing" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition">Pricing</Link>
@@ -66,7 +66,7 @@ export function MarketingFooter() {
         </div>
       </div>
       <div className="text-center text-zinc-500 text-sm">
-        &copy; {new Date().getFullYear()} InvoiceFlowPro. All rights reserved.
+        &copy; {new Date().getFullYear()} FlowRadiant. All rights reserved.
       </div>
     </footer>
   )
@@ -87,7 +87,7 @@ export default function TermsPage() {
         <p>Last updated: August 2026</p>
         
         <h2>1. Agreement to Terms</h2>
-        <p>By accessing or using InvoiceFlowPro, you agree to be bound by these Terms and Conditions. If you disagree with any part of the terms, you may not access our service.</p>
+        <p>By accessing or using FlowRadiant, you agree to be bound by these Terms and Conditions. If you disagree with any part of the terms, you may not access our service.</p>
         
         <h2>2. Use of Service</h2>
         <p>Our SaaS provides invoicing, client management, and expense tracking tools. You agree to use the service only for lawful purposes and in accordance with these Terms.</p>
@@ -102,7 +102,7 @@ export default function TermsPage() {
         <p>We may terminate or suspend your account immediately, without prior notice or liability, for any reason, including without limitation if you breach the Terms.</p>
         
         <h2>6. Limitation of Liability</h2>
-        <p>In no event shall InvoiceFlowPro, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages.</p>
+        <p>In no event shall FlowRadiant, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages.</p>
       </main>
       <MarketingFooter />
     </div>
@@ -167,7 +167,7 @@ export default function RefundPage() {
         </ul>
         
         <h2>4. Requesting a Refund</h2>
-        <p>To request a prorated refund within the eligible 14-day window, please contact our support team at <strong>support@invoiceflowpro.com</strong> with your account details.</p>
+        <p>To request a prorated refund within the eligible 14-day window, please contact our support team at <strong>support@flowradiant.com</strong> with your account details.</p>
       </main>
       <MarketingFooter />
     </div>
@@ -196,7 +196,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-bold text-lg">Physical Address</h3>
                 <p className="text-zinc-600 dark:text-zinc-400 mt-2">
-                  InvoiceFlowPro Solutions<br/>
+                  FlowRadiant Solutions<br/>
                   123 Business Hub, 4th Floor<br/>
                   Koramangala, Bengaluru<br/>
                   Karnataka 560034, India
@@ -211,7 +211,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-bold text-lg">Email Support</h3>
                 <p className="text-zinc-600 dark:text-zinc-400 mt-2">
-                  support@invoiceflowpro.com<br/>
+                  support@flowradiant.com<br/>
                   <span className="text-sm">We aim to reply within 24 hours.</span>
                 </p>
               </div>

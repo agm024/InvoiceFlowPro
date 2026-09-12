@@ -47,7 +47,7 @@ function InvoiceWorkspace({ phase }: { phase: Phase }) {
           </div>
         </div>
         <div className="text-right">
-          <div className="font-black text-sm tracking-tight" style={{ color: '#151515' }}>InvoiceFlow<span style={{ color: '#20B26B' }}>Pro</span></div>
+          <div className="font-black text-sm tracking-tight" style={{ color: '#151515' }}>FlowRadiant<span style={{ color: '#20B26B' }}>Pro</span></div>
           <AnimatePresence mode="wait">
             <motion.div
               key={statusLabel}
@@ -218,7 +218,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
 
   return (
     <section
-      aria-label="InvoiceFlowPro hero"
+      aria-label="FlowRadiant hero"
       className="relative min-h-screen flex items-center pt-16"
       style={{ background: '#F7F6F2' }}
     >

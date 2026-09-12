@@ -52,7 +52,7 @@ export default function Sidebar() {
           <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
             <Receipt className="w-4 h-4 text-primary-foreground" />
           </div>
-          InvoiceFlow
+          FlowRadiant
         </h1>
       </div>
       

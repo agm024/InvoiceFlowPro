@@ -8,7 +8,7 @@ import prisma from '@/utils/prisma'
 import SettingsTabs from './SettingsTabs'
 
 export const metadata = {
-  title: 'Settings - InvoiceFlowPro'
+  title: 'Settings - FlowRadiant'
 }
 
 export default async function SettingsPage(props: { searchParams: Promise<{ tab?: string }> }) {

@@ -5,7 +5,7 @@ import { ChevronDown } from 'lucide-react';
 
 const faqs = [
   {
-    question: "Is InvoiceFlowPro free?",
+    question: "Is FlowRadiant free?",
     answer: "Yes! You can start entirely for free with no credit card required. Our free tier includes standard invoicing tools. You can upgrade to a paid plan as your business scales and demands more features."
   },
   {
@@ -25,16 +25,16 @@ const faqs = [
     answer: "Yes, on our premium plans you can invite team members and assign them roles (like admin or member) to control what they can see and edit."
   },
   {
-    question: "Does InvoiceFlowPro support multiple currencies?",
+    question: "Does FlowRadiant support multiple currencies?",
     answer: "Yes. You can invoice international clients in their local currency, and we will accurately track the exchange rate at the time of the invoice."
   },
   {
     question: "Can I remove the PDF watermark?",
-    answer: "Yes, upgrading to any of our paid plans instantly removes the InvoiceFlowPro watermark from your generated PDFs."
+    answer: "Yes, upgrading to any of our paid plans instantly removes the FlowRadiant watermark from your generated PDFs."
   },
   {
     question: "Is GST invoicing supported?",
-    answer: "Yes! InvoiceFlowPro is built for Indian businesses and fully supports GST calculations, ITC tracking, and Indian Rupee (INR) formatting."
+    answer: "Yes! FlowRadiant is built for Indian businesses and fully supports GST calculations, ITC tracking, and Indian Rupee (INR) formatting."
   },
   {
     question: "Is my business data secure?",

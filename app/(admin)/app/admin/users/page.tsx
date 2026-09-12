@@ -38,7 +38,7 @@ export default async function UsersPage() {
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">Platform Users</h1>
-        <p className="text-xs text-zinc-500 mt-1">Directory of all registered user accounts on InvoiceFlowPro.</p>
+        <p className="text-xs text-zinc-500 mt-1">Directory of all registered user accounts on FlowRadiant.</p>
       </div>
 
       <UsersTableClient users={formattedUsers} roles={platformRoles} invitations={adminInvitations} />

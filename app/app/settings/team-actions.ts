@@ -55,7 +55,7 @@ export async function inviteTeamMember(email: string, customRoleId: string) {
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
       <h2>You've been invited!</h2>
-      <p>You have been invited to join a team on InvoiceFlowPro.</p>
+      <p>You have been invited to join a team on FlowRadiant.</p>
       <p>Click the link below to accept the invitation and set up your account:</p>
       <a href="${inviteLink}" style="display: inline-block; padding: 10px 20px; background: #000; color: #fff; text-decoration: none; border-radius: 5px;">Accept Invitation</a>
       <p>This link will expire in 7 days.</p>
@@ -64,7 +64,7 @@ export async function inviteTeamMember(email: string, customRoleId: string) {
 
   await sendEmail({
     to: email,
-    subject: "Invitation to join InvoiceFlowPro",
+    subject: "Invitation to join FlowRadiant",
     html
   })
 
