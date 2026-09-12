@@ -11,8 +11,9 @@ datasource db {
 model Company {
   id                   String   @id @default(cuid())
   name                 String
+  isTestAccount        Boolean  @default(false)
   gstin                String?
-  rzpCustomerId    String?   @unique
+  rzpCustomerId        String?  @unique
   pan                  String?
   address              String?
   city                 String?
