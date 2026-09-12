@@ -15,9 +15,7 @@ export function MarketingFooter() {
           {/* Brand */}
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2.5 mb-5 group w-fit">
-              <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-black text-base leading-none">I</span>
-              </div>
+              <img src="/logo.png" alt="FlowRadiant Logo" className="w-8 h-8 rounded-xl" />
               <span className="font-black text-lg tracking-tight text-white">
                 FlowRadiant<span className="text-cyan-500">Pro</span>
               </span>

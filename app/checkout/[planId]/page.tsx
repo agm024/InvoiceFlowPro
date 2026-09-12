@@ -36,11 +36,9 @@ export default async function CheckoutPage({
       >
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: '#151515' }}>
-              <span className="font-black text-sm" style={{ color: '#20B26B' }}>I</span>
-            </div>
+            <img src="/logo.png" alt="FlowRadiant Logo" className="w-7 h-7 rounded-lg" />
             <span className="font-black text-sm tracking-tight" style={{ color: '#151515' }}>
-              FlowRadiant<span style={{ color: '#20B26B' }}>Pro</span>
+              FlowRadiant<span style={{ color: '#06B6D4' }}>Pro</span>
             </span>
           </Link>
           <div className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: '#9B9B96' }}>

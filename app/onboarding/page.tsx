@@ -54,11 +54,9 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 p-4">
       <div className="w-full max-w-[500px]">
-        <div className="text-center mb-8">
-          <div className="w-10 h-10 mx-auto bg-zinc-900 dark:bg-zinc-100 rounded-xl flex items-center justify-center shadow-sm mb-6">
-            <span className="text-white dark:text-zinc-900 font-bold text-xl">I</span>
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Complete your profile</h1>
+          <div className="text-center mb-8">
+            <img src="/logo.png" alt="FlowRadiant Logo" className="w-10 h-10 mx-auto rounded-xl shadow-sm mb-6" />
+            <h1 className="text-3xl font-bold tracking-tight mb-2">Complete your profile</h1>
           <p className="text-zinc-500 dark:text-zinc-400">Tell us about your business to get started</p>
         </div>
 
