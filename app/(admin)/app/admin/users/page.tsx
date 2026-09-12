@@ -4,10 +4,17 @@ import { UsersTableClient } from './UsersTableClient'
 
 export const dynamic = 'force-dynamic'
 
-export default async function UsersPage() {
+export default async function UsersPage({
+  searchParams
+}: {
+  searchParams: Promise<{ mode?: string }>
+}) {
   await requireSuperAdmin()
+  const resolvedParams = await searchParams
+  const isTestMode = resolvedParams.mode === 'test'
 
   const users = await prisma.user.findMany({
+    where: isTestMode ? {} : { company: { isTestAccount: false } },
     include: {
       company: true
     },

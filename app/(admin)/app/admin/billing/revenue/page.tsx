@@ -2,8 +2,16 @@ import prisma from "@/utils/prisma"
 import { requireSuperAdmin } from "@/lib/auth-context"
 import { format } from 'date-fns'
 
-export default async function RevenuePage() {
+export default async function RevenuePage({
+  searchParams
+}: {
+  searchParams: Promise<{ mode?: string }>
+}) {
   await requireSuperAdmin()
+  const resolvedParams = await searchParams
+  const isTestMode = resolvedParams.mode === 'test'
+
+  const companyFilter = isTestMode ? {} : { company: { isTestAccount: false } }
 
   // Aggregate total revenue
   const totalRevenueResult = await prisma.platformPayment.aggregate({
@@ -11,7 +19,8 @@ export default async function RevenuePage() {
       convertedAmountInr: true
     },
     where: {
-      status: "SUCCESS"
+      status: "SUCCESS",
+      ...companyFilter
     }
   })
 
@@ -22,7 +31,8 @@ export default async function RevenuePage() {
     },
     where: {
       status: "SUCCESS",
-      originalCurrency: { not: "INR" }
+      originalCurrency: { not: "INR" },
+      ...companyFilter
     }
   })
 

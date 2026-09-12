@@ -4,10 +4,17 @@ import { PaymentsTableClient } from "./PaymentsTableClient"
 
 export const dynamic = 'force-dynamic'
 
-export default async function PaymentsPage() {
+export default async function PaymentsPage({
+  searchParams
+}: {
+  searchParams: Promise<{ mode?: string }>
+}) {
   await requireSuperAdmin()
+  const resolvedParams = await searchParams
+  const isTestMode = resolvedParams.mode === 'test'
 
   const payments = await prisma.platformPayment.findMany({
+    where: isTestMode ? {} : { company: { isTestAccount: false } },
     orderBy: { createdAt: "desc" },
     include: { company: true, subscription: { include: { plan: true } } }
   })

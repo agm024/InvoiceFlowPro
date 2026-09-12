@@ -6,10 +6,17 @@ import { format } from 'date-fns'
 
 export const dynamic = 'force-dynamic'
 
-export default async function SubscriptionsPage() {
+export default async function SubscriptionsPage({
+  searchParams
+}: {
+  searchParams: Promise<{ mode?: string }>
+}) {
   await requireSuperAdmin()
+  const resolvedParams = await searchParams
+  const isTestMode = resolvedParams.mode === 'test'
 
   const subscriptions = await prisma.subscription.findMany({
+    where: isTestMode ? {} : { company: { isTestAccount: false } },
     orderBy: { createdAt: "desc" },
     include: { company: true, plan: true }
   })

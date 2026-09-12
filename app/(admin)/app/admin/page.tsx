@@ -83,12 +83,13 @@ export default async function AdminDashboard({
 
   // 4. OPERATIONS METRICS
   const openTickets = await prisma.ticket.count({
-    where: { status: { in: ["OPEN", "PENDING", "IN_PROGRESS"] } }
+    where: { status: { in: ["OPEN", "PENDING", "IN_PROGRESS"] }, company: companyFilter }
   })
   const highPriorityTickets = await prisma.ticket.count({
     where: {
       priority: { in: ["HIGH", "URGENT"] },
-      status: { in: ["OPEN", "PENDING", "IN_PROGRESS"] }
+      status: { in: ["OPEN", "PENDING", "IN_PROGRESS"] },
+      company: companyFilter
     }
   })
   const failedPayments = await prisma.platformPayment.count({ where: { status: "FAILED", company: companyFilter } })
@@ -97,7 +98,15 @@ export default async function AdminDashboard({
   const systemIncidents = await prisma.backgroundJobLog.count({ where: { status: "FAILED" } })
 
   // 5. RECENT ACTIVITY FEED (Audit Logs)
+  let auditLogFilter = {}
+  if (!isTestMode) {
+    const testCompanies = await prisma.company.findMany({ where: { isTestAccount: true }, select: { id: true } })
+    const testCompanyIds = testCompanies.map(c => c.id)
+    auditLogFilter = { companyId: { notIn: testCompanyIds } }
+  }
+
   const recentActivities = await prisma.auditLog.findMany({
+    where: auditLogFilter,
     orderBy: { createdAt: "desc" },
     take: 8
   })

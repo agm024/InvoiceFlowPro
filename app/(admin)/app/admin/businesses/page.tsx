@@ -27,8 +27,11 @@ export default async function BusinessesPage({
   const limit = 20
   const skip = (page - 1) * limit
 
+  const mode = typeof resolvedSearchParams.mode === 'string' ? resolvedSearchParams.mode : 'real'
+  const isTestMode = mode === 'test'
+
   // Construct filters
-  const where: any = {}
+  const where: any = isTestMode ? {} : { isTestAccount: false }
   
   if (search) {
     where.name = { contains: search, mode: 'insensitive' as const }

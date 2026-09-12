@@ -4,10 +4,17 @@ import { resolveTicket } from "./actions"
 import { CheckCircle2 } from "lucide-react"
 import { format } from 'date-fns'
 
-export default async function AdminSupportPage() {
+export default async function AdminSupportPage({
+  searchParams
+}: {
+  searchParams: Promise<{ mode?: string }>
+}) {
   await requireSuperAdmin()
+  const resolvedParams = await searchParams
+  const isTestMode = resolvedParams.mode === 'test'
 
   const tickets = await prisma.ticket.findMany({
+    where: isTestMode ? {} : { company: { isTestAccount: false } },
     orderBy: { createdAt: 'desc' },
     include: { company: true }
   })
