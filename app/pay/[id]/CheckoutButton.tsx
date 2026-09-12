@@ -7,9 +7,9 @@ import { useRouter } from 'next/navigation'
 import Script from 'next/script'
 import { QRCodeSVG } from 'qrcode.react'
 
-export default function CheckoutButton({ invoiceId, amount, currency, companyName, upiId, invoiceNumber, clientName }: { invoiceId: string, amount: number, currency: string, companyName: string, upiId?: string, invoiceNumber?: string, clientName?: string }) {
+export default function CheckoutButton({ invoiceId, amount, currency, companyName, upiId, invoiceNumber, clientName, razorpayAccountId }: { invoiceId: string, amount: number, currency: string, companyName: string, upiId?: string, invoiceNumber?: string, clientName?: string, razorpayAccountId?: string }) {
   const [loading, setLoading] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'razorpay'>(upiId ? 'upi' : 'razorpay')
+  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'razorpay'>(upiId ? 'upi' : (razorpayAccountId ? 'razorpay' : 'upi'))
   const [isSuccess, setIsSuccess] = useState(false)
   const [isFailed, setIsFailed] = useState(false)
   const [failureReason, setFailureReason] = useState('')
@@ -154,7 +154,7 @@ export default function CheckoutButton({ invoiceId, amount, currency, companyNam
       {!isSuccess && !isFailed && (
         <div className="space-y-6">
         {/* Payment Method Selector */}
-        {upiId && currency === 'INR' && (
+        {(upiId && currency === 'INR') && razorpayAccountId && (
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => setPaymentMethod('upi')}
@@ -195,7 +195,7 @@ export default function CheckoutButton({ invoiceId, amount, currency, companyNam
             <p className="text-sm font-medium text-zinc-900 dark:text-white mt-2">Scan with any UPI App</p>
             <p className="text-sm font-bold text-zinc-500 mt-1 tracking-wide">{upiId}</p>
           </div>
-        ) : (
+        ) : (razorpayAccountId ? (
           <div className="animate-in fade-in zoom-in-95 duration-200">
             <button 
               onClick={handlePayment} 
@@ -209,7 +209,11 @@ export default function CheckoutButton({ invoiceId, amount, currency, companyNam
               <span>Supports Credit/Debit Cards, Netbanking & Wallets</span>
             </div>
           </div>
-        )}
+        ) : (
+          <div className="text-center p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl text-zinc-500 text-sm">
+            No active payment methods configured by this business.
+          </div>
+        ))}
       </div>
       )}
     </>

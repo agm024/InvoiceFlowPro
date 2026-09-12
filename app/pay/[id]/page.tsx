@@ -73,6 +73,7 @@ export default async function PayInvoicePage({ params }: { params: Promise<{ id:
                 upiId={companySettings?.upiId || ''}
                 invoiceNumber={invoice.invoiceNumber}
                 clientName={invoice.client.name}
+                razorpayAccountId={companySettings?.razorpayAccountId || undefined}
               />
             </div>
           )}
