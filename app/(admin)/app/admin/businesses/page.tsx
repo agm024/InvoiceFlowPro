@@ -31,7 +31,7 @@ export default async function BusinessesPage({
   const isTestMode = mode === 'test'
 
   // Construct filters
-  const where: any = isTestMode ? {} : { isTestAccount: false }
+  const where: any = isTestMode ? { isTestAccount: true } : { isTestAccount: false }
   
   if (search) {
     where.name = { contains: search, mode: 'insensitive' as const }

@@ -5,6 +5,7 @@ import { Search, Bell, HelpCircle, LogOut, ArrowLeft, ArrowUpRight, ShieldCheck,
 import Link from "next/link"
 import { stopImpersonation } from "./impersonate-actions"
 import posthog from "posthog-js"
+import { useSearchParams } from "next/navigation"
 
 interface AdminHeaderProps {
   user: {
@@ -18,6 +19,8 @@ interface AdminHeaderProps {
 export function AdminHeader({ user, signOutAction }: AdminHeaderProps) {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
+  const searchParams = useSearchParams()
+  const isTestMode = searchParams.get('mode') === 'test'
 
   const initials = user?.name
     ? user.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2)
@@ -25,14 +28,22 @@ export function AdminHeader({ user, signOutAction }: AdminHeaderProps) {
 
   return (
     <header className="h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex items-center justify-between px-6 sticky top-0 z-20 shrink-0 select-none">
-      {/* Search Input */}
-      <div className="flex-1 max-w-md relative">
-        <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400 dark:text-zinc-500" />
-        <input
-          type="text"
-          placeholder="Search businesses, users, invoices, audit logs..."
-          className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg pl-9 pr-4 py-1.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-transparent transition-all"
-        />
+      <div className="flex items-center gap-4 flex-1">
+        {isTestMode && (
+          <div className="bg-orange-100 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800/50 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center shadow-sm">
+            TEST MODE
+          </div>
+        )}
+        
+        {/* Search Input */}
+        <div className="flex-1 max-w-md relative">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400 dark:text-zinc-500" />
+          <input
+            type="text"
+            placeholder="Search businesses, users, invoices, audit logs..."
+            className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg pl-9 pr-4 py-1.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-transparent transition-all"
+          />
+        </div>
       </div>
 
       {/* Action Buttons */}

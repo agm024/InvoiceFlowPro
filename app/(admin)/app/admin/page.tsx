@@ -21,7 +21,7 @@ export default async function AdminDashboard({
   const isTestMode = resolvedParams.mode === 'test'
   
   // Filter condition for companies based on mode
-  const companyFilter = isTestMode ? {} : { isTestAccount: false }
+  const companyFilter = isTestMode ? { isTestAccount: true } : { isTestAccount: false }
   
   // 1. BUSINESS METRICS
   const totalBusinesses = await prisma.company.count({ where: companyFilter })
@@ -98,12 +98,12 @@ export default async function AdminDashboard({
   const systemIncidents = await prisma.backgroundJobLog.count({ where: { status: "FAILED" } })
 
   // 5. RECENT ACTIVITY FEED (Audit Logs)
-  let auditLogFilter = {}
-  if (!isTestMode) {
-    const testCompanies = await prisma.company.findMany({ where: { isTestAccount: true }, select: { id: true } })
-    const testCompanyIds = testCompanies.map(c => c.id)
-    auditLogFilter = { companyId: { notIn: testCompanyIds } }
-  }
+  const testCompanies = await prisma.company.findMany({ where: { isTestAccount: true }, select: { id: true } })
+  const testCompanyIds = testCompanies.map(c => c.id)
+  
+  const auditLogFilter = isTestMode 
+    ? { companyId: { in: testCompanyIds } }
+    : { companyId: { notIn: testCompanyIds } }
 
   const recentActivities = await prisma.auditLog.findMany({
     where: auditLogFilter,
