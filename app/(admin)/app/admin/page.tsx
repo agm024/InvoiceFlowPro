@@ -93,13 +93,14 @@ export default async function AdminDashboard() {
     take: 8
   })
 
+  const oneYearAgo = subDays(new Date(), 365)
   // 6. TIME SERIES CHART AGGREGATIONS (7d, 30d, 90d, 12m)
   const payments = await prisma.platformPayment.findMany({
-    where: { status: "SUCCESS"},
+    where: { status: "SUCCESS", createdAt: { gte: oneYearAgo } },
     select: { createdAt: true, convertedAmountInr: true }
   })
   const companies = await prisma.company.findMany({
-    
+    where: { createdAt: { gte: oneYearAgo } },
     select: { createdAt: true }
   })
 

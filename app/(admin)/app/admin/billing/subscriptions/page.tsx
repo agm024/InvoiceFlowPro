@@ -11,7 +11,8 @@ export default async function SubscriptionsPage() {
 
   const subscriptions = await prisma.subscription.findMany({
     orderBy: { createdAt: "desc" },
-    include: { company: true, plan: true }
+    include: { company: true, plan: true },
+    take: 1000
   })
 
   return (

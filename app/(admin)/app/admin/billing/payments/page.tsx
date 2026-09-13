@@ -9,7 +9,8 @@ export default async function PaymentsPage() {
 
   const payments = await prisma.platformPayment.findMany({
     orderBy: { createdAt: "desc" },
-    include: { company: true, subscription: { include: { plan: true } } }
+    include: { company: true, subscription: { include: { plan: true } } },
+    take: 1000
   })
 
   // Format to pass to client component

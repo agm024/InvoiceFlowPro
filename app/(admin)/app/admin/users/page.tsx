@@ -11,7 +11,8 @@ export default async function UsersPage() {
     include: {
       company: true
     },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'desc' },
+    take: 1000
   })
 
   // Format to client-ready rows

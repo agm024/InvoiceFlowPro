@@ -7,17 +7,17 @@ import StatusBadge from '@/components/StatusBadge'
 export default async function GlobalInvoicesPage() {
   await requireSuperAdmin()
 
-  const invoices = await prisma.invoice.findMany({
-    include: {
-      company: true,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    }
-  })
+  const [totalInvoices, totalValueAgg, invoices] = await Promise.all([
+    prisma.invoice.count(),
+    prisma.invoice.aggregate({ _sum: { total: true } }),
+    prisma.invoice.findMany({
+      include: { company: true },
+      orderBy: { createdAt: 'desc' },
+      take: 100
+    })
+  ])
 
-  const totalInvoices = invoices.length
-  const totalValue = invoices.reduce((sum, inv) => sum + (inv.total || 0), 0)
+  const totalValue = totalValueAgg._sum.total || 0
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
