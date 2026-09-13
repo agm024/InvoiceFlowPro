@@ -11,20 +11,33 @@ export const metadata = {
 export default async function ReportsPage() {
   const { companyId } = await requireCompany()
 
-  const invoices = await prisma.invoice.findMany({
-    where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' }, status: 'paid' }
-  })
-  
-  const expenses = await prisma.expense.findMany({
-    where: { companyId }
-  })
+  const [invoiceAgg, expenseAgg, itcAgg] = await Promise.all([
+    prisma.$queryRaw<{ totalRevenue: number, totalTaxCollected: number }[]>`
+      SELECT 
+        COALESCE(SUM((total - "taxTotal") * COALESCE("exchangeRate", 1.0)), 0) as "totalRevenue",
+        COALESCE(SUM("taxTotal" * COALESCE("exchangeRate", 1.0)), 0) as "totalTaxCollected"
+      FROM "Invoice"
+      WHERE "companyId" = ${companyId} 
+        AND "isDeleted" = false 
+        AND "invoiceType" != 'QUOTATION' 
+        AND "status" = 'paid'
+    `,
+    prisma.$queryRaw<{ totalExpenses: number }[]>`
+      SELECT COALESCE(SUM("totalAmount"), 0) as "totalExpenses"
+      FROM "Expense"
+      WHERE "companyId" = ${companyId} AND "category" != 'GST_PAYMENT'
+    `,
+    prisma.$queryRaw<{ totalTaxPaid: number }[]>`
+      SELECT COALESCE(SUM("taxAmount"), 0) as "totalTaxPaid"
+      FROM "Expense"
+      WHERE "companyId" = ${companyId} AND "category" != 'GST_PAYMENT' AND "itcEligible" = true
+    `
+  ])
 
-  const totalRevenue = invoices.reduce((acc, inv) => acc + ((inv.total - inv.taxTotal) * (inv.exchangeRate || 1.0)), 0)
-  const totalTaxCollected = invoices.reduce((acc, inv) => acc + (inv.taxTotal * (inv.exchangeRate || 1.0)), 0)
-
-  const operatingExpenses = expenses.filter(exp => exp.category !== 'GST_PAYMENT')
-  const totalExpenses = operatingExpenses.reduce((acc, exp) => acc + exp.totalAmount, 0)
-  const totalTaxPaid = operatingExpenses.filter(exp => exp.itcEligible).reduce((acc, exp) => acc + (exp.taxAmount || 0), 0)
+  const totalRevenue = Number(invoiceAgg[0]?.totalRevenue || 0)
+  const totalTaxCollected = Number(invoiceAgg[0]?.totalTaxCollected || 0)
+  const totalExpenses = Number(expenseAgg[0]?.totalExpenses || 0)
+  const totalTaxPaid = Number(itcAgg[0]?.totalTaxPaid || 0)
 
   const netProfit = totalRevenue - totalExpenses
   const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0

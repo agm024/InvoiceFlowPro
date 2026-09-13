@@ -43,52 +43,57 @@ export default async function DashboardPage({
     prevDateLimitEnd = endOfMonth(subMonths(today, 12))
   }
 
-  // 1. ANNOUNCEMENTS
-  const latestAnnouncement = await prisma.announcement.findFirst({
-    where: { published: true },
-    orderBy: { createdAt: 'desc' }
-  })
-
-  // 2. DB QUERIES
-  const allInvoices = await prisma.invoice.findMany({
-    where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' }, date: { gte: prevDateLimitStart } },
-    take: 2000,
-    orderBy: { date: 'desc' },
-    select: {
-      id: true,
-      status: true,
-      date: true,
-      dueDate: true,
-      total: true,
-      taxTotal: true,
-      exchangeRate: true,
-      invoiceNumber: true,
-      updatedAt: true,
-      client: { select: { id: true, name: true } }
-    }
-  })
-
-  const allExpenses = await prisma.expense.findMany({
-    where: { companyId, date: { gte: prevDateLimitStart } },
-    take: 2000,
-    orderBy: { date: 'desc' },
-    select: {
-      id: true,
-      category: true,
-      date: true,
-      totalAmount: true,
-      taxAmount: true,
-      itcEligible: true,
-      vendorName: true,
-      createdAt: true
-    }
-  })
-
-  const allProjects = await prisma.project.findMany({
-    where: { companyId, status: 'ACTIVE' },
-    take: 2000,
-    include: { milestones: true, client: true }
-  })
+  const [
+    latestAnnouncement,
+    allInvoices,
+    allExpenses,
+    allProjects,
+    allClientsCount,
+    totalInvoicesCount,
+    globalUnpaidInvoices,
+    topClientsRaw
+  ] = await Promise.all([
+    prisma.announcement.findFirst({
+      where: { published: true },
+      orderBy: { createdAt: 'desc' }
+    }),
+    prisma.invoice.findMany({
+      where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' }, date: { gte: prevDateLimitStart } },
+      take: 2000,
+      orderBy: { date: 'desc' },
+      select: {
+        id: true, status: true, date: true, dueDate: true, total: true, taxTotal: true, exchangeRate: true, invoiceNumber: true, updatedAt: true,
+        client: { select: { id: true, name: true } }
+      }
+    }),
+    prisma.expense.findMany({
+      where: { companyId, date: { gte: prevDateLimitStart } },
+      take: 2000,
+      orderBy: { date: 'desc' },
+      select: { id: true, category: true, date: true, totalAmount: true, taxAmount: true, itcEligible: true, vendorName: true, createdAt: true }
+    }),
+    prisma.project.findMany({
+      where: { companyId, status: 'ACTIVE' },
+      take: 1000,
+      include: { milestones: true, client: true }
+    }),
+    prisma.client.count({ where: { companyId } }),
+    prisma.invoice.count({ where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' } } }),
+    prisma.invoice.findMany({
+      where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' }, status: { in: ['draft', 'sent'] } },
+      select: { id: true, status: true, dueDate: true, total: true, exchangeRate: true, invoiceNumber: true, client: { select: { name: true } } }
+    }),
+    prisma.client.findMany({
+      where: { companyId, status: 'ACTIVE' },
+      select: {
+        id: true, name: true,
+        invoices: {
+          where: { isDeleted: false },
+          select: { status: true, total: true, exchangeRate: true }
+        }
+      }
+    })
+  ]);
 
   // 3. STATS IN CURRENT TIMEFRAME
   const paidInvoices = allInvoices.filter(i => i.status === 'paid' && i.date >= dateLimit)
@@ -116,10 +121,6 @@ export default async function DashboardPage({
   const expenseTrend = prevExpensesSum === 0 ? 100 : ((expensesTimeframe - prevExpensesSum) / prevExpensesSum) * 100
 
   // Balance Sheet Metrics (Current totals regardless of timeframe)
-  const globalUnpaidInvoices = await prisma.invoice.findMany({
-    where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' }, status: { in: ['draft', 'sent'] } },
-    select: { id: true, status: true, dueDate: true, total: true, exchangeRate: true, invoiceNumber: true, client: { select: { name: true } } }
-  })
   const outstandingInvoices = globalUnpaidInvoices.filter(i => ['draft', 'sent'].includes(i.status))
   const totalOutstanding = outstandingInvoices.reduce((sum, i) => sum + (i.total * i.exchangeRate), 0)
   
@@ -180,19 +181,6 @@ export default async function DashboardPage({
     .filter(i => i.status === 'sent' && i.dueDate && i.dueDate >= today && i.dueDate <= sevenDaysFromNow)
     .sort((a, b) => (a.dueDate!.getTime() - b.dueDate!.getTime()))
     .slice(0, 5)
-
-  const allClientsCount = await prisma.client.count({ where: { companyId } })
-  const totalInvoicesCount = await prisma.invoice.count({ where: { companyId, isDeleted: false, invoiceType: { not: 'QUOTATION' } } })
-  const topClientsRaw = await prisma.client.findMany({
-    where: { companyId, status: 'ACTIVE' },
-    select: {
-      id: true, name: true,
-      invoices: {
-        where: { isDeleted: false },
-        select: { status: true, total: true, exchangeRate: true }
-      }
-    }
-  });
 
   const topClients = topClientsRaw.map(client => {
     const revenue = client.invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total * i.exchangeRate), 0);

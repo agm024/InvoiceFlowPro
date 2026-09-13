@@ -19,11 +19,14 @@ export default function CustomDatePicker({ value, onChange, label, placeholder =
   const [view, setView] = useState<'days' | 'months' | 'years'>('days')
   const containerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  const [prevValue, setPrevValue] = useState(value)
+
+  if (value !== prevValue) {
+    setPrevValue(value)
     if (value) {
       setCurrentMonth(parseISO(value))
     }
-  }, [value])
+  }
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

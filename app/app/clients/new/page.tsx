@@ -1,15 +1,21 @@
-export const dynamic = 'force-dynamic'
+'use client'
+
 import { createClient } from '../actions'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import SubmitButton from './SubmitButton'
+import { toast } from 'react-hot-toast'
 
 export default function NewClientPage() {
+  const router = useRouter()
+
   async function handleSubmit(formData: FormData) {
-    'use server'
     const res = await createClient(formData)
     if (res.success) {
-      redirect('/app/clients')
+      router.push('/app/clients')
+      toast.success('Client created successfully')
+    } else {
+      toast.error(res.error || 'Failed to create client')
     }
   }
 

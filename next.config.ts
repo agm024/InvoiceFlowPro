@@ -24,7 +24,7 @@ const cspHeader = `
 `.replace(/\n/g, '').replace(/\s{2,}/g, ' ').trim();
 
 const nextConfig: NextConfig = {
-  typescript: { ignoreBuildErrors: true },
+
   
   poweredByHeader: false,
   async headers() {

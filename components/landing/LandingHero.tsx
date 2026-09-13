@@ -199,7 +199,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReduced) {
-      setPhase('paid')
+      setTimeout(() => setPhase('paid'), 0)
       return
     }
     runSequence()

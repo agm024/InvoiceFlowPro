@@ -14,7 +14,10 @@ export default function GlobalSearch() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault()
-        setIsOpen((prev) => !prev)
+        setIsOpen((prev) => {
+          if (!prev) setQuery('')
+          return !prev
+        })
       }
       if (e.key === 'Escape') {
         setIsOpen(false)
@@ -27,7 +30,6 @@ export default function GlobalSearch() {
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 50)
-      setQuery('')
     }
   }, [isOpen])
 
