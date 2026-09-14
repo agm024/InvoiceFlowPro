@@ -27,7 +27,9 @@ export default function AppLayoutClient({
 
   // Close sidebar on route change on mobile
   useEffect(() => {
-    setIsSidebarOpen(false)
+    if (isSidebarOpen) {
+      setIsSidebarOpen(false)
+    }
   }, [pathname])
 
   useEffect(() => {

@@ -20,19 +20,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 })
     }
 
-    // Mark invoice as paid
+    // Verify invoice order ID matches
     const invoice = await prisma.invoice.findUnique({ where: { id: invoiceId } })
-    if (invoice) {
-      const amountPaid = invoice.total // Assuming full payment since the order was for full amount
-      await prisma.invoice.update({
-        where: { id: invoiceId },
-        data: {
-          status: 'paid',
-          paymentId: razorpay_payment_id,
-          amountPaid: amountPaid,
-          paymentMethod: 'Razorpay'
-        }
-      })
+    if (!invoice) return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
+    if (invoice.razorpayOrderId !== razorpay_order_id) {
+      return NextResponse.json({ error: 'Order ID mismatch' }, { status: 400 })
+    }
+
+    // Mark invoice as paid
+    const amountPaid = invoice.total // We could verify amount against Razorpay API here if needed
+    await prisma.invoice.update({
+      where: { id: invoiceId },
+      data: {
+        status: 'paid',
+        paymentId: razorpay_payment_id,
+        amountPaid: amountPaid,
+        paymentMethod: 'Razorpay'
+      }
+    })
 
       if (invoice.invoiceType === 'MILESTONE') {
         await prisma.milestone.updateMany({

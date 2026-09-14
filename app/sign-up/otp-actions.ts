@@ -50,7 +50,7 @@ export async function sendOtpAction(email: string, name?: string) {
           </p>
         </div>
         <div style="background-color: #fafafa; padding: 24px 40px; text-align: center; border-top: 1px solid #e4e4e7;">
-          <p style="color: #a1a1aa; font-size: 13px; margin: 0;">FlowRadiant by SiteRadiant</p>
+          <p style="color: #a1a1aa; font-size: 13px; margin: 0;">FlowRadiantPro</p>
         </div>
       </div>
     </div>

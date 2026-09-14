@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   },
   description: "From invoices to business insights. All In One",
   keywords: ["invoicing software", "GST billing", "invoice generator", "business management", "FlowRadiantPro"],
-  authors: [{ name: "FlowRadiant" }],
-  creator: "FlowRadiant",
+  authors: [{ name: "FlowRadiantPro" }],
+  creator: "FlowRadiantPro",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://flow.siteradiant.co.in'),
   openGraph: {
     type: "website",
@@ -81,6 +81,20 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "FlowRadiantPro",
+              "alternateName": "FlowRadiant Pro",
+              "url": "https://flow.siteradiant.co.in/"
+            })
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         {children}
         <Toaster 

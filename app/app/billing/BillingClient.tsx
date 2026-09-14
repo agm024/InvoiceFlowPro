@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 import { useState, useTransition } from 'react'
 import { CheckCircle2 } from 'lucide-react'
-import { createCheckoutSession, adminBypassSubscribe } from './actions'
+import { adminBypassSubscribe } from './actions'
 
 export default function BillingClient({ plans, subscription, isAdmin }: { plans: any[], subscription: any, isAdmin?: boolean }) {
   const router = useRouter()

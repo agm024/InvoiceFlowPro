@@ -18,6 +18,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
+    const key_id = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '';
+    const rzp = new (require('razorpay'))({ key_id, key_secret });
+    const rzpOrder = await rzp.orders.fetch(razorpay_order_id);
+    if (!rzpOrder || rzpOrder.receipt !== `upgrade_${companyId}_${rzpOrder.receipt?.split('_').pop()}`) {
+      // Actually `receipt` in order creation was `upgrade_${user.companyId}_${Date.now()}`
+      if (!rzpOrder?.receipt?.startsWith(`upgrade_${companyId}_`)) {
+        return NextResponse.json({ error: 'Order mismatch' }, { status: 400 });
+      }
+    }
+
+
     // Success! Update the subscription
     let subscription = await prisma.subscription.findUnique({
       where: { companyId }

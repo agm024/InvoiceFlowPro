@@ -10,12 +10,14 @@ import { updateClientProfile, updateEstimateStatus, signProjectContract, signOff
 import SignatureModal from './SignatureModal'
 
 export default function PortalClient({ 
+  portalToken,
   client, 
   unpaidInvoices, 
   paidInvoices, 
   outstandingBalance, 
   companySettings 
 }: {
+  portalToken: string,
   client: any,
   unpaidInvoices: any[],
   paidInvoices: any[],
@@ -47,7 +49,7 @@ export default function PortalClient({
       panNo: formData.get('panNo') as string,
     }
 
-    const res = await updateClientProfile(client.id, data)
+    const res = await updateClientProfile(portalToken, client.id, data)
     if (res.success) {
       toast.success('Profile updated successfully')
     } else {
@@ -57,7 +59,7 @@ export default function PortalClient({
   }
 
   const handleEstimateAction = async (id: string, status: string) => {
-    const res = await updateEstimateStatus(id, status)
+    const res = await updateEstimateStatus(portalToken, id, status)
     if (res.success) {
       toast.success(`Estimate ${status} successfully`)
       // Wait for next.js to refresh since page is dynamic, we can just reload
@@ -74,9 +76,9 @@ export default function PortalClient({
     toast.loading(`Signing ${type}...`, { id: 'sign' })
     let res;
     if (type === 'contract') {
-      res = await signProjectContract(projectId, signature)
+      res = await signProjectContract(portalToken, projectId, signature)
     } else {
-      res = await signOffProject(projectId, signature)
+      res = await signOffProject(portalToken, projectId, signature)
     }
 
     if (res.success) {

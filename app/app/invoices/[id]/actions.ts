@@ -40,7 +40,7 @@ export async function recordPayment(id: string, amountReceived: number, paymentI
     await prisma.invoice.update({
       where: { id },
       data: {
-        amountPaid: newAmountPaid,
+        amountPaid: { increment: amountReceived },
         status: isFullyPaid ? 'paid' : 'partially_paid',
         ...(paymentId ? { paymentId } : {})
       }

@@ -45,6 +45,7 @@ export default async function ClientPortalPage({ params }: { params: Promise<{ p
   return (
     <Suspense fallback={<div className="p-8 text-center text-zinc-500">Loading Portal...</div>}>
       <PortalClient 
+        portalToken={resolvedParams.portalToken}
         client={client}
         unpaidInvoices={unpaidInvoices}
         paidInvoices={paidInvoices}

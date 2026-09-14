@@ -16,8 +16,9 @@ export async function POST(req: Request) {
       currency 
     } = body;
 
+    const key_id = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const secret = process.env.RAZORPAY_KEY_SECRET;
-    if (!secret) return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    if (!secret || !key_id) return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
 
     const generated_signature = crypto
       .createHmac('sha256', secret)
@@ -27,6 +28,14 @@ export async function POST(req: Request) {
     if (generated_signature !== razorpay_signature) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
+
+    // Verify against Razorpay
+    const rzp = new (require('razorpay'))({ key_id, key_secret: secret });
+    const rzpSub = await rzp.subscriptions.fetch(razorpay_subscription_id);
+    if (!rzpSub || rzpSub.notes?.companyId !== companyId) {
+      return NextResponse.json({ error: 'Subscription mismatch' }, { status: 400 });
+    }
+
 
     const days = isAnnual ? 365 : 30;
 
