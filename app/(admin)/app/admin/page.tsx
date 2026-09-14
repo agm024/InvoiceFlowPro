@@ -15,22 +15,22 @@ export default async function AdminDashboard() {
   await requireSuperAdmin()
   
   // 1. BUSINESS METRICS
-  const totalBusinesses = await prisma.company.count()
-  const activeBusinesses = await prisma.company.count({ where: { status: "ACTIVE" } })
+  const totalBusinesses = await prisma.company.count({ where: { name: { not: "Default Company" } } })
+  const activeBusinesses = await prisma.company.count({ where: { status: "ACTIVE", name: { not: "Default Company" } } })
   const newBusinesses30d = await prisma.company.count({
-    where: { createdAt: { gte: subDays(new Date(), 30) } }
+    where: { createdAt: { gte: subDays(new Date(), 30) }, name: { not: "Default Company" } }
   })
-  const suspendedBusinesses = await prisma.company.count({ where: { status: "SUSPENDED" } })
+  const suspendedBusinesses = await prisma.company.count({ where: { status: "SUSPENDED", name: { not: "Default Company" } } })
   
   // Users belong to companies
-  const activeUsers = await prisma.user.count({ where: {  } })
+  const activeUsers = await prisma.user.count({ where: { company: { name: { not: "Default Company" } } } })
   const newUsers30d = await prisma.user.count({
-    where: { createdAt: { gte: subDays(new Date(), 30) },  }
+    where: { createdAt: { gte: subDays(new Date(), 30) }, company: { name: { not: "Default Company" } } }
   })
 
   // 2. SUBSCRIPTION METRICS
   const activeSubs = await prisma.subscription.findMany({
-    where: { status: "active",  },
+    where: { status: "active", company: { name: { not: "Default Company" } } },
     include: { plan: true }
   })
 
@@ -43,9 +43,9 @@ export default async function AdminDashboard() {
   const arr = mrr * 12
 
   const activeSubscriptionsCount = activeSubs.length
-  const trialSubscriptionsCount = await prisma.subscription.count({ where: { status: "trialing",  } })
-  const cancelledSubscriptionsCount = await prisma.subscription.count({ where: { status: "canceled",  } })
-  const pastDueSubscriptionsCount = await prisma.subscription.count({ where: { status: "past_due",  } })
+  const trialSubscriptionsCount = await prisma.subscription.count({ where: { status: "trialing", company: { name: { not: "Default Company" } } } })
+  const cancelledSubscriptionsCount = await prisma.subscription.count({ where: { status: "canceled", company: { name: { not: "Default Company" } } } })
+  const pastDueSubscriptionsCount = await prisma.subscription.count({ where: { status: "past_due", company: { name: { not: "Default Company" } } } })
   
   // Churn calculations
   const churnRate = activeSubscriptionsCount > 0 
@@ -59,11 +59,11 @@ export default async function AdminDashboard() {
   // 3. REVENUE METRICS
   const successPaymentsAgg = await prisma.platformPayment.aggregate({
     _sum: { convertedAmountInr: true },
-    where: { status: "SUCCESS"}
+    where: { status: "SUCCESS", company: { name: { not: "Default Company" } } }
   })
   const refundedPaymentsAgg = await prisma.platformPayment.aggregate({
     _sum: { convertedAmountInr: true },
-    where: { status: "REFUNDED",  }
+    where: { status: "REFUNDED", company: { name: { not: "Default Company" } } }
   })
 
   const grossRevenue = successPaymentsAgg._sum.convertedAmountInr || 0
@@ -96,11 +96,11 @@ export default async function AdminDashboard() {
   const oneYearAgo = subDays(new Date(), 365)
   // 6. TIME SERIES CHART AGGREGATIONS (7d, 30d, 90d, 12m)
   const payments = await prisma.platformPayment.findMany({
-    where: { status: "SUCCESS", createdAt: { gte: oneYearAgo } },
+    where: { status: "SUCCESS", createdAt: { gte: oneYearAgo }, company: { name: { not: "Default Company" } } },
     select: { createdAt: true, convertedAmountInr: true }
   })
   const companies = await prisma.company.findMany({
-    where: { createdAt: { gte: oneYearAgo } },
+    where: { createdAt: { gte: oneYearAgo }, name: { not: "Default Company" } },
     select: { createdAt: true }
   })
 
