@@ -12,6 +12,7 @@ type Plan = {
   userLimits: number | null
   clientLimits: number | null
   invoiceLimits: number | null
+  isPopular: boolean
 }
 
 function fmt(n: number) {
@@ -75,7 +76,7 @@ export function LandingPricing({ plans }: { plans: Plan[] }) {
         {/* Plans grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {displayedPlans.map((plan, index) => {
-            const isRecommended = plan.name.toLowerCase() === 'pro'
+            const isRecommended = plan.isPopular
             const isActive = hovered === plan.id || (hovered === null && isRecommended)
             const features = getFeatures(plan)
 
