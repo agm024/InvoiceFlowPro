@@ -22,34 +22,37 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "FlowRadiantPro - From invoices to business insights. All In One",
+    default: "FlowRadiantPro - Invoicing & Business Insights",
     template: "%s | FlowRadiantPro",
   },
-  description: "From invoices to business insights. All In One",
+  description: "FlowRadiantPro is an all-in-one GST invoicing and business management software. Create invoices, manage clients, and track payments to scale your business.",
   keywords: ["invoicing software", "GST billing", "invoice generator", "business management", "FlowRadiantPro"],
   authors: [{ name: "FlowRadiantPro" }],
   creator: "FlowRadiantPro",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://flow.siteradiant.co.in'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: "https://flow.siteradiant.co.in",
     siteName: "FlowRadiantPro",
-    title: "FlowRadiantPro - From invoices to business insights. All In One",
-    description: "From invoices to business insights. All In One",
+    title: "FlowRadiantPro - Invoicing & Business Insights",
+    description: "FlowRadiantPro is an all-in-one GST invoicing and business management software. Create invoices, manage clients, and track payments to scale your business.",
     images: [
       {
         url: "https://flow.siteradiant.co.in/og-image.png",
         width: 1200,
         height: 630,
-        alt: "FlowRadiantPro - From invoices to business insights. All In One",
+        alt: "FlowRadiantPro - Invoicing & Business Insights",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FlowRadiantPro - From invoices to business insights. All In One",
-    description: "From invoices to business insights. All In One",
+    title: "FlowRadiantPro - Invoicing & Business Insights",
+    description: "FlowRadiantPro is an all-in-one GST invoicing and business management software. Create invoices, manage clients, and track payments to scale your business.",
     images: ["https://flow.siteradiant.co.in/og-image.png"],
   },
   robots: {
@@ -85,13 +88,53 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              "name": "FlowRadiantPro",
-              "alternateName": "FlowRadiant Pro",
-              "url": "https://flow.siteradiant.co.in/"
-            })
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "FlowRadiantPro",
+                "alternateName": "FlowRadiant Pro",
+                "url": "https://flow.siteradiant.co.in/"
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "LocalBusiness",
+                "name": "FlowRadiantPro",
+                "image": "https://flow.siteradiant.co.in/og-image.png",
+                "url": "https://flow.siteradiant.co.in/",
+                "telephone": "+91-9876543210",
+                "address": {
+                  "@type": "PostalAddress",
+                  "streetAddress": "SiteRadiant HQ",
+                  "addressLocality": "Mumbai",
+                  "addressRegion": "MH",
+                  "postalCode": "400001",
+                  "addressCountry": "IN"
+                },
+                "geo": {
+                  "@type": "GeoCoordinates",
+                  "latitude": 19.0760,
+                  "longitude": 72.8777
+                },
+                "openingHoursSpecification": {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": [
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday"
+                  ],
+                  "opens": "09:00",
+                  "closes": "18:00"
+                },
+                "sameAs": [
+                  "https://twitter.com/SiteRadiant",
+                  "https://www.linkedin.com/company/siteradiant",
+                  "https://github.com/SiteRadiant"
+                ]
+              }
+            ])
           }}
         />
       </head>

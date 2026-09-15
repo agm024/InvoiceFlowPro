@@ -54,6 +54,15 @@ export function LandingFooter() {
               <li>
                 <a href="mailto:support@flowradiant.in" className="land-footer-link">Contact</a>
               </li>
+              <li>
+                <a href="https://twitter.com/SiteRadiant" target="_blank" rel="noopener noreferrer" className="land-footer-link">Twitter</a>
+              </li>
+              <li>
+                <a href="https://www.linkedin.com/company/siteradiant" target="_blank" rel="noopener noreferrer" className="land-footer-link">LinkedIn</a>
+              </li>
+              <li>
+                <a href="https://github.com/SiteRadiant" target="_blank" rel="noopener noreferrer" className="land-footer-link">GitHub</a>
+              </li>
             </ul>
           </nav>
 

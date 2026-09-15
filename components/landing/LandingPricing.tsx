@@ -106,12 +106,12 @@ export function LandingPricing({ plans }: { plans: Plan[] }) {
 
                 {/* Plan name + desc */}
                 <div className="mb-6">
-                  <div
+                  <h3
                     className="text-[10px] font-black uppercase tracking-widest mb-3"
                     style={{ color: isRecommended ? '#9B9B96' : '#9B9B96' }}
                   >
                     {plan.name}
-                  </div>
+                  </h3>
 
                   <div className="flex items-baseline gap-1.5 mb-3">
                     <span
