@@ -22,21 +22,6 @@ export default async function PublicInvoicePage({ params }: { params: Promise<{ 
     }
   })
   
-  if (!invoice) {
-    invoice = await prisma.invoice.findFirst({
-      where: { invoiceNumber: resolvedParams.id },
-      include: {
-        client: true,
-        bank: true,
-        creditNotes: true,
-        debitNotes: true,
-        items: {
-          include: { product: true }
-        }
-      }
-    })
-  }
-  
   if (!invoice) notFound()
 
   const subscription = await prisma.subscription.findUnique({ where: { companyId: invoice.companyId }, include: { plan: true } })
