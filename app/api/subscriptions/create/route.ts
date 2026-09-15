@@ -43,6 +43,7 @@ export async function POST(req: Request) {
     // Create Razorpay Subscription
     const subscription = await instance.subscriptions.create({
       plan_id: rzpPlanId,
+      customer_id: rzpCustomerId,
       total_count: isAnnual ? 10 : 120, // max iterations (e.g., 10 years or 10 years of months)
       customer_notify: 0,
       notes: { companyId: user.companyId }
