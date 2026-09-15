@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       total_count: isAnnual ? 10 : 120, // max iterations (e.g., 10 years or 10 years of months)
       customer_notify: 0,
       notes: { companyId: user.companyId }
-    });
+    } as any);
     
     return NextResponse.json({ subscription, customer_id: rzpCustomerId, user, amount: isAnnual ? plan.yearlyPrice : plan.monthlyPrice });
   } catch (error: any) {

@@ -433,14 +433,14 @@ export default function InvoiceListClient({
             <div className="flex justify-between items-start">
               <div>
                 <div className="font-semibold text-zinc-900 dark:text-white text-base flex items-center gap-2"><input type="checkbox" className="rounded border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900" checked={selectedIds.includes(invoice.id)} onChange={(e) => { if (e.target.checked) setSelectedIds([...selectedIds, invoice.id]); else setSelectedIds(selectedIds.filter(id => id !== invoice.id)); }} onClick={(e) => e.stopPropagation()} /> {invoice.client.name}</div>
-                <div className="text-xs text-zinc-500">{invoice.invoiceNumber} • {format(new Date(invoice.date), 'dd MMM yyyy')}</div>
+                <div className="text-xs text-zinc-500" suppressHydrationWarning>{invoice.invoiceNumber} • {format(new Date(invoice.date), 'dd MMM yyyy')}</div>
               </div>
               <div className="text-right">
                 <div className="font-bold text-zinc-900 dark:text-white flex items-center justify-end gap-1">
                   {getCurrencySymbol(invoice.currency)} {invoice.total.toFixed(2)}
                   {invoice.status === 'sent' && <Send size={10} className="text-green-600" />}
                 </div>
-                <div className="mt-1">
+                <div className="mt-1" suppressHydrationWarning>
                   {invoice.status === 'sent' && invoice.dueDate && new Date(invoice.dueDate) < new Date() ? (
                     <StatusBadge status="overdue" />
                   ) : (
@@ -539,7 +539,7 @@ export default function InvoiceListClient({
                 </td>
 
                   {/* Status Badge & Automatic Aging */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap" suppressHydrationWarning>
                     {invoice.status === 'sent' && invoice.dueDate && new Date(invoice.dueDate) < new Date() ? (
                       <StatusBadge status="overdue" />
                     ) : (
@@ -575,8 +575,8 @@ export default function InvoiceListClient({
 
                   {/* Date */}
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="font-medium text-zinc-900 dark:text-white">{format(new Date(invoice.date), 'dd MMM yyyy')}</div>
-                    <div className="text-xs text-zinc-500 mt-0.5">{format(new Date(invoice.createdAt), 'dd MMM yy, hh:mm a')}</div>
+                    <div className="font-medium text-zinc-900 dark:text-white" suppressHydrationWarning>{format(new Date(invoice.date), 'dd MMM yyyy')}</div>
+                    <div className="text-xs text-zinc-500 mt-0.5" suppressHydrationWarning>{format(new Date(invoice.createdAt), 'dd MMM yy, hh:mm a')}</div>
                   </td>
 
                   {/* Actions - Dedicated Column */}

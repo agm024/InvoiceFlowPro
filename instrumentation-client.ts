@@ -19,7 +19,8 @@ if (!posthogToken || !posthogHost) {
   }
 } else {
   posthog.init(posthogToken, {
-    api_host: posthogHost,
+    api_host: "/ingest",
+    ui_host: posthogHost,
     defaults: "2026-01-30",
     capture_exceptions: true,
     debug: process.env.NODE_ENV === "development",
