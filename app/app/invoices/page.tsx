@@ -20,7 +20,7 @@ export default async function InvoicesPage() {
   })
   let isLimitReached = false;
   if (company?.subscription?.plan?.invoiceLimits) {
-    const currentCount = await prisma.invoice.count({ where: { companyId } })
+    const currentCount = await prisma.invoice.count({ where: { companyId, invoiceType: { not: 'ESTIMATE' }, isDeleted: false } })
     if (currentCount >= company.subscription.plan.invoiceLimits) {
       isLimitReached = true;
     }

@@ -27,7 +27,7 @@ export async function checkFeatureLimit(companyId: string, featureType: FeatureT
       limit = plan.invoiceLimits;
       if (limit !== null) {
         currentCount = await prisma.invoice.count({ 
-          where: { companyId, invoiceType: { not: 'ESTIMATE' } } 
+          where: { companyId, invoiceType: { not: 'ESTIMATE' }, isDeleted: false } 
         });
       }
       break;
@@ -35,7 +35,7 @@ export async function checkFeatureLimit(companyId: string, featureType: FeatureT
       limit = plan.invoiceLimits;
       if (limit !== null) {
         currentCount = await prisma.invoice.count({ 
-          where: { companyId, invoiceType: 'ESTIMATE' } 
+          where: { companyId, invoiceType: 'ESTIMATE', isDeleted: false } 
         });
       }
       break;

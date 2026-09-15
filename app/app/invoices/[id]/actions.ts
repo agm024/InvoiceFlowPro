@@ -109,7 +109,7 @@ export async function convertToInvoice(id: string) {
 
   if (company.subscription?.plan?.invoiceLimits) {
     const currentInvoiceCount = await prisma.invoice.count({
-      where: { companyId }
+      where: { companyId, invoiceType: { not: 'ESTIMATE' }, isDeleted: false }
     })
     
     if (currentInvoiceCount >= company.subscription.plan.invoiceLimits) {

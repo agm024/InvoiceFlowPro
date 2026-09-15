@@ -21,6 +21,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
     where: { slug },
     include: {
       invoices: {
+        where: { isDeleted: false },
         orderBy: { date: 'desc' },
         include: { milestone: true }
       },
