@@ -83,7 +83,11 @@ export function LandingFooter() {
           className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs"
           style={{ borderTop: '1px solid rgba(255,255,255,0.04)', color: '#9B9B96' }}
         >
-          <p>&copy; {new Date().getFullYear()} Global One Logistics And Distribution. All rights reserved.</p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2">
+            <p>&copy; {new Date().getFullYear()} Global One Logistics And Distribution. All rights reserved.</p>
+            <span className="hidden sm:inline" style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>
+            <p>Built by <a href="https://siteradiant.co.in" className="hover:text-white transition-colors" style={{ textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.2)' }}>SiteRadiant</a></p>
+          </div>
           <a 
             href="https://status.siteradiant.co.in"
             target="_blank"
