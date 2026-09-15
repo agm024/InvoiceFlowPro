@@ -252,13 +252,13 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
           <h1
             className="font-black tracking-tighter leading-[1.0] mb-6"
             style={{
-              fontSize: 'clamp(2.6rem, 6vw, 5.2rem)',
+              fontSize: 'clamp(2.6rem, 6vw, 4.8rem)',
               color: '#151515',
               letterSpacing: '-0.03em',
             }}
           >
-            Your business,<br />
-            billed{' '}
+            The Business OS<br />
+            that starts with{' '}
             <span
               style={{
                 color: 'transparent',
@@ -267,7 +267,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
                 backgroundImage: 'linear-gradient(135deg, #151515 0%, #06B6D4 100%)',
               }}
             >
-              beautifully.
+              beautiful invoicing.
             </span>
           </h1>
 
@@ -275,7 +275,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
             className="text-lg leading-relaxed mb-10 max-w-lg"
             style={{ color: '#6B6B67', fontWeight: 450 }}
           >
-            Create invoices, manage clients, track payments and keep your entire billing operation moving — without the spreadsheet chaos.
+            FlowRadiantPro is the all-in-one platform for Indian small businesses. Ditch the spreadsheets—create GST-ready invoices, manage clients, and track cash flow in one seamless workspace.
           </p>
 
           <div className="flex flex-col sm:flex-row items-start gap-3 mb-10">
