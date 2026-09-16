@@ -143,7 +143,7 @@ export default function InvoiceRowActions({ invoice, settings, onDelete }: { inv
           
           <div className="p-6 border-t border-card-border bg-sidebar-bg flex justify-end gap-4">
             <a 
-              href={`/pay/${invoice.id}/print`}
+              href={`/pay/${invoice.id}/invoice?download=true`}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-foreground text-background px-4 py-2 rounded-md font-medium text-sm hover:opacity-90 transition-opacity"

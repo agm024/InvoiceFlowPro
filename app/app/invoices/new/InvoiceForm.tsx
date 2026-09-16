@@ -372,7 +372,7 @@ export default function InvoiceForm({
       if (submitAction === 'sent_and_print') {
         const invId = existingInvoice ? existingInvoice.id : res.invoice?.id;
         if (invId) {
-          router.push(`/pay/${invId}/print`);
+          router.push(`/pay/${invId}/invoice?download=true`);
         } else {
           router.push(redirectPath);
         }

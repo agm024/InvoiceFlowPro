@@ -34,7 +34,7 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
   }
 
   const handlePrint = () => {
-    window.open(`/pay/${invoiceId}/print`, '_blank')
+    window.open(`/pay/${invoiceId}/invoice?download=true`, '_blank')
     setIsOpen(false)
   }
 
