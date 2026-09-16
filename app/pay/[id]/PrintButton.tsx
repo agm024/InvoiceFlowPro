@@ -1,7 +1,7 @@
 'use client'
 
 import { Download } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import * as htmlToImage from 'html-to-image'
 import jsPDF from 'jspdf'
