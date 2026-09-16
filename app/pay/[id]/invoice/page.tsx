@@ -22,7 +22,23 @@ export default async function PublicInvoicePage({ params }: { params: Promise<{ 
     }
   })
   
-  if (!invoice) notFound()
+  if (!invoice) {
+    const oldInvoices = await prisma.invoice.findMany({
+      where: { invoiceNumber: resolvedParams.id },
+      include: {
+        client: true,
+        bank: true,
+        creditNotes: true,
+        debitNotes: true,
+        items: { include: { product: true } }
+      }
+    })
+    if (oldInvoices.length === 1) {
+      invoice = oldInvoices[0]
+    } else {
+      notFound()
+    }
+  }
 
   const subscription = await prisma.subscription.findUnique({ where: { companyId: invoice.companyId }, include: { plan: true } })
   const isFree = !subscription || subscription.plan.name.toLowerCase() === 'free'

@@ -9,51 +9,8 @@ import jsPDF from 'jspdf'
 export default function PrintButton() {
   const [isExporting, setIsExporting] = useState(false)
 
-  const handleDownload = async () => {
-    try {
-      setIsExporting(true)
-      const element = document.getElementById('invoice-content')
-      if (!element) {
-        toast.error('Could not find invoice content')
-        return
-      }
-      
-      const dataUrl = await htmlToImage.toPng(element, {
-        quality: 1,
-        pixelRatio: 2,
-        backgroundColor: '#ffffff'
-      })
-      
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      })
-
-                  const pdfWidth = pdf.internal.pageSize.getWidth()
-      const pageHeight = pdf.internal.pageSize.getHeight()
-      const imgHeight = (element.offsetHeight * pdfWidth) / element.offsetWidth
-      
-      let heightLeft = imgHeight
-      let position = 0
-
-      pdf.addImage(dataUrl, 'PNG', 0, position, pdfWidth, imgHeight)
-      heightLeft -= pageHeight
-
-      while (heightLeft > 0) {
-        position = position - pageHeight
-        pdf.addPage()
-        pdf.addImage(dataUrl, 'PNG', 0, position, pdfWidth, imgHeight)
-        heightLeft -= pageHeight
-      }
-      pdf.save('Invoice.pdf')
-      
-    } catch (e) {
-      toast.error('Failed to generate PDF')
-      console.error(e)
-    } finally {
-      setIsExporting(false)
-    }
+  const handleDownload = () => {
+    window.print()
   }
 
   return (
