@@ -27,14 +27,14 @@ export default function InvoiceActionsDropdown({ invoiceId, invoiceNumber, invoi
   const [modalState, setModalState] = useState<{ isOpen: boolean, type: 'reminder' | 'send' | null }>({ isOpen: false, type: null })
   
   const handleCopyLink = () => {
-    const url = `${window.location.origin}/pay/${encodeURIComponent(invoiceNumber)}`
+    const url = `${window.location.origin}/pay/${invoiceId}`
     navigator.clipboard.writeText(url)
     toast.success('Public Link copied to clipboard!')
     setIsOpen(false)
   }
 
   const handlePrint = () => {
-    window.open(`/pay/${encodeURIComponent(invoiceNumber)}/print`, '_blank')
+    window.open(`/pay/${invoiceId}/print`, '_blank')
     setIsOpen(false)
   }
 

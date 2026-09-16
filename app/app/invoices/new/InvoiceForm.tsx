@@ -370,9 +370,9 @@ export default function InvoiceForm({
 
       const redirectPath = '/app/invoices'
       if (submitAction === 'sent_and_print') {
-        const num = existingInvoice ? existingInvoice.invoiceNumber : (res.invoice?.invoiceNumber || invoiceNumber);
-        if (num) {
-          router.push(`/pay/${encodeURIComponent(num)}/print`);
+        const invId = existingInvoice ? existingInvoice.id : res.invoice?.id;
+        if (invId) {
+          router.push(`/pay/${invId}/print`);
         } else {
           router.push(redirectPath);
         }

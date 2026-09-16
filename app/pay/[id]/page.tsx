@@ -94,8 +94,8 @@ export default async function PayInvoicePage({ params }: { params: Promise<{ id:
           </div>
 
           <div className="text-center print:hidden">
-            <Link href={`/pay/${invoice.id}/invoice`} className="text-sm font-medium text-zinc-900 dark:text-white hover:opacity-70 transition-opacity inline-flex items-center gap-1">
-              <FileText size={16} /> View Original Invoice PDF
+            <Link href={`/pay/${invoice.id}/print`} className="text-sm font-medium text-zinc-900 dark:text-white hover:opacity-70 transition-opacity inline-flex items-center gap-1">
+              <FileText size={16} /> View & Print Original Invoice
             </Link>
           </div>
           
