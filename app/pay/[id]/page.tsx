@@ -16,17 +16,7 @@ export default async function PayInvoicePage({ params }: { params: Promise<{ id:
     include: { client: true, items: { include: { product: true } }, creditNotes: true, debitNotes: true }
   })
 
-  if (!invoice) {
-    const oldInvoices = await prisma.invoice.findMany({
-      where: { invoiceNumber: resolvedParams.id },
-      include: { client: true, items: { include: { product: true } }, creditNotes: true, debitNotes: true }
-    })
-    if (oldInvoices.length === 1) {
-      invoice = oldInvoices[0]
-    } else {
-      notFound()
-    }
-  }
+  if (!invoice) notFound()
 
   // Prevent paying drafts or cancelled invoices
   if (invoice.status === 'draft' || invoice.status === 'cancelled') {
