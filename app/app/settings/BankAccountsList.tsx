@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { createBank, deleteBank, createInternalTransfer, deleteInternalTransfer } from './actions'
-import { Plus, Trash2, Loader2, Building2, ArrowRightLeft } from 'lucide-react'
+import { createBank, deleteBank, setDefaultBank, createInternalTransfer, deleteInternalTransfer } from './actions'
+import { Plus, Trash2, Loader2, Building2, ArrowRightLeft, Star } from 'lucide-react'
 import { format } from 'date-fns'
 
 export default function BankAccountsList({ initialBanks, initialTransfers = [] }: { initialBanks: any[], initialTransfers?: any[] }) {
@@ -38,6 +38,16 @@ export default function BankAccountsList({ initialBanks, initialTransfers = [] }
     }
   }
 
+  const handleSetDefault = async (id: string) => {
+    const res = await setDefaultBank(id)
+    if (res.success) {
+      setBanks(banks.map(b => ({ ...b, isDefault: b.id === id })))
+      toast.success('Default bank updated!')
+    } else {
+      toast.error('Failed to set default bank')
+    }
+  }
+
   return (
     <div className="space-y-6">
       
@@ -46,11 +56,14 @@ export default function BankAccountsList({ initialBanks, initialTransfers = [] }
           {banks.map(bank => (
             <div key={bank.id} className="p-4 rounded-xl border border-card-border bg-sidebar-bg flex justify-between items-start">
               <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 dark:bg-zinc-800/30 flex items-center justify-center text-zinc-900 dark:text-white dark:text-zinc-900 dark:text-white shrink-0">
+                <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 dark:bg-zinc-800/30 flex items-center justify-center text-zinc-900 dark:text-white shrink-0">
                   <Building2 size={20} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">{bank.bankName}</h3>
+                  <h3 className="font-semibold text-foreground flex items-center gap-2">
+                    {bank.bankName}
+                    {bank.isDefault && <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">DEFAULT</span>}
+                  </h3>
                   {bank.accountNumber !== bank.iban && (
                     <p className="text-sm text-zinc-500 mt-1 tracking-wider">{bank.accountNumber}</p>
                   )}
@@ -65,12 +78,23 @@ export default function BankAccountsList({ initialBanks, initialTransfers = [] }
                   </div>
                 </div>
               </div>
-              <button 
-                onClick={() => handleDelete(bank.id)}
-                className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <Trash2 size={16} />
-              </button>
+              <div className="flex flex-col gap-1">
+                {!bank.isDefault && (
+                  <button 
+                    onClick={() => handleSetDefault(bank.id)}
+                    className="p-2 text-zinc-400 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-500/10 rounded-lg transition-colors"
+                    title="Set as Default"
+                  >
+                    <Star size={16} />
+                  </button>
+                )}
+                <button 
+                  onClick={() => handleDelete(bank.id)}
+                  className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
           ))}
         </div>

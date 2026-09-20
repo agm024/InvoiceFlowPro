@@ -211,6 +211,7 @@ model Bank {
   swiftCode     String?
   routingNumber String?
   iban          String?
+  isDefault     Boolean            @default(false)
   companyId     String
   company       Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdAt     DateTime           @default(now())

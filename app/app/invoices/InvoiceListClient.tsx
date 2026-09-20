@@ -44,7 +44,7 @@ export default function InvoiceListClient({
   const [paymentAmount, setPaymentAmount] = useState('')
   const [paymentDate, setPaymentDate] = useState('')
   const [paymentTransactionId, setPaymentTransactionId] = useState('')
-  const [paymentBankId, setPaymentBankId] = useState('')
+  const [paymentBankId, setPaymentBankId] = useState(() => banks.find((b: any) => b.isDefault)?.id || '')
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false)
 
   const [dateRange, setDateRange] = useState('This Year')

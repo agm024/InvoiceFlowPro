@@ -169,6 +169,30 @@ export async function deleteBank(id: string) {
   }
 }
 
+export async function setDefaultBank(id: string) {
+  try {
+    const { companyId } = await requireCompany()
+    
+    // First remove default from all other banks
+    await prisma.bank.updateMany({
+      where: { companyId },
+      data: { isDefault: false }
+    })
+    
+    // Set the selected one as default
+    await prisma.bank.update({
+      where: { id, companyId },
+      data: { isDefault: true }
+    })
+    
+    revalidatePath('/app/settings')
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to set default bank:', error)
+    return { error: 'Failed to set default bank' }
+  }
+}
+
 export async function getExchangeRates() {
   const { companyId } = await requireCompany()
   return await prisma.exchangeRate.findMany({

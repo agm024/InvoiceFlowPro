@@ -273,12 +273,6 @@ export default async function PublicInvoicePage({ params }: { params: Promise<{ 
                       <td className="py-1 font-medium uppercase">{invoice.paymentMethod}</td>
                     </tr>
                   )}
-                  {invoice.bank && (
-                    <tr>
-                      <td className="py-1 pr-4 font-semibold text-zinc-600">Bank Details:</td>
-                      <td className="py-1 font-medium">{invoice.bank.bankName} - {invoice.bank.accountNumber}</td>
-                    </tr>
-                  )}
                   {invoice.paymentId && (
                     <tr>
                       <td className="py-1 pr-4 font-semibold text-zinc-600">Transaction ID:</td>
