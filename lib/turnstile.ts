@@ -3,7 +3,10 @@ export async function verifyTurnstileToken(token: string | null | undefined, exp
     return { success: false, error: 'Missing turnstile token' }
   }
 
-  const secret = process.env.TURNSTILE_SECRET
+  const secret = process.env.NODE_ENV === 'development' 
+    ? '1x0000000000000000000000000000000AA' 
+    : process.env.TURNSTILE_SECRET;
+    
   if (!secret) {
     console.warn('TURNSTILE_SECRET is not configured, skipping validation.')
     return { success: true }
