@@ -85,7 +85,6 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

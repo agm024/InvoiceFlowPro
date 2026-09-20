@@ -7,10 +7,12 @@ import { sendOtpAction, verifyOtpAction } from './otp-actions'
 import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
+import { Turnstile } from '@marsidev/react-turnstile'
 
 export default function SignUpPage() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [showPass, setShowPass] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [otp, setOtp] = useState('')
@@ -83,18 +85,16 @@ export default function SignUpPage() {
   const handleSubmit = async () => {
     try {
       setLoading(true)
-        const searchParams = new URLSearchParams(window.location.search)
-        const planId = searchParams.get('planId')
-        const cycle = searchParams.get('cycle')
-        
-        const turnstileToken = (document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
+      const searchParams = new URLSearchParams(window.location.search)
+      const planId = searchParams.get('planId')
+      const cycle = searchParams.get('cycle')
 
-        const payload = {
-          ...formData,
-          planId,
-          cycle,
-          turnstileToken
-        }
+      const payload = {
+        ...formData,
+        planId,
+        cycle,
+        turnstileToken: turnstileToken || (document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value
+      }
 
       const res = await signUpAction(payload)
       if (res?.error) {
@@ -322,13 +322,13 @@ export default function SignUpPage() {
                   </div>
                 </div>
                 
-                <div className="cf-turnstile" data-sitekey="0x4AAAAAAE9v89aShIlA9tCn" data-action="signup"></div>
+                <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'} onSuccess={(token) => setTurnstileToken(token)} onExpire={() => setTurnstileToken(null)} onError={() => setTurnstileToken(null)} />
 
                 <div className="flex gap-3 pt-2">
                   <button onClick={prevStep} className="px-4 py-3 rounded-xl font-medium border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                     <ArrowLeft size={18} />
                   </button>
-                  <button onClick={handleSubmit} disabled={loading} className="flex-1 bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+                  <button onClick={handleSubmit} disabled={loading || !turnstileToken} className="flex-1 bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
                     {loading ? <Loader2 className="animate-spin" size={18} /> : <>Complete Setup <CheckCircle2 size={18} /></>}
                   </button>
                 </div>

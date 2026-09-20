@@ -10,12 +10,12 @@ const posthogCspSources = [
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://o4512011724587008.ingest.us.sentry.io https://va.vercel-scripts.com https://checkout.razorpay.com https://cdn.razorpay.com ${posthogCspSources}; frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://o4512011724587008.ingest.us.sentry.io https://challenges.cloudflare.com https://va.vercel-scripts.com https://checkout.razorpay.com https://cdn.razorpay.com ${posthogCspSources}; frame-src 'self' https://challenges.cloudflare.com https://api.razorpay.com https://checkout.razorpay.com;
     worker-src 'self' blob:;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  font-src 'self' https://fonts.gstatic.com;
+  font-src 'self' https://fonts.gstatic.com data:;
   img-src 'self' blob: data: https:;
-  connect-src 'self' https://o4512011724587008.ingest.us.sentry.io https://accounts.google.com https://vitals.vercel-insights.com https://api.razorpay.com https://checkout.razorpay.com https://lumberjack.razorpay.com ${posthogCspSources};
+  connect-src 'self' https://o4512011724587008.ingest.us.sentry.io https://challenges.cloudflare.com https://accounts.google.com https://vitals.vercel-insights.com https://api.razorpay.com https://checkout.razorpay.com https://lumberjack.razorpay.com ${posthogCspSources};
   object-src 'none';
   base-uri 'self';
   form-action 'self';

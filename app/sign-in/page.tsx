@@ -7,9 +7,11 @@ import { signIn } from 'next-auth/react'
 import { useState, Suspense } from 'react'
 import { toast } from 'react-hot-toast'
 import { useSearchParams } from 'next/navigation'
+import { Turnstile } from '@marsidev/react-turnstile'
 
 function SignInForm() {
   const [loading, setLoading] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [formError, setFormError] = useState('')
   const searchParams = useSearchParams()
   const registered = searchParams.get('registered')
@@ -18,6 +20,13 @@ function SignInForm() {
   async function handleSubmit(formData: FormData) {
     setLoading(true)
     setFormError('')
+    
+    // Explicitly grab the Turnstile token if it didn't get caught in formData
+    const turnstileToken = (document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
+    if (turnstileToken && !formData.get('cf-turnstile-response')) {
+      formData.append('cf-turnstile-response', turnstileToken);
+    }
+    
     try {
       const result = await signInAction(formData)
       if (result?.error) {
@@ -63,9 +72,9 @@ function SignInForm() {
           <label htmlFor="remember" className="text-sm text-zinc-600 dark:text-zinc-400">Remember me</label>
         </div>
 
-        <div className="cf-turnstile" data-sitekey="0x4AAAAAAE9v89aShIlA9tCn" data-action="login"></div>
+        <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'} onSuccess={(token) => setTurnstileToken(token)} onExpire={() => setTurnstileToken(null)} onError={() => setTurnstileToken(null)} />
         
-        <button disabled={loading} type="submit" className="w-full bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+        <button disabled={loading || !turnstileToken} type="submit" className="w-full bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
           {loading ? <Loader2 className="animate-spin" size={18} /> : <>Sign in <ArrowRight size={18} /></>}
         </button>
       </form>
