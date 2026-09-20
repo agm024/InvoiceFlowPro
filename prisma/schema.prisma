@@ -251,6 +251,7 @@ model Invoice {
   amountPaid      Float         @default(0)
   razorpayOrderId String?
   paymentId       String?
+  paymentDate     DateTime?
   bank            Bank?         @relation(fields: [bankId], references: [id])
   client          Client        @relation(fields: [clientId], references: [id])
   items           InvoiceItem[]

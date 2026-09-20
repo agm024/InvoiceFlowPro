@@ -85,12 +85,8 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-12">
             <div>
-              {companySettings?.logoUrl ? (
+              {companySettings?.logoUrl && (
                 <img src={companySettings.logoUrl} alt="Company Logo" className="h-16 w-auto object-contain mb-4" />
-              ) : (
-                <div className="h-16 w-16 bg-zinc-100 flex items-center justify-center rounded-lg mb-4 text-zinc-400 font-bold text-xs uppercase text-center border border-zinc-200">
-                  Logo
-                </div>
               )}
               <h2 className="text-xl font-bold">{companySettings?.brandName || companySettings?.companyName}</h2>
               {companySettings?.address && <p className="text-sm text-zinc-600 whitespace-pre-wrap mt-1">{companySettings.address}</p>}
@@ -306,6 +302,12 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
                     <tr>
                       <td className="py-1 pr-4 font-semibold text-zinc-600">Transaction ID:</td>
                       <td className="py-1 font-medium">{invoice.paymentId}</td>
+                    </tr>
+                  )}
+                  {invoice.paymentDate && (
+                    <tr>
+                      <td className="py-1 pr-4 font-semibold text-zinc-600">Payment Date:</td>
+                      <td className="py-1 font-medium">{new Date(invoice.paymentDate).toLocaleString()}</td>
                     </tr>
                   )}
                 </tbody>

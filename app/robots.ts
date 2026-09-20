@@ -1,14 +1,19 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://flow.siteradiant.co.in'
-
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/app/', '/api/', '/admin/'],
-    },
-    sitemap: `${baseUrl}/sitemap.xml`,
+    rules: [
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: ['/app/', '/pay/'],
+      },
+      {
+        userAgent: ['GPTBot', 'CCBot', 'ClaudeBot', 'Applebot-Extended', 'Google-Extended', 'PerplexityBot', 'Omgilibot', 'Omgili', 'FacebookBot'],
+        disallow: '/',
+      }
+    ],
+    sitemap: 'https://flow.siteradiant.co.in/sitemap.xml',
   }
 }
+
