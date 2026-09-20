@@ -38,6 +38,9 @@ interface CompanyDetails {
     status: string
     billingInterval: string
     currentPeriodEnd: string | null
+    planSource?: string | null
+    expiresAt?: string | null
+    grantReason?: string | null
   } | null
 }
 

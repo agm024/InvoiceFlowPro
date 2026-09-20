@@ -4,9 +4,15 @@ import prisma from '@/utils/prisma'
 import bcrypt from 'bcryptjs'
 import { signIn } from '@/auth'
 import { AuthError } from 'next-auth'
+import { verifyTurnstileToken } from '@/lib/turnstile'
 
 export async function signUpAction(data: any) {
-  const { name, email, password, companyName, businessType, country, gstin, pan, address, city, state } = data
+  const { name, email, password, companyName, businessType, country, gstin, pan, address, city, state, turnstileToken } = data
+
+  const turnstileResult = await verifyTurnstileToken(turnstileToken, 'signup')
+  if (!turnstileResult.success) {
+    return { error: turnstileResult.error }
+  }
 
   if (!companyName || !name || !email || !password) {
     return { error: 'Required fields missing' }

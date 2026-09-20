@@ -62,6 +62,8 @@ function SignInForm() {
           <input type="checkbox" id="remember" className="rounded border-zinc-300 text-cyan-500 focus:ring-blue-500 h-4 w-4" />
           <label htmlFor="remember" className="text-sm text-zinc-600 dark:text-zinc-400">Remember me</label>
         </div>
+
+        <div className="cf-turnstile" data-sitekey="0x4AAAAAAE9v89aShIlA9tCn" data-action="login"></div>
         
         <button disabled={loading} type="submit" className="w-full bg-primary text-primary-foreground px-4 py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
           {loading ? <Loader2 className="animate-spin" size={18} /> : <>Sign in <ArrowRight size={18} /></>}

@@ -84,3 +84,17 @@ export async function requireWriteAccess() {
     }
   }
 }
+
+export async function requireRBAC() {
+  const { companyId } = await requireCompany()
+  const company = await prisma.company.findUnique({
+    where: { id: companyId },
+    include: { subscription: { include: { plan: true } } }
+  })
+  
+  if (company?.subscription?.plan?.name === 'Free') {
+    throw new Error('Role-Based Access Control (RBAC) is not available on the Free plan. Please upgrade to Pro.')
+  }
+}
+
+

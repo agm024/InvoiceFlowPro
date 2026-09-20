@@ -1,13 +1,14 @@
 "use server"
 
 import prisma from "@/utils/prisma"
-import { requireCompany, requireWriteAccess } from "@/lib/auth-context"
+import { requireCompany, requireWriteAccess, requireRBAC } from "@/lib/auth-context"
 import { revalidatePath } from "next/cache"
 import { logAudit } from "@/lib/audit"
 
 export async function createRole(data: { name: string, description: string, permissions: string[] }) {
   const { companyId } = await requireCompany()
   await requireWriteAccess()
+  await requireRBAC()
 
   if (!data.name) return { error: "Name is required" }
 
@@ -28,6 +29,7 @@ export async function createRole(data: { name: string, description: string, perm
 export async function updateRole(id: string, data: { name: string, description: string, permissions: string[] }) {
   const { companyId } = await requireCompany()
   await requireWriteAccess()
+  await requireRBAC()
 
   if (!data.name) return { error: "Name is required" }
 
@@ -51,6 +53,7 @@ export async function updateRole(id: string, data: { name: string, description: 
 export async function deleteRole(id: string) {
   const { companyId } = await requireCompany()
   await requireWriteAccess()
+  await requireRBAC()
 
   const role = await prisma.customRole.findFirst({ where: { id, companyId } })
   if (!role) return { error: "Role not found" }

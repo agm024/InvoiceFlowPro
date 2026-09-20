@@ -83,15 +83,18 @@ export default function SignUpPage() {
   const handleSubmit = async () => {
     try {
       setLoading(true)
-      const searchParams = new URLSearchParams(window.location.search)
-      const planId = searchParams.get('planId')
-      const cycle = searchParams.get('cycle')
-      
-      const payload = {
-        ...formData,
-        planId,
-        cycle
-      }
+        const searchParams = new URLSearchParams(window.location.search)
+        const planId = searchParams.get('planId')
+        const cycle = searchParams.get('cycle')
+        
+        const turnstileToken = (document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
+
+        const payload = {
+          ...formData,
+          planId,
+          cycle,
+          turnstileToken
+        }
 
       const res = await signUpAction(payload)
       if (res?.error) {
@@ -319,6 +322,8 @@ export default function SignUpPage() {
                   </div>
                 </div>
                 
+                <div className="cf-turnstile" data-sitekey="0x4AAAAAAE9v89aShIlA9tCn" data-action="signup"></div>
+
                 <div className="flex gap-3 pt-2">
                   <button onClick={prevStep} className="px-4 py-3 rounded-xl font-medium border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                     <ArrowLeft size={18} />

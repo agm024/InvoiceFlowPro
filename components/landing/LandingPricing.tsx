@@ -9,6 +9,7 @@ type Plan = {
   id: string
   name: string
   monthlyPrice: number
+  yearlyPrice: number
   userLimits: number | null
   clientLimits: number | null
   invoiceLimits: number | null

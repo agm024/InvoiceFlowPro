@@ -319,7 +319,7 @@ export default function InvoiceListClient({
                 onClick={() => setShowUpgradeModal(true)}
                 className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-hover transition-colors shadow-sm shadow-primary/20"
               >
-                <Plus size={18} /> New {type === 'quotation' ? 'Estimate' : 'Invoice'}
+                <Plus size={18} /> New Invoice
               </button>
             ) : (
               <Link 
@@ -673,7 +673,7 @@ export default function InvoiceListClient({
                     <p className="text-zinc-500 mb-6">Create a new invoice to bill a client for your services.</p>
                     {isLimitReached && type === 'invoice' ? (
                       <button onClick={() => setShowUpgradeModal(true)} className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
-                        <Plus size={18} /> Create {type === 'quotation' ? 'Estimate' : 'Invoice'}
+                        <Plus size={18} /> Create Invoice
                       </button>
                     ) : (
                       <Link href={type === 'quotation' ? '/app/estimates/new' : '/app/invoices/new'} className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">

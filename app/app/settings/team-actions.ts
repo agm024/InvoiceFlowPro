@@ -2,7 +2,7 @@
 import { checkFeatureLimit } from '@/lib/billing'
 
 import prisma from "@/utils/prisma"
-import { requireCompany, requireWriteAccess, requireSuperAdmin } from "@/lib/auth-context"
+import { requireCompany, requireWriteAccess, requireSuperAdmin, requireRBAC } from "@/lib/auth-context"
 import { revalidatePath } from "next/cache"
 import { logAudit } from "@/lib/audit"
 import crypto from "crypto"
@@ -13,8 +13,11 @@ export async function inviteTeamMember(email: string, customRoleId: string) {
   
   try {
     await requireWriteAccess()
+    if (customRoleId) {
+      await requireRBAC()
+    }
   } catch (err: any) {
-    return { error: err.message || 'Write operations are blocked during read-only impersonation.' }
+    return { error: err.message || 'Error executing action.' }
   }
 
   const company = await prisma.company.findUnique({
@@ -162,8 +165,11 @@ export async function updateTeamMemberRole(userId: string, customRoleId: string 
   
   try {
     await requireWriteAccess()
+    if (customRoleId) {
+      await requireRBAC()
+    }
   } catch (err: any) {
-    return { error: err.message || 'Write operations are blocked during read-only impersonation.' }
+    return { error: err.message || 'Error executing action.' }
   }
 
   await prisma.user.update({
