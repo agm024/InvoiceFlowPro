@@ -40,6 +40,13 @@ function SignInForm() {
 
   return (
     <>
+      {loading && !formError && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white/80 dark:bg-zinc-950/80 backdrop-blur-sm">
+          <Loader2 className="animate-spin text-primary w-12 h-12 mb-4" />
+          <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">Securing your session...</h2>
+          <p className="text-zinc-500 dark:text-zinc-400 mt-2">Entering dashboard</p>
+        </div>
+      )}
       {registered && (
         <div className="mb-6 p-4 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg text-sm font-medium border border-emerald-200 dark:border-emerald-900 flex items-center gap-2">
           <Check size={16} />

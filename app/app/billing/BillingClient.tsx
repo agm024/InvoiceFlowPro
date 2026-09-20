@@ -76,6 +76,25 @@ export default function BillingClient({ plans, subscription, isAdmin }: { plans:
         </div>
       </div>
 
+      {subscription && (subscription.planSource === 'TRIAL' || subscription.planSource === 'ADMIN_GRANT') && (
+        <div className="mb-8 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-bold text-blue-900 dark:text-blue-100 mb-1">
+              {subscription.planSource === 'TRIAL' ? '14-Day Free Trial Active' : 'Premium Access Granted'}
+            </h3>
+            <p className="text-blue-700 dark:text-blue-300 text-sm">
+              {subscription.grantReason || 'You currently have complimentary access to premium features.'}
+              {subscription.expiresAt && ` Your access expires on ${new Date(subscription.expiresAt).toLocaleDateString()}.`}
+            </p>
+          </div>
+          <div className="hidden md:block">
+            <span className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
+              {subscription.planSource === 'TRIAL' ? 'Trial Active' : 'Granted'}
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans.map(plan => {
           let price = isAnnual ? plan.yearlyPrice : plan.monthlyPrice

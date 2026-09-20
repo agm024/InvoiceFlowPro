@@ -108,6 +108,13 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 p-4">
+      {loading && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white/80 dark:bg-zinc-950/80 backdrop-blur-sm">
+          <Loader2 className="animate-spin text-primary w-12 h-12 mb-4" />
+          <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">Creating your account...</h2>
+          <p className="text-zinc-500 dark:text-zinc-400 mt-2">Setting up your workspace</p>
+        </div>
+      )}
       <div className="w-full max-w-[500px] mt-12 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <Link href="/" className="flex items-center gap-3 mb-8 w-fit mx-auto">
           <img src="/logo.png" alt="FlowRadiant Logo" className="w-10 h-10 rounded-xl shadow-sm" />

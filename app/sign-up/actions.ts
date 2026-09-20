@@ -62,8 +62,23 @@ export async function signUpAction(data: any) {
       }
     })
 
+    const proPlan = await tx.plan.findFirst({ where: { name: 'Pro Tier' } });
     const freePlan = await tx.plan.findFirst({ where: { name: 'Free' } });
-    if (freePlan) {
+    
+    if (proPlan) {
+      await tx.subscription.create({
+        data: {
+          companyId: company.id,
+          planId: proPlan.id,
+          status: 'active',
+          billingInterval: 'month',
+          planSource: 'TRIAL',
+          grantReason: '14-Day Free Trial',
+          expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days
+          previousPlanId: freePlan?.id || null
+        }
+      });
+    } else if (freePlan) {
       await tx.subscription.create({
         data: {
           companyId: company.id,

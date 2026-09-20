@@ -61,9 +61,20 @@ export default async function BillingPage() {
             <div className="space-y-2">
               <p><strong>Plan:</strong> {subscription.plan?.name}</p>
               <p><strong>Status:</strong> <span className={`capitalize font-medium ${subscription.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>{subscription.status.replace('_', ' ')}</span></p>
-              <p><strong>Billing Interval:</strong> <span className="capitalize">{subscription.billingInterval || 'Month'}</span></p>
-              {subscription.currentPeriodEnd && (
-                <p><strong>Renews on:</strong> {format(new Date(subscription.currentPeriodEnd), 'dd MMM yyyy')}</p>
+              {subscription.planSource === 'SUBSCRIPTION' ? (
+                <>
+                  <p><strong>Billing Interval:</strong> <span className="capitalize">{subscription.billingInterval || 'Month'}</span></p>
+                  {subscription.currentPeriodEnd && (
+                    <p><strong>Renews on:</strong> {format(new Date(subscription.currentPeriodEnd), 'dd MMM yyyy')}</p>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p><strong>Access Type:</strong> {subscription.planSource === 'TRIAL' ? '14-Day Trial' : 'Admin Grant'}</p>
+                  {subscription.expiresAt && (
+                    <p><strong>Expires on:</strong> {format(new Date(subscription.expiresAt), 'dd MMM yyyy')}</p>
+                  )}
+                </>
               )}
             </div>
           ) : (
