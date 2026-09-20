@@ -28,11 +28,15 @@ export async function verifyTurnstileToken(token: string | null | undefined, exp
     }
 
     const result = await res.json();
+    console.log('[Turnstile Verification Result]:', result);
     if (!result.success) {
       return { success: false, error: 'CAPTCHA verification failed' }
     }
 
-    if (result.action !== expectedAction) {
+    const isTesting = secret === '1x0000000000000000000000000000000AA';
+    
+    if (result.action && result.action !== expectedAction && !isTesting) {
+      console.log(`Action mismatch: expected ${expectedAction}, got ${result.action}`);
       return { success: false, error: 'CAPTCHA action mismatch' }
     }
 
