@@ -42,6 +42,8 @@ export default function InvoiceListClient({
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   const [paymentAmount, setPaymentAmount] = useState('')
+  const [paymentDate, setPaymentDate] = useState('')
+  const [paymentTransactionId, setPaymentTransactionId] = useState('')
   const [paymentBankId, setPaymentBankId] = useState('')
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false)
 
@@ -173,7 +175,8 @@ export default function InvoiceListClient({
 
     try {
       const { recordPayment } = await import('./actions')
-      const res = await recordPayment(selectedInvoice.id, amount, paymentBankId || undefined)
+      const pDateIso = paymentDate ? new Date(paymentDate).toISOString() : undefined
+      const res = await recordPayment(selectedInvoice.id, amount, paymentTransactionId || undefined, pDateIso, paymentBankId || undefined)
       
       if (res.error) {
         toast.error(res.error)
@@ -719,6 +722,27 @@ export default function InvoiceListClient({
                     required
                   />
                 </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-foreground mb-1">Date and Time (Optional)</label>
+                <input
+                  type="datetime-local"
+                  value={paymentDate}
+                  onChange={(e) => setPaymentDate(e.target.value)}
+                  disabled={isSubmittingPayment}
+                  className="w-full px-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:outline-none"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-foreground mb-1">Transaction ID (Optional)</label>
+                <input
+                  type="text"
+                  value={paymentTransactionId}
+                  onChange={(e) => setPaymentTransactionId(e.target.value)}
+                  disabled={isSubmittingPayment}
+                  placeholder="e.g. UPI Ref or Cheque No"
+                  className="w-full px-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:outline-none"
+                />
               </div>
               <div className="mb-6">
                 <label className="block text-sm font-medium text-foreground mb-1">Deposit To Bank Account</label>

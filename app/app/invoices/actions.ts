@@ -340,7 +340,7 @@ export async function markInvoiceAsPaid(id: string) {
   }
 }
 
-export async function recordPayment(id: string, amountReceived: number, bankId?: string) {
+export async function recordPayment(id: string, amountReceived: number, paymentId?: string, paymentDate?: string, bankId?: string) {
   const { companyId } = await requireCompany()
   try {
     const invoice = await prisma.invoice.findFirst({ 
@@ -358,6 +358,8 @@ export async function recordPayment(id: string, amountReceived: number, bankId?:
       data: {
         amountPaid: newAmountPaid,
         status: isFullyPaid ? 'paid' : 'partially_paid',
+        paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
+        ...(paymentId ? { paymentId } : {}),
         ...(bankId ? { bankId } : {})
       }
     })

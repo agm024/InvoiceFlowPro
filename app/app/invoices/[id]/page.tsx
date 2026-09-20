@@ -8,6 +8,7 @@ import InvoiceActionsDropdown from './InvoiceActionsDropdown'
 import SendEmailButton from './SendEmailButton'
 import StatusBadge from '@/components/StatusBadge'
 import { getCurrencySymbol } from '@/utils/currency'
+import LocalTime from '@/components/LocalTime'
 
 export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -307,7 +308,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
                   {invoice.paymentDate && (
                     <tr>
                       <td className="py-1 pr-4 font-semibold text-zinc-600">Payment Date:</td>
-                      <td className="py-1 font-medium">{new Date(invoice.paymentDate).toLocaleString()}</td>
+                      <td className="py-1 font-medium"><LocalTime date={invoice.paymentDate} /></td>
                     </tr>
                   )}
                 </tbody>
