@@ -48,7 +48,7 @@ export default async function LandingPage() {
         <LandingFeatures />
 
         {/* 10. Pricing — DB-connected */}
-        <LandingPricing plans={plans} />
+        <LandingPricing plans={plans} isLoggedIn={!!session?.user} />
 
         {/* 11. Final CTA */}
         <LandingFinalCTA signupHref={signupHref} />

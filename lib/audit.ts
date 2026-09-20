@@ -1,5 +1,5 @@
 import prisma from '@/utils/prisma'
-import { requireSuperAdmin } from './auth-context'
+import { auth } from '@/auth'
 import { headers } from 'next/headers'
 
 export async function logAudit({
@@ -20,7 +20,8 @@ export async function logAudit({
   metadata?: any
 }) {
   try {
-    const admin = await requireSuperAdmin()
+    const session = await auth()
+    const adminId = session?.user?.id || 'system'
     const headersList = await headers()
     const ipAddress = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown'
     const userAgent = headersList.get('user-agent') || 'unknown'
@@ -35,7 +36,7 @@ export async function logAudit({
     await prisma.auditLog.create({
       data: {
         action,
-        adminId: admin.id || 'system',
+        adminId: adminId,
         targetId,
         companyId,
         ipAddress,

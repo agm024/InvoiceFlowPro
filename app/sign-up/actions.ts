@@ -71,10 +71,11 @@ export async function signUpAction(data: any) {
   })
 
   try {
+    const targetUrl = data.planId ? `/checkout/${data.planId}?cycle=${data.cycle || 'monthly'}` : '/app'
     await signIn('credentials', {
       email,
       password,
-      redirectTo: '/app'
+      redirectTo: targetUrl
     })
   } catch (error) {
     if (error instanceof AuthError) {

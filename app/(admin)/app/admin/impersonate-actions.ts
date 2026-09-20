@@ -52,7 +52,7 @@ export async function impersonateCompany(companyId: string, reason: string, allo
     cookieStore.delete('impersonateWriteEnabled')
   }
 
-  redirect('/app')
+  return { success: true }
 }
 
 export async function stopImpersonation() {

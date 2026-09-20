@@ -59,6 +59,15 @@ export async function createClient(formData: FormData) {
     }
   }
   const name = formData.get('name') as string
+
+  const existingClient = await prisma.client.findFirst({
+    where: { companyId, name: { equals: name, mode: 'insensitive' } }
+  })
+  
+  if (existingClient) {
+    return { error: `A client named "${name}" already exists.` }
+  }
+
   const email = formData.get('email') as string
   const phone = formData.get('phone') as string
   const address = formData.get('address') as string
@@ -149,6 +158,15 @@ export async function generateMissingPortalTokens() {
 export async function updateClient(id: string, formData: FormData) {
   const { companyId } = await requireCompany()
   const name = formData.get('name') as string
+
+  const duplicateClient = await prisma.client.findFirst({
+    where: { companyId, name: { equals: name, mode: 'insensitive' }, id: { not: id } }
+  })
+  
+  if (duplicateClient) {
+    return { error: `A client named "${name}" already exists.` }
+  }
+
   const email = formData.get('email') as string
   const phone = formData.get('phone') as string
   const address = formData.get('address') as string

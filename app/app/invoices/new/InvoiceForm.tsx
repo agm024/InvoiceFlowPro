@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import UpgradeModal from '@/components/UpgradeModal'
 import { createInvoice } from '../actions'
 import { createClient } from '../../clients/actions'
 import { createProduct } from '../../products/actions'
@@ -406,6 +407,16 @@ export default function InvoiceForm({
   
   return (
     <div className="relative font-sans text-sm flex flex-col items-center w-full min-h-screen bg-zinc-50/50 dark:bg-black/20 p-2 sm:p-8 gap-6">
+
+      {/* Full screen loading overlay when submitting */}
+      {isSubmitting && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-200">
+            <div className="w-10 h-10 border-4 border-zinc-200 dark:border-zinc-700 border-t-primary rounded-full animate-spin"></div>
+            <p className="font-semibold text-zinc-900 dark:text-white">Saving {invoiceType === 'QUOTATION' ? 'Estimate' : 'Invoice'}...</p>
+          </div>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col xl:flex-row gap-4 xl:gap-8 text-foreground w-full max-w-[1400px] mx-auto pb-28 sm:pb-0">
         

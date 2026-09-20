@@ -3,6 +3,7 @@
 import prisma from "@/utils/prisma"
 import bcrypt from "bcryptjs"
 import { signIn } from "@/auth"
+import { logAudit } from "@/lib/audit"
 
 export async function checkInvitationAction(token: string) {
   const invitation = await prisma.invitation.findFirst({
@@ -37,16 +38,25 @@ export async function acceptInvitationAction(token: string, name: string, passwo
     return { error: "This invitation has expired." }
   }
 
-  // Check if user already exists
   const existingUser = await prisma.user.findUnique({ where: { email: invitation.email } })
   
   if (existingUser) {
-    // If user exists, we might just link them, but in this schema, users are strictly tied to one company
-    // For now, if user exists, they can't join another company unless we support multi-company.
-    // If they already exist in this company, why invite them?
     if (existingUser.companyId !== invitation.companyId) {
       return { error: "This email is already registered to a different workspace." }
     }
+    
+    const passwordHash = await bcrypt.hash(password, 10)
+    
+    // Update existing user role based on invitation and update their password
+    await prisma.user.update({
+      where: { id: existingUser.id },
+      data: {
+        passwordHash,
+        name,
+        role: "member", // never default to admin
+        customRoleId: (invitation.customRoleId || undefined) as string | undefined
+      }
+    });
   } else {
     // Create new user
     const passwordHash = await bcrypt.hash(password, 10)
@@ -69,8 +79,17 @@ export async function acceptInvitationAction(token: string, name: string, passwo
     data: { status: "ACCEPTED" }
   })
 
+  await logAudit({
+    action: 'INVITATION_ACCEPTED',
+    targetId: invitation.id,
+    companyId: invitation.companyId || undefined,
+    metadata: {
+      email: invitation.email,
+      roleAssigned: invitation.customRoleId || 'member'
+    }
+  })
+
   // Sign in the user automatically
-  // This throws a NEXT_REDIRECT internally, which is caught by the client
   await signIn('credentials', {
     email: invitation.email,
     password,

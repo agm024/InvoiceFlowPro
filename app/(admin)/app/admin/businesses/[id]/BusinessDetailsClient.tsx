@@ -10,7 +10,8 @@ import {
 import Link from "next/link"
 import { 
   suspendCompany, reactivateCompany, archiveCompany, 
-  changeCompanyPlan, cancelCompanySubscription 
+  changeCompanyPlan, cancelCompanySubscription,
+  grantAdminPlan, revokeAdminPlan
 } from "../actions"
 import { impersonateCompany } from "../../impersonate-actions"
 
@@ -92,6 +93,7 @@ interface BusinessDetailsClientProps {
   activityLogs: AuditLogRow[]
   tickets: TicketRow[]
   plans: Plan[]
+  clientCount: number
   adminImpersonating: boolean
 }
 
@@ -103,6 +105,7 @@ export function BusinessDetailsClient({
   activityLogs,
   tickets,
   plans,
+  clientCount,
   adminImpersonating
 }: BusinessDetailsClientProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "invoices" | "payments" | "subscriptions" | "activity" | "support" | "security">("overview")
@@ -120,6 +123,14 @@ export function BusinessDetailsClient({
   const [selectedPlanId, setSelectedPlanId] = useState(company.subscription?.plan?.id || "")
   const [planChangeReason, setPlanChangeReason] = useState("")
 
+  const [showGrantModal, setShowGrantModal] = useState(false)
+  const [grantPlanId, setGrantPlanId] = useState("")
+  const [grantDurationDays, setGrantDurationDays] = useState("")
+  const [grantReason, setGrantReason] = useState("")
+
+  const [showRevokeModal, setShowRevokeModal] = useState(false)
+  const [revokeReason, setRevokeReason] = useState("")
+
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [cancelReason, setCancelReason] = useState("")
 
@@ -131,7 +142,10 @@ export function BusinessDetailsClient({
     if (!impersonateReason.trim()) return alert("Reason is required.")
     startTransition(async () => {
       try {
-        await impersonateCompany(company.id, impersonateReason, impersonateAllowWrite)
+        const res = await impersonateCompany(company.id, impersonateReason, impersonateAllowWrite)
+        if (res?.success) {
+          window.location.href = '/app'
+        }
       } catch (err: any) {
         alert(err.message)
       }
@@ -164,6 +178,35 @@ export function BusinessDetailsClient({
         await changeCompanyPlan(company.id, selectedPlanId, planChangeReason)
         setShowPlanModal(false)
         setPlanChangeReason("")
+      } catch (err: any) {
+        alert(err.message)
+      }
+    })
+  }
+
+  const handleGrantPlan = () => {
+    if (!grantReason.trim()) return alert("Reason is required.")
+    if (!grantPlanId) return alert("Select a plan to grant.")
+    startTransition(async () => {
+      try {
+        const days = grantDurationDays ? parseInt(grantDurationDays) : null
+        await grantAdminPlan(company.id, grantPlanId, days, grantReason)
+        setShowGrantModal(false)
+        setGrantReason("")
+        setGrantDurationDays("")
+      } catch (err: any) {
+        alert(err.message)
+      }
+    })
+  }
+
+  const handleRevokePlan = () => {
+    if (!revokeReason.trim()) return alert("Reason is required.")
+    startTransition(async () => {
+      try {
+        await revokeAdminPlan(company.id, revokeReason)
+        setShowRevokeModal(false)
+        setRevokeReason("")
       } catch (err: any) {
         alert(err.message)
       }
@@ -352,6 +395,20 @@ export function BusinessDetailsClient({
                     ></div>
                   </div>
                 </div>
+
+                {/* Clients Limit */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs font-semibold">
+                    <span className="text-zinc-500">Clients Limit ({clientCount} created)</span>
+                    <span className="text-zinc-700 dark:text-zinc-300">{clientLimit === null ? "Unlimited" : `${clientLimit} max`}</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-zinc-100 dark:bg-zinc-900 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-amber-500" 
+                      style={{ width: clientLimit === null ? "10%" : `${Math.min((clientCount / clientLimit) * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -361,32 +418,59 @@ export function BusinessDetailsClient({
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-950 dark:text-white">Active Plan</h3>
                 
                 <div className="mt-4">
-                  <h4 className="text-xl font-bold text-zinc-900 dark:text-white">{planName}</h4>
+                  <h4 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                    {planName}
+                    {company.subscription?.planSource === "ADMIN_GRANT" && (
+                      <span className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">Admin Grant</span>
+                    )}
+                  </h4>
                   <p className="text-2xl font-bold mt-2 text-zinc-800 dark:text-zinc-200">
                     {currency === "USD" ? "$" : "₹"}{price.toLocaleString()}
                     <span className="text-xs text-zinc-400 font-semibold uppercase"> / {company.subscription?.billingInterval || "month"}</span>
                   </p>
-                  <p className="text-xs text-zinc-500 mt-2">
-                    Status: <span className={`font-semibold capitalize ${company.subscription?.status === 'active' ? 'text-emerald-500' : company.subscription?.status === 'paused' ? 'text-amber-500' : 'text-red-500'}`}>{company.subscription?.status || "active"}</span>
+                  <p className="text-xs text-zinc-500 mt-2 flex flex-col gap-1">
+                    <span>Status: <span className={`font-semibold capitalize ${company.subscription?.status === 'active' ? 'text-emerald-500' : company.subscription?.status === 'paused' ? 'text-amber-500' : 'text-red-500'}`}>{company.subscription?.status || "active"}</span></span>
+                    {company.subscription?.planSource === "ADMIN_GRANT" && company.subscription?.expiresAt && (
+                      <span>Expires: <span className="font-semibold text-zinc-700 dark:text-zinc-300">{new Date(company.subscription.expiresAt).toLocaleDateString()}</span></span>
+                    )}
                   </p>
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-6">
-                <button
-                  onClick={() => setShowPlanModal(true)}
-                  className="flex-1 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 py-2 rounded-lg text-xs font-semibold transition"
-                >
-                  Change Plan
-                </button>
-                {company.subscription?.status !== "canceled" && (
+              <div className="flex flex-col gap-2 pt-6">
+                <div className="flex gap-2">
                   <button
-                    onClick={() => setShowCancelModal(true)}
-                    className="flex-1 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/30 py-2 rounded-lg text-xs font-semibold transition"
+                    onClick={() => setShowPlanModal(true)}
+                    className="flex-1 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 py-2 rounded-lg text-xs font-semibold transition"
                   >
-                    Cancel Subscription
+                    Change Plan
                   </button>
-                )}
+                  {company.subscription?.status !== "canceled" && (
+                    <button
+                      onClick={() => setShowCancelModal(true)}
+                      className="flex-1 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/30 py-2 rounded-lg text-xs font-semibold transition"
+                    >
+                      Cancel Plan
+                    </button>
+                  )}
+                </div>
+                
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setShowGrantModal(true)}
+                    className="flex-1 bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/20 dark:hover:bg-purple-900/30 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-900/30 py-2 rounded-lg text-xs font-semibold transition"
+                  >
+                    Grant Override
+                  </button>
+                  {company.subscription?.planSource === "ADMIN_GRANT" && (
+                    <button
+                      onClick={() => setShowRevokeModal(true)}
+                      className="flex-1 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 py-2 rounded-lg text-xs font-semibold transition"
+                    >
+                      Revoke Grant
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -772,6 +856,109 @@ export function BusinessDetailsClient({
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-50"
               >
                 {isPending ? "Migrating..." : "Update Plan"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Grant Plan Modal */}
+      {showGrantModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">Grant Plan Override</h3>
+            <p className="text-xs text-zinc-500">Temporarily override this company's plan for testing, support, or promotions.</p>
+            
+            <div className="space-y-3 text-xs font-semibold">
+              <div>
+                <label className="block text-zinc-600 dark:text-zinc-400 mb-1">Target Plan</label>
+                <select 
+                  value={grantPlanId}
+                  onChange={(e) => setGrantPlanId(e.target.value)}
+                  className="w-full bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2"
+                >
+                  <option value="">Select a plan</option>
+                  {plans.map(p => (
+                    <option key={p.id} value={p.id}>{p.name} ({p.currency === "USD" ? "$" : "₹"}{p.monthlyPrice}/mo)</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-zinc-600 dark:text-zinc-400 mb-1">Duration (Days)</label>
+                <input 
+                  type="number"
+                  placeholder="Leave empty for infinite"
+                  value={grantDurationDays}
+                  onChange={(e) => setGrantDurationDays(e.target.value)}
+                  className="w-full bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-zinc-600 dark:text-zinc-400 mb-1">Reason for Override</label>
+                <textarea 
+                  rows={2}
+                  placeholder="e.g. Granted for 7 days trial."
+                  value={grantReason}
+                  onChange={(e) => setGrantReason(e.target.value)}
+                  className="w-full bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-purple-400"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 text-xs font-semibold">
+              <button 
+                onClick={() => setShowGrantModal(false)}
+                className="px-4 py-2 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:bg-zinc-50"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleGrantPlan}
+                disabled={isPending}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
+              >
+                {isPending ? "Applying..." : "Grant Plan"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Revoke Modal */}
+      {showRevokeModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Revoke Plan Override</h3>
+            <p className="text-xs text-zinc-500">Remove the admin override and restore the company's previous plan.</p>
+            
+            <div className="space-y-3 text-xs font-semibold">
+              <div>
+                <label className="block text-zinc-600 dark:text-zinc-400 mb-1">Revocation Reason</label>
+                <textarea 
+                  rows={2}
+                  placeholder="e.g. Trial ended."
+                  value={revokeReason}
+                  onChange={(e) => setRevokeReason(e.target.value)}
+                  className="w-full bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 text-xs font-semibold">
+              <button 
+                onClick={() => setShowRevokeModal(false)}
+                className="px-4 py-2 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-900"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleRevokePlan}
+                disabled={isPending}
+                className="px-4 py-2 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 rounded-lg hover:opacity-90 disabled:opacity-50"
+              >
+                {isPending ? "Revoking..." : "Revoke Override"}
               </button>
             </div>
           </div>

@@ -52,7 +52,10 @@ export function LandingFooter() {
             <h2 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Company</h2>
             <ul className="space-y-3 text-sm" role="list">
               <li>
-                <a href="mailto:support@flowradiant.in" className="land-footer-link">Contact</a>
+                <Link href="/about" className="land-footer-link">About FlowRadiantPro</Link>
+              </li>
+              <li>
+                <a href="mailto:support@siteradiant.co.in" className="land-footer-link">Contact</a>
               </li>
               <li>
                 <a href="https://twitter.com/SiteRadiant" target="_blank" rel="noopener noreferrer" className="land-footer-link">Twitter</a>

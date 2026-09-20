@@ -23,7 +23,7 @@ export default async function CompanyDetailsPage({ params }: { params: Promise<{
       orderBy: { createdAt: 'desc' }
     }),
     prisma.invoice.findMany({
-      where: { companyId: id },
+      where: { companyId: id, isDeleted: false },
       orderBy: { date: 'desc' }
     }),
     prisma.platformPayment.findMany({
@@ -60,6 +60,9 @@ export default async function CompanyDetailsPage({ params }: { params: Promise<{
       status: company.subscription.status,
       billingInterval: company.subscription.billingInterval,
       currentPeriodEnd: company.subscription.currentPeriodEnd ? company.subscription.currentPeriodEnd.toISOString() : null,
+      planSource: company.subscription.planSource,
+      expiresAt: company.subscription.expiresAt ? company.subscription.expiresAt.toISOString() : null,
+      grantReason: company.subscription.grantReason,
       plan: {
         id: company.subscription.plan.id,
         name: company.subscription.plan.name,
@@ -128,11 +131,16 @@ export default async function CompanyDetailsPage({ params }: { params: Promise<{
     currency: p.currency
   }))
 
+  const clientCount = await prisma.client.count({
+    where: { companyId: id }
+  })
+
   return (
     <BusinessDetailsClient 
       company={formattedCompany}
       users={formattedUsers}
       invoices={formattedInvoices}
+      clientCount={clientCount}
       payments={formattedPayments}
       activityLogs={formattedLogs}
       tickets={formattedTickets}

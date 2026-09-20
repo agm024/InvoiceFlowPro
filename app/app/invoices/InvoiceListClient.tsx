@@ -18,13 +18,15 @@ export default function InvoiceListClient({
   settings, 
   type = 'invoice', 
   hideHeader = false,
-  banks = []
+  banks = [],
+  isLimitReached = false
 }: { 
   initialInvoices: Invoice[], 
   settings?: any, 
   type?: 'invoice' | 'quotation', 
   hideHeader?: boolean,
-  banks?: any[] 
+  banks?: any[],
+  isLimitReached?: boolean
 }) {
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices)
   const [activeTab, setActiveTab] = useState<TabType>('All')
@@ -312,12 +314,21 @@ export default function InvoiceListClient({
             <Link href="/app/settings" className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
               <Settings size={16} /> Document Settings
             </Link>
-            <Link 
-              href={type === 'quotation' ? '/app/estimates/new' : '/app/invoices/new'} 
-              className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-hover transition-colors shadow-sm shadow-primary/20"
-            >
-              <Plus size={18} /> Create {type === 'quotation' ? 'Quotation' : 'Invoice'}
-            </Link>
+            {isLimitReached && type === 'invoice' ? (
+              <button
+                onClick={() => setShowUpgradeModal(true)}
+                className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-hover transition-colors shadow-sm shadow-primary/20"
+              >
+                <Plus size={18} /> New {type === 'quotation' ? 'Estimate' : 'Invoice'}
+              </button>
+            ) : (
+              <Link 
+                href={type === 'quotation' ? '/app/estimates/new' : '/app/invoices/new'} 
+                className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-hover transition-colors shadow-sm shadow-primary/20"
+              >
+                <Plus size={18} /> New {type === 'quotation' ? 'Estimate' : 'Invoice'}
+              </Link>
+            )}
           </div>
         </div>
       )}
@@ -500,9 +511,15 @@ export default function InvoiceListClient({
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-1">No invoices found</h3>
             <p className="text-zinc-500 mb-6 text-sm">Create a new invoice to bill a client for your services.</p>
-            <Link href="/app/invoices/new" className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 text-sm">
-              <Plus size={16} /> Create
-            </Link>
+            {isLimitReached && type === 'invoice' ? (
+              <button onClick={() => setShowUpgradeModal(true)} className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 text-sm">
+                <Plus size={16} /> Create
+              </button>
+            ) : (
+              <Link href={type === 'quotation' ? '/app/estimates/new' : '/app/invoices/new'} className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 text-sm">
+                <Plus size={16} /> Create
+              </Link>
+            )}
           </div>
         )}
       </div>
@@ -654,9 +671,15 @@ export default function InvoiceListClient({
                     </div>
                     <h3 className="text-lg font-semibold text-foreground mb-1">No invoices found</h3>
                     <p className="text-zinc-500 mb-6">Create a new invoice to bill a client for your services.</p>
-                    <Link href="/app/invoices/new" className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
-                      <Plus size={18} /> Create Invoice
-                    </Link>
+                    {isLimitReached && type === 'invoice' ? (
+                      <button onClick={() => setShowUpgradeModal(true)} className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
+                        <Plus size={18} /> Create {type === 'quotation' ? 'Estimate' : 'Invoice'}
+                      </button>
+                    ) : (
+                      <Link href={type === 'quotation' ? '/app/estimates/new' : '/app/invoices/new'} className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
+                        <Plus size={18} /> Create {type === 'quotation' ? 'Estimate' : 'Invoice'}
+                      </Link>
+                    )}
                   </td>
                 </tr>
               )}

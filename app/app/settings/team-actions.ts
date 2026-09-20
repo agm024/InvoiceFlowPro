@@ -10,7 +10,12 @@ import { sendEmail } from "@/app/actions/email"
 
 export async function inviteTeamMember(email: string, customRoleId: string) {
   const { companyId } = await requireCompany()
-  await requireWriteAccess()
+  
+  try {
+    await requireWriteAccess()
+  } catch (err: any) {
+    return { error: err.message || 'Write operations are blocked during read-only impersonation.' }
+  }
 
   const company = await prisma.company.findUnique({
     where: { id: companyId },
@@ -68,7 +73,49 @@ export async function inviteTeamMember(email: string, customRoleId: string) {
     html
   })
 
-  await logAudit({ action: "TEAM_INVITE_SENT", targetId: invitation.id, metadata: { email } })
+  await logAudit({ action: "INVITATION_EMAIL_SENT", targetId: invitation.id, metadata: { email } })
+  await logAudit({ action: "INVITATION_CREATED", targetId: invitation.id, metadata: { email, customRoleId } })
+  revalidatePath("/app/settings")
+  
+  return { success: true }
+}
+
+export async function resendInvitationEmail(id: string) {
+  const { companyId } = await requireCompany()
+  
+  try {
+    await requireWriteAccess()
+  } catch (err: any) {
+    return { error: err.message || 'Write operations are blocked during read-only impersonation.' }
+  }
+
+  const invitation = await prisma.invitation.findUnique({
+    where: { id, companyId, status: "PENDING" }
+  })
+
+  if (!invitation) {
+    return { error: "Invitation not found or no longer pending." }
+  }
+
+  const inviteLink = `https://flow.siteradiant.co.in/invite?token=${invitation.token}`
+  
+  const html = `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h2>Reminder: You've been invited!</h2>
+      <p>You have been invited to join a team on FlowRadiant.</p>
+      <p>Click the link below to accept the invitation and set up your account:</p>
+      <a href="${inviteLink}" style="display: inline-block; padding: 10px 20px; background: #000; color: #fff; text-decoration: none; border-radius: 5px;">Accept Invitation</a>
+      <p>This link will expire in 7 days.</p>
+    </div>
+  `
+
+  await sendEmail({
+    to: invitation.email,
+    subject: "Reminder: Invitation to join FlowRadiant",
+    html
+  })
+
+  await logAudit({ action: "INVITATION_EMAIL_RESENT", targetId: invitation.id, metadata: { email: invitation.email } })
   revalidatePath("/app/settings")
   
   return { success: true }
@@ -76,7 +123,12 @@ export async function inviteTeamMember(email: string, customRoleId: string) {
 
 export async function revokeInvitation(id: string) {
   const { companyId } = await requireCompany()
-  await requireWriteAccess()
+  
+  try {
+    await requireWriteAccess()
+  } catch (err: any) {
+    return { error: err.message || 'Write operations are blocked during read-only impersonation.' }
+  }
 
   await prisma.invitation.delete({ where: { id, companyId } })
   revalidatePath("/app/settings")
@@ -85,12 +137,20 @@ export async function revokeInvitation(id: string) {
 
 export async function removeTeamMember(id: string) {
   const { companyId } = await requireCompany()
-  await requireWriteAccess()
+  
+  try {
+    await requireWriteAccess()
+  } catch (err: any) {
+    return { error: err.message || 'Write operations are blocked during read-only impersonation.' }
+  }
 
-  // We don't delete the user, we could just remove their customRole or set them to a detached state
-  // But since user must belong to a company in this schema, we might just delete them or remove role
-  // Let's just remove the role for now so they have no permissions, or delete the user record if they only belong here.
-  // We'll just remove the customRole and set role to 'member'
+  const targetUser = await prisma.user.findUnique({ where: { id, companyId } })
+  if (!targetUser) return { error: 'User not found.' }
+  
+  if (targetUser.role === 'admin') {
+    return { error: 'Cannot remove an Account Admin. The admin title must be handed over first.' }
+  }
+
   await prisma.user.delete({ where: { id, companyId } })
 
   revalidatePath("/app/settings")
@@ -99,7 +159,12 @@ export async function removeTeamMember(id: string) {
 
 export async function updateTeamMemberRole(userId: string, customRoleId: string | null) {
   const { companyId } = await requireCompany()
-  await requireWriteAccess()
+  
+  try {
+    await requireWriteAccess()
+  } catch (err: any) {
+    return { error: err.message || 'Write operations are blocked during read-only impersonation.' }
+  }
 
   await prisma.user.update({
     where: { id: userId, companyId },

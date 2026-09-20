@@ -132,8 +132,10 @@ export async function changeCompanyPlan(companyId: string, planId: string, reaso
   }
 
   const sub = await prisma.subscription.findUnique({ where: { companyId } })
+  const newPlan = await prisma.plan.findUnique({ where: { id: planId } })
+  if (!newPlan) throw new Error("Plan not found.")
+
   if (!sub) {
-    // Create new subscription if none exists
     await prisma.subscription.create({
       data: {
         companyId,
@@ -149,10 +151,112 @@ export async function changeCompanyPlan(companyId: string, planId: string, reaso
   }
 
   await logAudit({
-    action: "COMPANY_PLAN_CHANGED",
+    action: "PLAN_CHANGED_BY_ADMIN",
     companyId,
     reason,
-    metadata: { planId }
+    before: sub ? { planId: sub.planId } : null,
+    after: { planId }
+  })
+
+  revalidatePath(`/app/admin/businesses/${companyId}`)
+}
+
+export async function grantAdminPlan(companyId: string, planId: string, durationDays: number | null, reason: string) {
+  await requireSuperAdmin()
+  await requireWriteAccess()
+
+  if (!reason || reason.trim() === "") {
+    throw new Error("A reason must be provided to grant an admin plan.")
+  }
+
+  const session = await requireSuperAdmin() // get the current user for grantedBy
+
+  const sub = await prisma.subscription.findUnique({ where: { companyId } })
+  const newPlan = await prisma.plan.findUnique({ where: { id: planId } })
+  if (!newPlan) throw new Error("Plan not found.")
+
+  const expiresAt = durationDays ? new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000) : null
+
+  if (!sub) {
+    await prisma.subscription.create({
+      data: {
+        companyId,
+        planId,
+        status: "active",
+        planSource: "ADMIN_GRANT",
+        grantedBy: session.id,
+        grantedAt: new Date(),
+        expiresAt,
+        grantReason: reason
+      }
+    })
+  } else {
+    await prisma.subscription.update({
+      where: { companyId },
+      data: { 
+        planId,
+        planSource: "ADMIN_GRANT",
+        grantedBy: session.id,
+        grantedAt: new Date(),
+        expiresAt,
+        previousPlanId: sub.planSource === "ADMIN_GRANT" ? sub.previousPlanId : sub.planId, // preserve original plan if already granted
+        grantReason: reason
+      }
+    })
+  }
+
+  await logAudit({
+    action: "ADMIN_PLAN_GRANTED",
+    companyId,
+    reason,
+    before: sub ? { planId: sub.planId, source: sub.planSource } : null,
+    after: { planId, source: "ADMIN_GRANT", expiresAt }
+  })
+
+  revalidatePath(`/app/admin/businesses/${companyId}`)
+}
+
+export async function revokeAdminPlan(companyId: string, reason: string) {
+  await requireSuperAdmin()
+  await requireWriteAccess()
+
+  if (!reason || reason.trim() === "") {
+    throw new Error("A reason must be provided to revoke an admin plan.")
+  }
+
+  const sub = await prisma.subscription.findUnique({ where: { companyId } })
+  if (!sub || sub.planSource !== "ADMIN_GRANT") {
+    throw new Error("No active admin grant found.")
+  }
+
+  // If there's no previous plan, maybe fallback to free plan
+  let fallbackPlanId = sub.previousPlanId
+  if (!fallbackPlanId) {
+    const freePlan = await prisma.plan.findFirst({ orderBy: { monthlyPrice: 'asc' } })
+    if (freePlan) fallbackPlanId = freePlan.id
+  }
+
+  if (!fallbackPlanId) throw new Error("Could not determine fallback plan.")
+
+  await prisma.subscription.update({
+    where: { companyId },
+    data: { 
+      planId: fallbackPlanId,
+      planSource: "SUBSCRIPTION",
+      grantedBy: null,
+      grantedAt: null,
+      expiresAt: null,
+      previousPlanId: null,
+      grantReason: null
+    }
+  })
+
+  await logAudit({
+    action: "ADMIN_PLAN_REVOKED",
+    companyId,
+    reason,
+    before: { planId: sub.planId, source: sub.planSource },
+    after: { planId: fallbackPlanId, source: "SUBSCRIPTION" }
   })
 
   revalidatePath(`/app/admin/businesses/${companyId}`)

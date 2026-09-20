@@ -1,11 +1,16 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
+import GitHubProvider from "next-auth/providers/github"
 import prisma from "@/utils/prisma"
 import bcrypt from "bcryptjs"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -55,9 +60,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
     })
   ],
-  callbacks: {
+    callbacks: {
     async signIn({ user, account, profile }) {
-      if (account?.provider === "google") {
+      if (account?.provider === "google" || account?.provider === "github") {
         if (!user.email) return false
         const dbUser = await prisma.user.findUnique({ where: { email: user.email } })
         if (!dbUser) {
@@ -87,7 +92,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Initial sign in
       if (user) {
         let dbUser = null;
-        if (account?.provider === "google" && user.email) {
+        if ((account?.provider === "google" || account?.provider === "github") && user.email) {
            dbUser = await prisma.user.findUnique({ where: { email: user.email } });
         } else {
            dbUser = user as any; // From CredentialsProvider
@@ -98,8 +103,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.companyId = dbUser.companyId
           token.isSuperAdmin = dbUser.isSuperAdmin
           token.role = dbUser.role
-        } else if (account?.provider === "google") {
-          // New user signing up via Google
+        } else if (account?.provider === "google" || account?.provider === "github") {
+          // New user signing up via OAuth
           token.email = user.email;
           token.name = user.name;
         }

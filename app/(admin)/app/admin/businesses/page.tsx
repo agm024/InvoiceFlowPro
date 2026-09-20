@@ -49,7 +49,11 @@ export default async function BusinessesPage({
       include: {
         subscription: { include: { plan: true } },
         _count: {
-          select: { users: true, invoices: true, clients: true }
+          select: { 
+            users: true, 
+            invoices: { where: { isDeleted: false } }, 
+            clients: true 
+          }
         }
       },
       orderBy: { [sortBy]: sortOrder },

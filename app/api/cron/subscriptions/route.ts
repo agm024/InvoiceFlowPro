@@ -43,9 +43,50 @@ export async function GET(req: Request) {
       }
     }
 
+    // Find all expired admin grants
+    const expiredAdminGrants = await prisma.subscription.findMany({
+      where: {
+        planSource: 'ADMIN_GRANT',
+        expiresAt: { lt: now }
+      }
+    });
+
+    for (const sub of expiredAdminGrants) {
+      let fallbackPlanId = sub.previousPlanId;
+      if (!fallbackPlanId) {
+        fallbackPlanId = freePlan.id;
+      }
+
+      await prisma.subscription.update({
+        where: { id: sub.id },
+        data: {
+          planId: fallbackPlanId,
+          planSource: 'SUBSCRIPTION',
+          grantedBy: null,
+          grantedAt: null,
+          expiresAt: null,
+          previousPlanId: null,
+          grantReason: null
+        }
+      });
+
+      await prisma.auditLog.create({
+        data: {
+          action: 'ADMIN_PLAN_EXPIRED',
+          adminId: 'system',
+          companyId: sub.companyId,
+          metadata: JSON.stringify({
+            expiredPlanId: sub.planId,
+            restoredPlanId: fallbackPlanId
+          })
+        }
+      });
+    }
+
     return NextResponse.json({ 
       success: true, 
-      processed: expiredSubs.length 
+      processed: expiredSubs.length,
+      adminGrantsExpired: expiredAdminGrants.length
     });
   } catch (error) {
     console.error('Cron Error:', error);

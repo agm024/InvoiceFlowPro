@@ -149,7 +149,14 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                {editingUserId === user.id ? (
+                {user.role === 'admin' ? (
+                  <span 
+                    className="text-sm font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800"
+                    title="Account Owner"
+                  >
+                    Account Admin
+                  </span>
+                ) : editingUserId === user.id ? (
                   <div className="flex items-center gap-2">
                     <select 
                       className="bg-zinc-50 dark:bg-zinc-800 border rounded-lg px-2 py-1 text-sm"
@@ -183,9 +190,11 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
                 <span className="text-xs font-bold px-2 py-1 rounded bg-emerald-500/10 text-emerald-600">
                   Active
                 </span>
-                <button onClick={() => handleRemove(user.id)} className="text-zinc-400 hover:text-red-500 p-2">
-                  <Trash2 size={16} />
-                </button>
+                {user.role !== 'admin' && (
+                  <button onClick={() => handleRemove(user.id)} className="text-zinc-400 hover:text-red-500 p-2">
+                    <Trash2 size={16} />
+                  </button>
+                )}
               </div>
             </div>
           ))}

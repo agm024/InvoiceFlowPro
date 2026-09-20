@@ -33,7 +33,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-bold text-lg">Email Support</h3>
                 <p className="text-zinc-600 dark:text-zinc-400 mt-2">
-                  support@flowradiant.com<br/>
+                  <a href="mailto:support@siteradiant.co.in" className="hover:underline">support@siteradiant.co.in</a><br/>
                   <span className="text-sm">We aim to reply within 24 hours.</span>
                 </p>
               </div>
@@ -46,7 +46,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-bold text-lg">Phone Number</h3>
                 <p className="text-zinc-600 dark:text-zinc-400 mt-2">
-                  +91 98765 43210<br/>
+                  <a href="tel:+917208999095" className="hover:underline">+91 7208999095</a><br/>
                   <span className="text-sm">Mon-Fri, 9:00 AM - 6:00 PM IST</span>
                 </p>
               </div>

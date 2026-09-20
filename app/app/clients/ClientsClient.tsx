@@ -139,12 +139,21 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
               className="pl-9 pr-4 py-2 bg-card-bg border border-card-border rounded-lg text-sm focus:outline-none focus:border-zinc-900 dark:border-white text-foreground shadow-sm w-full md:w-64"
             />
           </div>
-          <Link 
-            href="/app/clients/new" 
-            className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary-hover transition-colors shadow-sm flex items-center gap-2 shrink-0"
-          >
-            <Plus size={18} /> <span className="hidden sm:inline">Add Client</span>
-          </Link>
+          {isLimitReached ? (
+            <button 
+              onClick={() => setShowUpgradeModal(true)}
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary-hover transition-colors shadow-sm flex items-center gap-2 shrink-0"
+            >
+              <Plus size={18} /> <span className="hidden sm:inline">Add Client</span>
+            </button>
+          ) : (
+            <Link 
+              href="/app/clients/new" 
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary-hover transition-colors shadow-sm flex items-center gap-2 shrink-0"
+            >
+              <Plus size={18} /> <span className="hidden sm:inline">Add Client</span>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -155,9 +164,15 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
           </div>
           <h3 className="text-lg font-semibold text-foreground mb-1">No clients found</h3>
           <p className="text-zinc-500 mb-6">You haven&apos;t added any clients yet, or none match your search.</p>
-          <Link href="/app/clients/new" className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
-            <Plus size={18} /> Create your first client
-          </Link>
+          {isLimitReached ? (
+            <button onClick={() => setShowUpgradeModal(true)} className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
+              <Plus size={18} /> Create your first client
+            </button>
+          ) : (
+            <Link href="/app/clients/new" className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-2">
+              <Plus size={18} /> Create your first client
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

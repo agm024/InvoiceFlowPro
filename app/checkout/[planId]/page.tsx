@@ -10,10 +10,10 @@ export default async function CheckoutPage({
   searchParams,
 }: {
   params: Promise<{ planId: string }>
-  searchParams: Promise<{ interval?: string }>
+  searchParams: Promise<{ interval?: string; cycle?: string }>
 }) {
   const { planId }   = await params
-  const { interval } = await searchParams
+  const { interval, cycle } = await searchParams
 
   const plan = await prisma.plan.findUnique({ where: { id: planId } })
   if (!plan) notFound()
@@ -51,7 +51,7 @@ export default async function CheckoutPage({
       <main className="py-10 px-6 max-w-6xl mx-auto">
         <CheckoutClient
           plan={plan}
-          isAnnual={interval !== 'month'}
+          isAnnual={cycle === 'yearly' || interval === 'year'}
           user={user}
           company={company}
         />

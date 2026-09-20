@@ -35,8 +35,8 @@ export default async function InvoicesPage() {
         initialInvoices={invoices} 
         settings={settings}
         banks={banks}
+        isLimitReached={isLimitReached}
       />
     </div>
   )
 }
-

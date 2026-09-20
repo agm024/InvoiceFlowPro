@@ -11,6 +11,10 @@ export async function register() {
       throw new Error('Missing required environment variables: ' + missingEnvs.join(', '));
     }
 
+    // Increase default max listeners to suppress dev-mode MaxListenersExceededWarning
+    // (caused by Sentry/OTel wrapping Next.js ServerResponse heavily during HMR)
+    require('events').EventEmitter.defaultMaxListeners = 20;
+
     await import('./sentry.server.config');
 
     const exporter = new OTLPLogExporter({

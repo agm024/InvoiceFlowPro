@@ -88,43 +88,74 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify([
-              {
-                "@context": "https://schema.org",
-                "@type": "SoftwareApplication",
-                "name": "FlowRadiantPro",
-                "applicationCategory": "BusinessApplication",
-                "operatingSystem": "Web",
-                "url": "https://flow.siteradiant.co.in/",
-                "offers": {
-                  "@type": "Offer",
-                  "price": "0",
-                  "priceCurrency": "INR"
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "SoftwareApplication",
+                  "name": "FlowRadiantPro",
+                  "applicationCategory": "BusinessApplication",
+                  "operatingSystem": "Web",
+                  "url": "https://flow.siteradiant.co.in/",
+                  "brand": {
+                    "@type": "Brand",
+                    "name": "FlowRadiantPro"
+                  },
+                  "publisher": {
+                    "@type": "Organization",
+                    "name": "SiteRadiant",
+                    "url": "https://siteradiant.co.in/"
+                  },
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "INR"
+                  }
                 },
-                "creator": {
+                {
                   "@type": "Organization",
-                  "name": "SiteRadiant",
-                  "url": "https://siteradiant.co.in/"
+                  "name": "FlowRadiantPro",
+                  "url": "https://flow.siteradiant.co.in/",
+                  "logo": "https://flow.siteradiant.co.in/logo.png",
+                  "parentOrganization": {
+                    "@type": "Organization",
+                    "name": "SiteRadiant",
+                    "url": "https://siteradiant.co.in/"
+                  },
+                  "sameAs": [
+                    "https://twitter.com/SiteRadiant",
+                    "https://www.linkedin.com/company/siteradiant",
+                    "https://github.com/SiteRadiant"
+                  ]
+                },
+                {
+                  "@type": "WebSite",
+                  "name": "FlowRadiantPro",
+                  "url": "https://flow.siteradiant.co.in/",
+                  "publisher": {
+                    "@type": "Organization",
+                    "name": "SiteRadiant"
+                  }
+                },
+                {
+                  "@type": "BreadcrumbList",
+                  "itemListElement": [
+                    {
+                      "@type": "ListItem",
+                      "position": 1,
+                      "name": "Home",
+                      "item": "https://flow.siteradiant.co.in/"
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 2,
+                      "name": "About",
+                      "item": "https://flow.siteradiant.co.in/about"
+                    }
+                  ]
                 }
-              },
-              {
-                "@context": "https://schema.org",
-                "@type": "Organization",
-                "name": "FlowRadiantPro",
-                "url": "https://flow.siteradiant.co.in/",
-                "logo": "https://flow.siteradiant.co.in/logo.png",
-                "parentOrganization": {
-                  "@type": "Organization",
-                  "name": "Global One Logistics And Distribution",
-                  "alternateName": "SiteRadiant"
-                },
-                "sameAs": [
-                  "https://twitter.com/SiteRadiant",
-                  "https://www.linkedin.com/company/siteradiant",
-                  "https://github.com/SiteRadiant"
-                ]
-              }
-            ])
+              ]
+            })
           }}
         />
       </head>

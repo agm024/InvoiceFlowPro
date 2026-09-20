@@ -1,7 +1,7 @@
 
 'use client'
 
-import { AlertTriangle, X, ArrowRight, Sparkles } from 'lucide-react'
+import { AlertTriangle, X, ArrowRight, Rocket } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 
@@ -53,8 +53,8 @@ export default function UpgradeModal({
         aria-labelledby="modal-title"
       >
         <div className="p-6 text-center pt-10 pb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-amber-500/20">
-            <Sparkles className="text-white" size={32} />
+          <div className="w-16 h-16 bg-blue-100 dark:bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-blue-200 dark:border-blue-500/20">
+            <Rocket className="text-blue-600 dark:text-blue-400" size={32} />
           </div>
           <h2 id="modal-title" className="text-xl font-bold text-foreground mb-3">{title}</h2>
           <p className="text-zinc-500 mb-8">{message}</p>
