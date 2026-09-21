@@ -45,14 +45,21 @@ export default function SettingsTabs({
     router.push(`/app/settings?tab=${tabId}`)
   }
 
+  const permissions = currentUser?.permissions || []
+  const hasManageSettings = permissions.includes('ALL') || permissions.includes('MANAGE_SETTINGS')
+
   const tabs = [
     { id: 'profile', name: 'My Profile', icon: UserCircle },
-    { id: 'company', name: 'Company Profile', icon: Building2 },
-    { id: 'banks', name: 'Bank Accounts', icon: Landmark },
-    { id: 'currency', name: 'Exchange Rates', icon: Currency },
-    { id: 'payment-gateways', name: 'Payment Gateways', icon: CreditCard },
+    ...(hasManageSettings ? [
+      { id: 'company', name: 'Company Profile', icon: Building2 },
+      { id: 'banks', name: 'Bank Accounts', icon: Landmark },
+      { id: 'currency', name: 'Exchange Rates', icon: Currency },
+      { id: 'payment-gateways', name: 'Payment Gateways', icon: CreditCard },
+    ] : []),
     { id: 'team', name: 'Team Members', icon: Users },
-    { id: 'roles', name: 'Roles & Permissions', icon: Shield },
+    ...(hasManageSettings ? [
+      { id: 'roles', name: 'Roles & Permissions', icon: Shield },
+    ] : [])
   ]
 
   return (
@@ -130,7 +137,7 @@ export default function SettingsTabs({
         )}
 
         {activeTab === 'team' && (
-          <TeamMembersClient users={users} invitations={invitations} roles={roles} isLimitReached={isUserLimitReached} />
+          <TeamMembersClient users={users} invitations={invitations} roles={roles} isLimitReached={isUserLimitReached} currentUser={currentUser} />
         )}
         {activeTab === 'roles' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">

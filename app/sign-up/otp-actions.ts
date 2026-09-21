@@ -15,8 +15,9 @@ export async function sendOtpAction(email: string, name?: string) {
     where: { email }
   })
 
-  // Generate 6 digit OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString()
+  // Generate 6 digit OTP (Dummy for recording)
+  // const otp = Math.floor(100000 + Math.random() * 900000).toString()
+  const otp = '123456'
   
   await prisma.verificationToken.create({
     data: {
@@ -56,12 +57,15 @@ export async function sendOtpAction(email: string, name?: string) {
     </div>
   `
 
+  // Send email (Bypassed for recording)
+  /*
   await sendEmail({
     to: email,
     toName: clientName,
     subject: "Your FlowRadiant Verification Code",
     html
   })
+  */
 
   return { success: true }
 }

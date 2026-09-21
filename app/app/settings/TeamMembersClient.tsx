@@ -5,13 +5,16 @@ import { Users, Mail, X, Check, Trash2, ShieldAlert } from "lucide-react"
 import { toast } from "react-hot-toast"
 import { inviteTeamMember, revokeInvitation, removeTeamMember, updateTeamMemberRole } from "./team-actions"
 
-export default function TeamMembersClient({ users, invitations, roles, isLimitReached }: { users: any[], invitations: any[], roles: any[], isLimitReached?: boolean }) {
+export default function TeamMembersClient({ users, invitations, roles, isLimitReached, currentUser }: { users: any[], invitations: any[], roles: any[], isLimitReached?: boolean, currentUser?: any }) {
   const [isInviting, setIsInviting] = useState(false)
   const [email, setEmail] = useState("")
   const [selectedRole, setSelectedRole] = useState("")
 
   const [editingUserId, setEditingUserId] = useState<string | null>(null)
   const [editingRoleId, setEditingRoleId] = useState("")
+
+  const permissions = currentUser?.permissions || []
+  const hasManageSettings = permissions.includes('ALL') || permissions.includes('MANAGE_SETTINGS')
 
   const handleUpdateRole = async (userId: string) => {
     toast.promise(updateTeamMemberRole(userId, editingRoleId || null), {
@@ -48,76 +51,39 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
     toast.promise(revokeInvitation(id), {
       loading: "Revoking...",
       success: "Invitation revoked",
-      error: "Failed to revoke"
+      error: "Failed to revoke invitation"
     })
   }
 
   const handleRemove = async (id: string) => {
-    if (!confirm("Remove this user's roles?")) return
+    if (!confirm("Remove this team member? They will lose access immediately.")) return
     toast.promise(removeTeamMember(id), {
       loading: "Removing...",
-      success: "User role removed",
-      error: "Failed to remove user"
+      success: "Team member removed",
+      error: "Failed to remove member"
     })
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-      {isLimitReached && (
-        <div className="mb-6 bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400 px-4 py-3 rounded-xl border border-red-200 dark:border-red-900/50 flex items-center justify-between font-medium text-sm w-full">
-          <span>You have reached your plan's team member limit. Please upgrade your subscription to invite more members.</span>
-          <a href="/app/settings?tab=pricing" className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-red-700 transition-colors font-semibold">
-            Upgrade Plan
-          </a>
-        </div>
-      )}
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-foreground">Team Management</h2>
-        <p className="text-sm text-zinc-500 mt-1">Manage accountants and team members.</p>
-      </div>
-
-      {isInviting && (
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm mb-6">
-          <h3 className="text-lg font-semibold mb-4">Invite New Member</h3>
-          <div className="flex flex-col md:flex-row gap-4">
-            <input 
-              type="email" 
-              placeholder="Email address"
-              className="flex-1 bg-zinc-50 dark:bg-zinc-800 border rounded-lg px-4 py-2"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-            />
-            <select 
-              className="md:w-48 bg-zinc-50 dark:bg-zinc-800 border rounded-lg px-4 py-2"
-              value={selectedRole}
-              onChange={e => setSelectedRole(e.target.value)}
-            >
-              <option value="">Standard Member</option>
-              {roles.map(r => (
-                <option key={r.id} value={r.id}>{r.name}</option>
-              ))}
-            </select>
-            <button 
-              onClick={handleInvite}
-              className="bg-primary text-primary-foreground px-6 py-2 rounded-lg font-medium"
-            >
-              Send Invite
-            </button>
-            <button 
-              onClick={() => setIsInviting(false)}
-              className="text-zinc-500 hover:text-zinc-900 px-4"
-            >
-              Cancel
-            </button>
+    <section className="bg-card-bg border border-card-border rounded-xl shadow-sm overflow-hidden">
+      <div className="p-6 md:p-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+              <Users size={20} className="text-zinc-400" />
+              Team Members
+            </h2>
+            <p className="text-sm text-zinc-500 mt-1">Manage who has access to your company account.</p>
           </div>
-        </div>
-      )}
-
-      <div className="bg-card-bg border border-card-border rounded-xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-card-border flex justify-between items-center">
-          <h3 className="font-semibold text-foreground">Active & Pending Members</h3>
-          {!isInviting && (
-            isLimitReached ? (
+          {hasManageSettings && (
+            isInviting ? (
+              <button 
+                onClick={() => setIsInviting(false)}
+                className="text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+              >
+                Cancel
+              </button>
+            ) : isLimitReached ? (
               <button 
                 disabled
                 className="bg-zinc-200 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-600 px-4 py-2 rounded-lg text-sm font-semibold transition-opacity cursor-not-allowed"
@@ -136,6 +102,34 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
           )}
         </div>
         
+        {isInviting && hasManageSettings && (
+          <div className="bg-sidebar-bg border border-card-border rounded-lg p-4 mb-6 flex flex-col md:flex-row gap-3">
+            <input 
+              type="email"
+              placeholder="Email address"
+              className="flex-1 bg-background border rounded-lg px-3 py-2 text-sm"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+            <select
+              className="bg-background border rounded-lg px-3 py-2 text-sm"
+              value={selectedRole}
+              onChange={e => setSelectedRole(e.target.value)}
+            >
+              <option value="">Standard Member</option>
+              {roles.map(r => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+            <button 
+              onClick={handleInvite}
+              className="bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-600 transition-colors"
+            >
+              Send Invite
+            </button>
+          </div>
+        )}
+
         <div className="divide-y divide-card-border">
           {users.map((user) => (
             <div key={user.id} className="p-4 px-6 flex items-center justify-between hover:bg-sidebar-bg/50 transition-colors">
@@ -154,9 +148,9 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
                     className="text-sm font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800"
                     title="Account Owner"
                   >
-                    Account Admin
+                    Admin
                   </span>
-                ) : editingUserId === user.id ? (
+                ) : editingUserId === user.id && hasManageSettings ? (
                   <div className="flex items-center gap-2">
                     <select 
                       className="bg-zinc-50 dark:bg-zinc-800 border rounded-lg px-2 py-1 text-sm"
@@ -177,12 +171,14 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
                   </div>
                 ) : (
                   <span 
-                    className="text-sm font-medium text-zinc-600 dark:text-zinc-400 bg-sidebar-bg px-3 py-1 rounded-full border border-card-border cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                    className={`text-sm font-medium text-zinc-600 dark:text-zinc-400 bg-sidebar-bg px-3 py-1 rounded-full border border-card-border ${hasManageSettings ? 'cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors' : ''}`}
                     onClick={() => {
-                      setEditingUserId(user.id)
-                      setEditingRoleId(user.customRoleId || "")
+                      if (hasManageSettings) {
+                        setEditingUserId(user.id)
+                        setEditingRoleId(user.customRoleId || "")
+                      }
                     }}
-                    title="Click to edit role"
+                    title={hasManageSettings ? "Click to edit role" : "Role"}
                   >
                     {user.customRole?.name || "Standard Member"}
                   </span>
@@ -190,7 +186,7 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
                 <span className="text-xs font-bold px-2 py-1 rounded bg-emerald-500/10 text-emerald-600">
                   Active
                 </span>
-                {user.role !== 'admin' && (
+                {user.role !== 'admin' && hasManageSettings && (
                   <button onClick={() => handleRemove(user.id)} className="text-zinc-400 hover:text-red-500 p-2">
                     <Trash2 size={16} />
                   </button>
@@ -202,24 +198,23 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
           {invitations.map((inv) => (
             <div key={inv.id} className="p-4 px-6 flex items-center justify-between hover:bg-sidebar-bg/50 transition-colors opacity-70">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 border border-dashed">
+                <div className="w-10 h-10 rounded-full border border-dashed border-zinc-300 dark:border-zinc-700 flex items-center justify-center text-zinc-400">
                   <Mail size={16} />
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground italic">{inv.email}</p>
-                  <p className="text-sm text-zinc-500">Invited by {inv.invitedBy}</p>
+                  <p className="font-semibold text-foreground">{inv.email}</p>
+                  <p className="text-sm text-zinc-500">Invited Member</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-zinc-500 bg-sidebar-bg px-3 py-1 rounded-full border border-dashed">
-                  {roles.find(r => r.id === inv.customRoleId)?.name || "Standard Member"}
-                </span>
-                <span className="text-xs font-bold px-2 py-1 rounded bg-orange-500/10 text-orange-600">
+                <span className="text-xs font-bold px-2 py-1 rounded bg-amber-500/10 text-amber-600">
                   Pending
                 </span>
-                <button onClick={() => handleRevoke(inv.id)} className="text-zinc-400 hover:text-red-500 p-2" title="Revoke Invite">
-                  <X size={16} />
-                </button>
+                {hasManageSettings && (
+                  <button onClick={() => handleRevoke(inv.id)} className="text-zinc-400 hover:text-red-500 p-2" title="Revoke invitation">
+                    <X size={16} />
+                  </button>
+                )}
               </div>
             </div>
           ))}
@@ -231,6 +226,6 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
           )}
         </div>
       </div>
-    </div>
+    </section>
   )
 }

@@ -9,7 +9,9 @@ export default function OnboardingWidget({ hasBusinessInfo, hasGst, hasClient, h
   const stepsCompleted = 1 + (hasBusinessInfo ? 1 : 0) + (hasGst ? 1 : 0) + (hasClient ? 1 : 0) + (hasInvoice ? 1 : 0) + (hasPaymentGateway ? 1 : 0);
   const totalSteps = 6;
 
-  if (stepsCompleted === totalSteps) return null; // Fully completed
+  // Temporarily hidden for recording purposes
+  return null;
+  // if (stepsCompleted === totalSteps) return null; // Fully completed
 
   return (
     <div className="w-full bg-white dark:bg-zinc-950 rounded-xl border border-blue-200 dark:border-blue-900/50 shadow-sm mb-8 overflow-hidden transition-all">

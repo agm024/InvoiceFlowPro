@@ -28,15 +28,33 @@ export async function getCurrentUser() {
     }
   }
 
+  // Fetch latest user details including custom role for permissions
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.user.id || "" },
+    include: { customRole: true }
+  })
+  
+  let permissions: string[] = []
+  if (dbUser?.role === 'admin') {
+    permissions = ['ALL']
+  } else if (dbUser?.customRole) {
+    try {
+      permissions = JSON.parse(dbUser.customRole.permissions || '[]')
+    } catch (e) {
+      permissions = []
+    }
+  }
+
   return {
     id: session.user.id || "",
     email: session.user.email,
     name: session.user.name,
-    role: (session.user as any).role,
+    role: dbUser?.role || (session.user as any).role,
     companyId,
     isSuperAdmin,
     isImpersonating,
-    writeAllowed
+    writeAllowed,
+    permissions
   }
 }
 

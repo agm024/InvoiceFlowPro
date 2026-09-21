@@ -6,44 +6,53 @@ import { LayoutDashboard, Users, FolderKanban, Box, FileText, Receipt, CreditCar
 import { signOutAction } from '@/app/sign-out-action'
 import posthog from 'posthog-js'
 
-export default function Sidebar() {
+export default function Sidebar({ user }: { user?: any }) {
   const pathname = usePathname()
 
-  const navGroups = [
+  const permissions = user?.permissions || []
+  const hasPerm = (perm: string) => permissions.includes('ALL') || permissions.includes(perm)
+
+  let navGroups = [
     {
       label: 'Insights',
       items: [
         { name: 'Dashboard', href: '/app', icon: LayoutDashboard },
-        { name: 'Reports', href: '/app/reports', icon: PieChart },
+        { name: 'Reports', href: '/app/reports', icon: PieChart, perm: 'VIEW_REPORTS' },
       ]
     },
     {
       label: 'Money',
       items: [
-        { name: 'Invoices & Payments', href: '/app/invoices', icon: Receipt },
-        { name: 'Estimates', href: '/app/estimates', icon: FileText },
-        { name: 'Expenses', href: '/app/expenses', icon: CreditCard },
-        { name: 'Transfers', href: '/app/transfers', icon: ArrowRightLeft },
+        { name: 'Invoices & Payments', href: '/app/invoices', icon: Receipt, perm: 'MANAGE_INVOICES' },
+        { name: 'Estimates', href: '/app/estimates', icon: FileText, perm: 'MANAGE_INVOICES' },
+        { name: 'Expenses', href: '/app/expenses', icon: CreditCard, perm: 'MANAGE_INVOICES' },
+        { name: 'Transfers', href: '/app/transfers', icon: ArrowRightLeft, perm: 'MANAGE_INVOICES' },
       ]
     },
     {
       label: 'Work',
       items: [
-        { name: 'Clients', href: '/app/clients', icon: Users },
-        { name: 'Projects', href: '/app/projects', icon: FolderKanban },
-        { name: 'Products', href: '/app/products', icon: Box },
+        { name: 'Clients', href: '/app/clients', icon: Users, perm: 'MANAGE_CLIENTS' },
+        { name: 'Projects', href: '/app/projects', icon: FolderKanban, perm: 'MANAGE_CLIENTS' },
+        { name: 'Products', href: '/app/products', icon: Box, perm: 'MANAGE_PRODUCTS' },
       ]
     },
     {
       label: 'System',
       items: [
-        { name: 'Billing & Plans', href: '/app/billing', icon: CreditCard },
-        { name: 'Export Data', href: '/app/export', icon: Download },
+        { name: 'Billing & Plans', href: '/app/billing', icon: CreditCard, perm: 'MANAGE_SETTINGS' },
+        { name: 'Export Data', href: '/app/export', icon: Download, perm: 'VIEW_REPORTS' },
         { name: 'Settings', href: '/app/settings', icon: Settings },
         { name: 'Help & Support', href: '/app/support', icon: MessageSquare },
       ]
     }
   ]
+
+  // Filter items based on permissions
+  navGroups = navGroups.map(group => ({
+    ...group,
+    items: group.items.filter(item => !item.perm || hasPerm(item.perm))
+  })).filter(group => group.items.length > 0)
 
   return (
     <div className="w-64 border-r border-sidebar-border bg-sidebar-bg flex flex-col h-full shrink-0">

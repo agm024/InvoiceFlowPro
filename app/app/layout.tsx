@@ -13,7 +13,7 @@ export default async function AppLayout({
   return (
     <>
       <ImpersonationBanner />
-      <AppLayoutClient sidebar={<Sidebar />} user={user}>
+      <AppLayoutClient sidebar={<Sidebar user={user} />} user={user}>
         {children}
       </AppLayoutClient>
     </>
