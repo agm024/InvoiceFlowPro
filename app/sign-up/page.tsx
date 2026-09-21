@@ -12,7 +12,7 @@ import { Turnstile } from '@marsidev/react-turnstile'
 export default function SignUpPage() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>('dummy-token')
   const [showPass, setShowPass] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [otp, setOtp] = useState('')

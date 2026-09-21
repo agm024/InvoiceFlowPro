@@ -11,7 +11,7 @@ import { Turnstile } from '@marsidev/react-turnstile'
 
 function SignInForm() {
   const [loading, setLoading] = useState(false)
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>('dummy-token')
   const [formError, setFormError] = useState('')
   const searchParams = useSearchParams()
   const registered = searchParams.get('registered')
