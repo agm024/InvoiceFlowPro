@@ -82,7 +82,7 @@ export default async function BillingPage() {
           )}
         </div>
         
-        {subscription && subscription.status === 'active' && subscription.plan?.monthlyPrice > 0 && (
+        {subscription && subscription.status === 'active' && subscription.plan?.monthlyPrice > 0 && subscription.planSource === 'SUBSCRIPTION' && (
           <div className="bg-red-50 p-4 rounded-lg border border-red-100 max-w-sm">
             <h3 className="text-sm font-semibold text-red-800 flex items-center gap-2 mb-2"><ShieldAlert size={16} /> Danger Zone</h3>
             <p className="text-xs text-red-700 mb-4">Canceling your subscription will immediately revoke your access to premium features at the end of your billing cycle.</p>

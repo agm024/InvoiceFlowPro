@@ -46,7 +46,7 @@ export default function OnboardingPage() {
         const searchParams = new URLSearchParams(window.location.search)
         const planId = searchParams.get('planId')
         const cycle = searchParams.get('cycle')
-        const targetUrl = planId ? `/checkout/${planId}?cycle=${cycle || 'monthly'}` : '/app'
+        const targetUrl = planId ? `/checkout/${planId}?cycle=${cycle || 'monthly'}` : '/app/billing'
         window.location.href = targetUrl
       }
     } catch (e: any) {

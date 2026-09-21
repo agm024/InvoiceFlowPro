@@ -13,20 +13,52 @@ export default function BillingClient({ plans, subscription, isAdmin }: { plans:
   const [isAnnual, setIsAnnual] = useState(true)
   const [isPending, startTransition] = useTransition()
   
-  const handleSubscribe = async (planId: string, isAnnual: boolean, price: number) => {
+  const handleSubscribe = async (planId: string, isAnnual: boolean, price: number, trialPeriod: number) => {
     if (price <= 0) {
-      if (confirm('Are you sure you want to downgrade to the Free plan? You may lose access to premium features.')) {
+      const isDowngrading = subscription && subscription.plan?.monthlyPrice > 0;
+      if (!isDowngrading || confirm('Are you sure you want to downgrade to the Free plan? You may lose access to premium features.')) {
         setLoadingPlan(planId);
         try {
-          const cancelRes = await fetch('/api/subscriptions/cancel', { method: 'POST' });
-          if (!cancelRes.ok) throw new Error('Failed to cancel on Razorpay');
-          toast.success('Successfully downgraded to Free plan');
+          if (isDowngrading && subscription?.rzpSubscriptionId && subscription.rzpSubscriptionId !== 'free') {
+            const cancelRes = await fetch('/api/subscriptions/cancel', { method: 'POST' });
+            if (!cancelRes.ok) throw new Error('Failed to cancel on Razorpay');
+          }
+          
+          const createFreeRes = await fetch('/api/subscriptions/create-free', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ planId, isAnnual })
+          });
+          
+          if (!createFreeRes.ok) throw new Error('Failed to activate Free plan');
+          
+          toast.success(isDowngrading ? 'Successfully downgraded to Free plan' : 'Successfully activated Free plan');
           router.refresh();
         } catch (e: any) {
-          toast.error('Failed to downgrade');
+          toast.error(e.message || 'Failed to process request');
         } finally {
           setLoadingPlan(null);
         }
+      }
+      return;
+    }
+
+    if (price > 0 && trialPeriod > 0 && !subscription) {
+      setLoadingPlan(planId);
+      try {
+        const trialRes = await fetch('/api/subscriptions/start-trial', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ planId, isAnnual })
+        });
+        const data = await trialRes.json();
+        if (!trialRes.ok) throw new Error(data.error || 'Failed to start trial');
+        toast.success(`Successfully started ${trialPeriod}-Day Free Trial!`);
+        router.refresh();
+      } catch (e: any) {
+        toast.error(e.message || 'Failed to start trial');
+      } finally {
+        setLoadingPlan(null);
       }
       return;
     }
@@ -147,13 +179,13 @@ export default function BillingClient({ plans, subscription, isAdmin }: { plans:
               </ul>
               
               <button
-                onClick={() => handleSubscribe(plan.id, isAnnual, isAnnual ? plan.yearlyPrice : plan.monthlyPrice)}
+                onClick={() => handleSubscribe(plan.id, isAnnual, isAnnual ? plan.yearlyPrice : plan.monthlyPrice, plan.trialPeriod || 0)}
                 disabled={loadingPlan === plan.id || (isCurrentPlan && (price === 0 || (subscription?.status === 'active' && subscription?.billingInterval === intervalLabel)))}
                 className={`w-full py-2.5 px-4 rounded-lg font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.isPopular && !isCurrentPlan ? 'bg-blue-600 text-white hover:bg-blue-700 border-blue-600' : 'bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-zinc-700'} disabled:bg-gray-100 disabled:text-gray-500 disabled:border-gray-200 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 dark:disabled:border-zinc-700`}
               >
                 {loadingPlan === plan.id ? 'Processing...' : isCurrentPlan 
                   ? ((subscription?.status === 'active' || subscription?.status === 'paused' || price === 0) ? 'Current Plan' : 'Update Plan') 
-                  : 'Subscribe'}
+                  : (!subscription && plan.trialPeriod > 0 && price > 0 ? `Start ${plan.trialPeriod}-Day Free Trial` : 'Subscribe')}
               </button>
             </div>
           )

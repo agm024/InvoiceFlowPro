@@ -20,8 +20,13 @@ export default async function CheckoutPage({
 
   const user    = await getCurrentUser().catch(() => null)
   const company = user?.companyId
-    ? await prisma.company.findUnique({ where: { id: user.companyId } })
+    ? await prisma.company.findUnique({ where: { id: user.companyId }, include: { subscription: true } })
     : null
+
+  let isTrialEligible = false;
+  if (company && plan.trialPeriod && plan.trialPeriod > 0 && !company.subscription) {
+    isTrialEligible = true;
+  }
 
   return (
     <div className="min-h-screen font-sans" style={{ background: '#F7F6F2', color: '#151515' }}>
@@ -54,6 +59,7 @@ export default async function CheckoutPage({
           isAnnual={cycle === 'yearly' || interval === 'year'}
           user={user}
           company={company}
+          isTrialEligible={isTrialEligible}
         />
       </main>
     </div>

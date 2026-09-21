@@ -137,11 +137,13 @@ export default function CheckoutClient({
   isAnnual,
   user,
   company,
+  isTrialEligible,
 }: {
   plan: any
   isAnnual: boolean
   user: any
   company: any
+  isTrialEligible?: boolean
 }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -172,6 +174,37 @@ export default function CheckoutClient({
     e.preventDefault()
     setLoading(true)
     try {
+      if (total === 0) {
+        const res = await fetch('/api/subscriptions/create-free', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ planId: plan.id, isAnnual })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to subscribe to free plan');
+        
+        toast.success('Successfully subscribed to Free plan!', { id: 'pay' });
+        setInvoiceNumber(`INV-${Math.floor(10000 + Math.random() * 90000)}`);
+        setSuccess(true);
+        setLoading(false);
+        return;
+      }
+
+      if (isTrialEligible) {
+        const res = await fetch('/api/subscriptions/start-trial', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ planId: plan.id, isAnnual })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to start trial');
+        
+        toast.success(`Successfully started ${plan.trialPeriod}-Day Free Trial!`, { id: 'pay' });
+        setSuccess(true);
+        setLoading(false);
+        return;
+      }
+
       const res = await fetch('/api/subscriptions/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -406,10 +439,10 @@ export default function CheckoutClient({
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
-                    Processing…
+                    Processing...
                   </>
                 ) : (
-                  `Pay ₹${fmt(total)} & Subscribe`
+                  isTrialEligible ? `Start ${plan.trialPeriod}-Day Free Trial` : (total === 0 ? 'Activate Free Plan' : `Pay ₹${fmt(total)} & Subscribe`)
                 )}
               </button>
 
