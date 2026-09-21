@@ -41,8 +41,12 @@ export async function deleteAccountAction() {
 
   if (!company) return { error: 'Company not found' }
 
-  if (company.subscription?.status === 'active') {
-    return { error: 'Please cancel active subscription before deleting account' }
+  if (
+    company.subscription?.status === 'active' && 
+    company.subscription?.rzpSubscriptionId && 
+    company.subscription?.rzpSubscriptionId !== 'free'
+  ) {
+    return { error: 'Please cancel active paid subscription before deleting account' }
   }
 
   // Delete related models that don't have onDelete: Cascade

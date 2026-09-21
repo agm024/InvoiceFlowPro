@@ -20,11 +20,11 @@ export default async function CheckoutPage({
 
   const user    = await getCurrentUser().catch(() => null)
   const company = user?.companyId
-    ? await prisma.company.findUnique({ where: { id: user.companyId }, include: { subscription: true } })
+    ? await prisma.company.findUnique({ where: { id: user.companyId }, include: { subscription: { include: { plan: true } } } })
     : null
 
   let isTrialEligible = false;
-  if (company && plan.trialPeriod && plan.trialPeriod > 0 && !company.subscription) {
+  if (company && plan.trialPeriod && plan.trialPeriod > 0 && (!company.subscription || company.subscription.plan?.monthlyPrice === 0)) {
     isTrialEligible = true;
   }
 

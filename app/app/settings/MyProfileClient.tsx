@@ -40,8 +40,8 @@ export default function MyProfileClient({ currentUser, subscription }: { current
   }
 
   const handleDeleteAccount = () => {
-    if (subscription?.status === 'active') {
-      return toast.error('Please cancel your active subscription before deleting your account.')
+    if (subscription?.status === 'active' && subscription?.rzpSubscriptionId && subscription?.rzpSubscriptionId !== 'free') {
+      return toast.error('Please cancel your active paid subscription before deleting your account.')
     }
     setShowDeleteModal(true)
   }
@@ -149,17 +149,18 @@ export default function MyProfileClient({ currentUser, subscription }: { current
           <p className="text-sm text-red-500/80 dark:text-red-400/80 mt-1">Permanently delete your account and all associated data.</p>
         </div>
         <div className="p-6">
-          {subscription?.status === 'active' ? (
+          {subscription?.status === 'active' && subscription?.rzpSubscriptionId && subscription?.rzpSubscriptionId !== 'free' ? (
             <div className="p-4 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 rounded-lg text-sm mb-4 border border-orange-200 dark:border-orange-900/50">
-              <strong>Active Subscription:</strong> You currently have an active subscription. Please cancel your subscription from the billing dashboard before you can delete your account.
+              <strong>Active Subscription:</strong> You currently have an active paid subscription. Please cancel your subscription from the billing dashboard before you can delete your account.
             </div>
           ) : null}
           <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
             Once you delete your account, there is no going back. Please be certain. All your invoices, clients, and company data will be permanently wiped.
           </p>
           <button 
+            type="button"
             onClick={handleDeleteAccount} 
-            disabled={deleting || subscription?.status === 'active'}
+            disabled={deleting || (subscription?.status === 'active' && subscription?.rzpSubscriptionId && subscription?.rzpSubscriptionId !== 'free')}
             className="bg-red-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-red-700 transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >
             {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}

@@ -78,8 +78,15 @@ export function PricingClient({ plans, user }: { plans: any[], user?: any }) {
                   <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> {plan.userLimits === null ? 'Unlimited' : plan.userLimits} Team Members</li>
                   <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> {plan.clientLimits === null ? 'Unlimited' : plan.clientLimits} Clients</li>
                   <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> {plan.invoiceLimits === null ? 'Unlimited' : plan.invoiceLimits} Invoices</li>
-                  <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> Advanced Reporting</li>
-                  <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> Dedicated Client Portal</li>
+                  
+                  {Array.isArray(plan.features) ? plan.features.map((feature: any, idx: number) => (
+                    <li key={idx} className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> {feature}</li>
+                  )) : (
+                    <>
+                      <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> Advanced Reporting</li>
+                      <li className="flex items-center gap-3"><CheckCircle2 className="text-cyan-300" size={20}/> Dedicated Client Portal</li>
+                    </>
+                  )}
                 </ul>
                 <button onClick={() => !user ? router.push(`/sign-up?planId=${plan.id}&cycle=${isAnnual ? 'yearly' : 'monthly'}`) : router.push('/app/billing')} className="block text-center w-full py-3 rounded-xl bg-white text-blue-600 font-bold hover:bg-zinc-50 transition shadow-sm">{user ? 'Current Plan' : 'Start Free Trial'}</button>
               </div>
@@ -102,11 +109,18 @@ export function PricingClient({ plans, user }: { plans: any[], user?: any }) {
                 <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> {plan.userLimits === null ? 'Unlimited' : plan.userLimits} Team Member{plan.userLimits !== 1 ? 's' : ''}</li>
                 <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> {plan.clientLimits === null ? 'Unlimited' : `Up to ${plan.clientLimits}`} Clients</li>
                 <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> {plan.invoiceLimits === null ? 'Unlimited' : plan.invoiceLimits} Invoices</li>
-                <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> Basic Reporting</li>
-                {price > 10000 ? (
-                  <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> Priority Support</li>
-                ) : (
-                  <li className="flex items-center gap-3 text-zinc-400"><XCircle size={20}/> Client Portal</li>
+                
+                {Array.isArray(plan.features) ? plan.features.map((feature: any, idx: number) => (
+                  <li key={idx} className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> {feature}</li>
+                )) : (
+                  <>
+                    <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> Basic Reporting</li>
+                    {price > 10000 ? (
+                      <li className="flex items-center gap-3"><CheckCircle2 className="text-blue-500" size={20}/> Priority Support</li>
+                    ) : (
+                      <li className="flex items-center gap-3 text-zinc-400"><XCircle size={20}/> Client Portal</li>
+                    )}
+                  </>
                 )}
               </ul>
               <Link href={price > 30000 ? "/contact" : `/sign-up?planId=${plan.id}&cycle=${isAnnual ? 'yearly' : 'monthly'}`} className="block text-center w-full py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-semibold hover:bg-zinc-200 dark:hover:bg-zinc-700 transition">

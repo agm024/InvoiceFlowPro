@@ -6,9 +6,17 @@ import { cookies } from 'next/headers'
 export default async function PricingPage() {
   const token = (await cookies()).get('auth_token')?.value
   let user = { companyId: 'test' }; // mock user for testing
-const plans = await prisma.plan.findMany({
-    orderBy: { displayOrder: 'asc' }
+let plans = await prisma.plan.findMany({
+    orderBy: { monthlyPrice: 'asc' }
   })
+
+  // Put popular plan in the middle
+  const popularIndex = plans.findIndex(p => p.isPopular);
+  if (popularIndex !== -1 && plans.length >= 3) {
+    const popularPlan = plans.splice(popularIndex, 1)[0];
+    const middleIndex = Math.floor(plans.length / 2);
+    plans.splice(middleIndex, 0, popularPlan);
+  }
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100 flex flex-col">

@@ -43,7 +43,9 @@ export default function BillingClient({ plans, subscription, isAdmin }: { plans:
       return;
     }
 
-    if (price > 0 && trialPeriod > 0 && !subscription) {
+    const isFreePlanActive = !subscription || subscription.plan?.monthlyPrice === 0;
+
+    if (price > 0 && trialPeriod > 0 && isFreePlanActive) {
       setLoadingPlan(planId);
       try {
         const trialRes = await fetch('/api/subscriptions/start-trial', {
@@ -163,30 +165,57 @@ export default function BillingClient({ plans, subscription, isAdmin }: { plans:
               )}
               {(!isAnnual || price === 0) && <div className="mb-4 h-5"></div>}
 
-              <ul className="space-y-3 mb-8 flex-1">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>{plan.userLimits === null ? 'Unlimited' : `${plan.userLimits} Users`}</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>{plan.clientLimits === null ? 'Unlimited' : `${plan.clientLimits} Clients`}</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                  <span>{plan.invoiceLimits === null ? 'Unlimited' : `${plan.invoiceLimits} Invoices`}</span>
-                </li>
-              </ul>
-              
-              <button
-                onClick={() => handleSubscribe(plan.id, isAnnual, isAnnual ? plan.yearlyPrice : plan.monthlyPrice, plan.trialPeriod || 0)}
-                disabled={loadingPlan === plan.id || (isCurrentPlan && (price === 0 || (subscription?.status === 'active' && subscription?.billingInterval === intervalLabel)))}
-                className={`w-full py-2.5 px-4 rounded-lg font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.isPopular && !isCurrentPlan ? 'bg-blue-600 text-white hover:bg-blue-700 border-blue-600' : 'bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-zinc-700'} disabled:bg-gray-100 disabled:text-gray-500 disabled:border-gray-200 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 dark:disabled:border-zinc-700`}
-              >
-                {loadingPlan === plan.id ? 'Processing...' : isCurrentPlan 
-                  ? ((subscription?.status === 'active' || subscription?.status === 'paused' || price === 0) ? 'Current Plan' : 'Update Plan') 
-                  : (!subscription && plan.trialPeriod > 0 && price > 0 ? `Start ${plan.trialPeriod}-Day Free Trial` : 'Subscribe')}
-              </button>
+                <ul className="space-y-3 mb-8 flex-1">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    <span>{plan.clientLimits === null ? 'Unlimited' : `${plan.clientLimits} Clients`}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    <span>{plan.invoiceLimits === null ? 'Unlimited' : `${plan.invoiceLimits} Invoices`}</span>
+                  </li>
+
+                  {Array.isArray(plan.features) ? plan.features.map((feature: any, idx: number) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      <span>{feature}</span>
+                    </li>
+                  )) : (
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      <span>{price > 0 ? 'Advanced Reporting' : 'Basic Reporting'}</span>
+                    </li>
+                  )}
+                </ul>
+              {/* button logic extraction */}
+              {(() => {
+                let buttonText = 'Subscribe'
+                const isPaidPlanActive = subscription && subscription.plan?.monthlyPrice > 0
+                
+                if (loadingPlan === plan.id) {
+                  buttonText = 'Processing...'
+                } else if (isCurrentPlan) {
+                  buttonText = (subscription?.status === 'active' || subscription?.status === 'paused' || price === 0) ? 'Current Plan' : 'Update Plan'
+                } else if (price === 0 && isPaidPlanActive) {
+                  buttonText = 'Downgrade'
+                } else if ((!subscription || subscription.plan?.monthlyPrice === 0) && plan.trialPeriod > 0 && price > 0) {
+                  buttonText = `Start ${plan.trialPeriod}-Day Free Trial`
+                } else if (isPaidPlanActive && price < subscription.plan.monthlyPrice) {
+                  buttonText = 'Downgrade'
+                } else if (isPaidPlanActive && price > subscription.plan.monthlyPrice) {
+                  buttonText = 'Upgrade'
+                }
+
+                return (
+                  <button
+                    onClick={() => handleSubscribe(plan.id, isAnnual, isAnnual ? plan.yearlyPrice : plan.monthlyPrice, plan.trialPeriod || 0)}
+                    disabled={loadingPlan === plan.id || (isCurrentPlan && (price === 0 || (subscription?.status === 'active' && subscription?.billingInterval === intervalLabel)))}
+                    className={`w-full py-2.5 px-4 rounded-lg font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${plan.isPopular && !isCurrentPlan ? 'bg-blue-600 text-white hover:bg-blue-700 border-blue-600' : 'bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-zinc-700'} disabled:bg-gray-100 disabled:text-gray-500 disabled:border-gray-200 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500 dark:disabled:border-zinc-700`}
+                  >
+                    {buttonText}
+                  </button>
+                )
+              })()}
             </div>
           )
         })}

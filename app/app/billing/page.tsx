@@ -14,9 +14,17 @@ export default async function BillingPage() {
   })
 
   // get all plans
-  const plans = await prisma.plan.findMany({
-    orderBy: { displayOrder: 'asc' }
+  let plans = await prisma.plan.findMany({
+    orderBy: { monthlyPrice: 'asc' }
   })
+
+  // Put popular plan in the middle
+  const popularIndex = plans.findIndex(p => p.isPopular);
+  if (popularIndex !== -1 && plans.length >= 3) {
+    const popularPlan = plans.splice(popularIndex, 1)[0];
+    const middleIndex = Math.floor(plans.length / 2);
+    plans.splice(middleIndex, 0, popularPlan);
+  }
 
   const isWarningStatus = subscription?.status === 'past_due' || subscription?.status === 'canceled'
   const isPaused = subscription?.status === 'paused'

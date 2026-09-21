@@ -60,6 +60,7 @@ model Plan {
   userLimits    Int?
   clientLimits  Int?
   invoiceLimits Int?
+  features      Json?
   rzpPlanIdMonthly String?
   rzpPlanIdYearly  String?
   displayOrder  Int            @default(0)
