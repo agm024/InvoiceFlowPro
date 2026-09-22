@@ -17,11 +17,15 @@ if (token) {
 export async function sendEmail({
   to,
   toName,
+  cc,
+  bcc,
   subject,
   html,
 }: {
   to: string;
   toName?: string;
+  cc?: string[];
+  bcc?: string[];
   subject: string;
   html: string;
 }) {
@@ -34,7 +38,7 @@ export async function sendEmail({
   }
 
   try {
-    const response = await client.sendMail({
+    const payload: any = {
       from: {
         address: "noreply@siteradiant.co.in",
         name: "FlowRadiant",
@@ -57,7 +61,17 @@ export async function sendEmail({
             'img': ['src', 'alt', 'width', 'height']
           }
         }),
-    });
+    };
+    
+    if (cc && cc.length > 0) {
+      payload.cc = cc.map(email => ({ email_address: { address: email } }));
+    }
+    
+    if (bcc && bcc.length > 0) {
+      payload.bcc = bcc.map(email => ({ email_address: { address: email } }));
+    }
+
+    const response = await client.sendMail(payload);
     
     return { success: true, data: response };
   } catch (error) {
@@ -66,7 +80,7 @@ export async function sendEmail({
   }
 }
 
-export async function sendPortalLink(clientEmail: string, clientName: string, portalToken: string, customSubject?: string, customMessage?: string) {
+export async function sendPortalLink(clientEmail: string, clientName: string, portalToken: string, customSubject?: string, customMessage?: string, cc?: string[], bcc?: string[]) {
   const portalUrl = `https://flow.siteradiant.co.in/portal/${portalToken}`;
   
   const defaultMessage = `Here is the link to access your dedicated Client Portal. You can view your active projects, estimates, outstanding invoices, and statement of accounts.`;
@@ -102,13 +116,19 @@ export async function sendPortalLink(clientEmail: string, clientName: string, po
   
   return await sendEmail({
     to: clientEmail,
+    cc,
+    bcc,
     subject: customSubject || "Your Client Portal Access - Site Radiant",
     html
   });
 }
 
-export async function sendPaymentReminder(clientEmail: string, clientName: string, invoiceNumber: string, invoiceId: string, amount: string) {
+export async function sendPaymentReminder(clientEmail: string, clientName: string, invoiceNumber: string, invoiceId: string, amount: string, customSubject?: string, customMessage?: string, cc?: string[], bcc?: string[]) {
   const paymentUrl = `https://flow.siteradiant.co.in/pay/${invoiceId}`;
+  
+  const defaultMessage = `This is a friendly reminder that an invoice on your account is currently pending payment.`;
+  const messageBody = customMessage ? customMessage.replace(/\n/g, '<br/>') : defaultMessage;
+
   const html = `
     <div style="background-color: #f4f4f5; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
       <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
@@ -118,7 +138,7 @@ export async function sendPaymentReminder(clientEmail: string, clientName: strin
         <div style="padding: 40px;">
           <h2 style="color: #18181b; margin-top: 0; font-size: 20px; font-weight: 600;">Hello ${clientName},</h2>
           <p style="color: #52525b; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-            This is a friendly reminder that an invoice on your account is currently pending payment.
+            ${messageBody}
           </p>
           <div style="background-color: #fafafa; border: 1px solid #e4e4e7; border-radius: 8px; padding: 20px; margin-bottom: 32px;">
             <div style="margin-bottom: 12px;">
@@ -145,12 +165,14 @@ export async function sendPaymentReminder(clientEmail: string, clientName: strin
   
   return await sendEmail({
     to: clientEmail,
-    subject: `Payment Reminder: Invoice ${invoiceNumber}`,
+    cc,
+    bcc,
+    subject: customSubject || `Payment Reminder: Invoice ${invoiceNumber}`,
     html
   });
 }
 
-export async function sendInvoiceEmail(clientEmail: string, clientName: string, invoiceNumber: string, invoiceId: string, amount: string, customSubject?: string, customMessage?: string) {
+export async function sendInvoiceEmail(clientEmail: string, clientName: string, invoiceNumber: string, invoiceId: string, amount: string, customSubject?: string, customMessage?: string, cc?: string[], bcc?: string[]) {
   const paymentUrl = `https://flow.siteradiant.co.in/pay/${invoiceId}`;
   
   const defaultMessage = `A new invoice has been generated for you and is now available for review and payment.`;
@@ -192,6 +214,8 @@ export async function sendInvoiceEmail(clientEmail: string, clientName: string, 
   
   return await sendEmail({
     to: clientEmail,
+    cc,
+    bcc,
     subject: customSubject || `Invoice Available: ${invoiceNumber}`,
     html
   });

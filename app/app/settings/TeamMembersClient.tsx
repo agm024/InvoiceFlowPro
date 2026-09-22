@@ -27,23 +27,29 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
     })
   }
 
+  const [isSaving, setIsSaving] = useState(false)
+
   const handleInvite = async () => {
     if (!email || !email.includes('@')) {
       toast.error("Please enter a valid email")
       return
     }
     
-    toast.promise(inviteTeamMember(email, selectedRole), {
-      loading: "Sending invitation...",
-      success: (res) => {
-        if (res.error) throw new Error(res.error)
-        setIsInviting(false)
-        setEmail("")
-        setSelectedRole("")
-        return "Invitation sent via email!"
-      },
-      error: (err) => err.message
-    })
+    if (isSaving) return;
+    setIsSaving(true);
+    
+    try {
+      const res = await inviteTeamMember(email, selectedRole)
+      if (res.error) throw new Error(res.error)
+      setIsInviting(false)
+      setEmail('')
+      setSelectedRole('member')
+      toast.success("Invitation sent successfully")
+    } catch (e: any) {
+      toast.error(e.message)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleRevoke = async (id: string) => {
@@ -121,12 +127,13 @@ export default function TeamMembersClient({ users, invitations, roles, isLimitRe
                 <option key={r.id} value={r.id}>{r.name}</option>
               ))}
             </select>
-            <button 
-              onClick={handleInvite}
-              className="bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-600 transition-colors"
-            >
-              Send Invite
-            </button>
+              <button 
+                onClick={handleInvite}
+                disabled={isSaving}
+                className="bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSaving ? 'Sending...' : 'Send Invite'}
+              </button>
           </div>
         )}
 

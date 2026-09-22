@@ -35,6 +35,8 @@ export default function InvoiceListClient({
   const [emailModalOpen, setEmailModalOpen] = useState(false)
   const [emailSubject, setEmailSubject] = useState('')
   const [emailMessage, setEmailMessage] = useState('')
+  const [emailCc, setEmailCc] = useState('')
+  const [emailBcc, setEmailBcc] = useState('')
   const [selectedInvoiceForEmail, setSelectedInvoiceForEmail] = useState<Invoice | null>(null)
   const [isSubmittingEmail, setIsSubmittingEmail] = useState(false)
   
@@ -136,6 +138,9 @@ export default function InvoiceListClient({
     setIsSubmittingEmail(true)
     const { sendInvoiceEmail } = await import('@/app/actions/email')
     const formattedAmount = '₹ ' + selectedInvoiceForEmail.total.toFixed(2)
+    const ccList = emailCc ? emailCc.split(',').map(s => s.trim()).filter(s => s) : undefined;
+    const bccList = emailBcc ? emailBcc.split(',').map(s => s.trim()).filter(s => s) : undefined;
+    
     const res = await sendInvoiceEmail(
       selectedInvoiceForEmail.client.email, 
       selectedInvoiceForEmail.client.name, 
@@ -143,7 +148,9 @@ export default function InvoiceListClient({
       selectedInvoiceForEmail.id, 
       formattedAmount,
       emailSubject,
-      emailMessage
+      emailMessage,
+      ccList,
+      bccList
     )
     
     if (res.success) {
@@ -789,6 +796,30 @@ export default function InvoiceListClient({
             <h2 className="text-lg font-bold text-foreground mb-1">Send Email</h2>
             <p className="text-sm text-zinc-500 mb-6">Send invoice {selectedInvoiceForEmail.invoiceNumber} to {selectedInvoiceForEmail.client.email}</p>
             <form onSubmit={handleSendEmail}>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">CC (Comma Separated)</label>
+                  <input
+                    type="text"
+                    value={emailCc}
+                    onChange={(e) => setEmailCc(e.target.value)}
+                    disabled={isSubmittingEmail}
+                    placeholder="e.g. billing@company.com"
+                    className="w-full px-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">BCC (Comma Separated)</label>
+                  <input
+                    type="text"
+                    value={emailBcc}
+                    onChange={(e) => setEmailBcc(e.target.value)}
+                    disabled={isSubmittingEmail}
+                    placeholder="e.g. secret@company.com"
+                    className="w-full px-4 py-2 rounded-lg border border-card-border bg-sidebar-bg text-foreground focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:outline-none"
+                  />
+                </div>
+              </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-foreground mb-1">Subject</label>
                 <input

@@ -168,8 +168,13 @@ export default function InvoiceForm({
   const filteredClients = clients.filter(c => c.name.toLowerCase().includes(clientSearch.toLowerCase()))
   const filteredProducts = products.filter(p => p.name.toLowerCase().includes(productSearch.toLowerCase()))
 
+  const [isSavingClient, setIsSavingClient] = useState(false)
+  const [isSavingProduct, setIsSavingProduct] = useState(false)
+
   const handleCreateClient = async (e: any) => {
     e.preventDefault()
+    if (isSavingClient) return
+    
     const container = e.currentTarget.closest('.quick-client-container')
     const inputs = container.querySelectorAll('input')
     const formData = new FormData()
@@ -178,40 +183,55 @@ export default function InvoiceForm({
       if (input.required && !input.value) isValid = false
       formData.append(input.name, input.value)
     })
+    
     if (!isValid) {
       toast.error('Please fill in required fields (Customer Name).')
       return
     }
-    const res = await createClient(formData)
-    if (res.success && res.client) {
-      setClients([...clients, res.client])
-      setClientId(res.client.id)
-      setClientSearch(res.client.name)
-      setIsAddingClient(false)
-      setShowClientDropdown(false)
-      toast.success('Customer created successfully!')
-    } else {
-      toast.error('Failed to create customer.')
+
+    setIsSavingClient(true)
+    try {
+      const res = await createClient(formData)
+      if (res.success && res.client) {
+        setClients([...clients, res.client])
+        setClientId(res.client.id)
+        setIsAddingClient(false)
+        setClientSearch('')
+        toast.success('Client added successfully')
+      } else {
+        toast.error(res.error || 'Failed to add client')
+      }
+    } finally {
+      setIsSavingClient(false)
     }
   }
 
   const handleSaveProduct = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+    if (isSavingProduct) return
+    setIsSavingProduct(true)
+    
+    try {
+      const formData = new FormData(e.currentTarget)
 
-    if (editingProduct?.id) {
-      toast.error('Product editing requires updateProduct action to be fully implemented in actions.ts. We will add it as new for now.');
-      const res = await createProduct(formData)
-      if (res.success && res.product) {
-        setProducts([...products, res.product])
-        setEditingProduct(null)
+      if (editingProduct?.id) {
+        toast.error('Product editing requires updateProduct action to be fully implemented in actions.ts. We will add it as new for now.');
+        const res = await createProduct(formData)
+        if (res.success && res.product) {
+          setProducts([...products, res.product])
+          setEditingProduct(null)
+          toast.success('Product added successfully')
+        }
+      } else {
+        const res = await createProduct(formData)
+        if (res.success && res.product) {
+          setProducts([...products, res.product])
+          setEditingProduct(null)
+          toast.success('Product added successfully')
+        }
       }
-    } else {
-      const res = await createProduct(formData)
-      if (res.success && res.product) {
-        setProducts([...products, res.product])
-        setEditingProduct(null)
-      }
+    } finally {
+      setIsSavingProduct(false)
     }
   }
 
@@ -565,7 +585,13 @@ export default function InvoiceForm({
                   </div>
                   <div className="mt-4 flex justify-end gap-2">
                     <button type="button" onClick={() => setIsAddingClient(false)} className="px-4 py-2 text-sm font-medium text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200">Cancel</button>
-                    <button type="button" onClick={handleCreateClient} className="bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium text-sm hover:bg-primary-hover transition-colors shadow-sm">Save Customer</button>
+                    <button 
+                      type="button" 
+                      onClick={handleCreateClient} 
+                      disabled={isSavingClient}
+                      className="bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium text-sm hover:bg-primary-hover transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                      {isSavingClient ? 'Saving...' : 'Save Customer'}
+                    </button>
                   </div>
                 </div>
               )}
@@ -886,7 +912,12 @@ export default function InvoiceForm({
                 </div>
                 <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-card-border">
                   <button type="button" onClick={() => setEditingProduct(null)} className="px-5 py-2.5 font-medium text-zinc-500 hover:bg-sidebar-bg rounded-lg transition-colors">Back</button>
-                  <button type="submit" className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-primary-hover transition-colors shadow-sm">Save Product</button>
+                  <button 
+                    type="submit" 
+                    disabled={isSavingProduct}
+                    className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-primary-hover transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                    {isSavingProduct ? 'Saving...' : 'Save Product'}
+                  </button>
                 </div>
               </form>
             ) : (

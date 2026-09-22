@@ -49,32 +49,33 @@ export default function RolesClient({ initialRoles }: { initialRoles: any[] }) {
     }))
   }
 
+  const [isSaving, setIsSaving] = useState(false)
+
   const handleSave = async () => {
     if (!formData.name) {
       toast.error("Role name is required")
       return
     }
 
-    const savePromise = isCreating 
-      ? createRole(formData)
-      : updateRole(editingRole, formData)
+    if (isSaving) return;
+    setIsSaving(true);
 
-    toast.promise(savePromise, {
-      loading: "Saving role...",
-      success: (res) => {
-        if (res.error) throw new Error(res.error)
+    try {
+      const savePromise = isCreating 
+        ? createRole(formData)
+        : updateRole(editingRole, formData)
         
-        if (isCreating) {
-          setRoles([...roles, res.role])
-        } else {
-          setRoles(roles.map(r => r.id === editingRole ? res.role : r))
-        }
-        
-        handleCancel()
-        return "Role saved successfully"
-      },
-      error: (err) => err.message
-    })
+      const res = await savePromise
+      if (res.error) throw new Error(res.error)
+      setRoles(isCreating ? [...roles, res.role] : roles.map((r: any) => r.id === editingRole ? res.role : r))
+      setEditingRole(null)
+      setIsCreating(false)
+      toast.success(isCreating ? "Role created successfully" : "Role updated successfully")
+    } catch (e: any) {
+      toast.error(e.message || "Failed to save role")
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleDelete = async (id: string) => {
@@ -171,9 +172,10 @@ export default function RolesClient({ initialRoles }: { initialRoles: any[] }) {
               </button>
               <button 
                 onClick={handleSave}
-                className="bg-primary text-primary-foreground px-6 py-2 rounded-lg text-sm font-bold hover:opacity-90 flex items-center gap-2 transition-opacity shadow-sm"
+                disabled={isSaving}
+                className="bg-primary text-primary-foreground px-6 py-2 rounded-lg text-sm font-bold hover:opacity-90 flex items-center gap-2 transition-opacity shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Save size={16} /> Save Role
+                <Save size={16} /> {isSaving ? 'Saving...' : 'Save Role'}
               </button>
             </div>
           </div>

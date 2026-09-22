@@ -40,6 +40,8 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
   const [emailModalOpen, setEmailModalOpen] = useState(false)
   const [emailSubject, setEmailSubject] = useState('')
   const [emailMessage, setEmailMessage] = useState('')
+  const [emailCc, setEmailCc] = useState('')
+  const [emailBcc, setEmailBcc] = useState('')
   const [selectedClientForEmail, setSelectedClientForEmail] = useState<Client | null>(null)
   const [isSubmittingEmail, setIsSubmittingEmail] = useState(false)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
@@ -71,21 +73,26 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
     }
   }
 
+  const [isSavingClient, setIsSavingClient] = useState(false)
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!editingClient) return
+    if (!editingClient || isSavingClient) return
 
-    const formData = new FormData(e.currentTarget)
-    const res = await updateClient(editingClient.id, formData)
-    
-    if (res.success && res.client) {
-      // Keep existing invoices data when updating client metadata
-      const updatedClient = { ...res.client, invoices: editingClient.invoices }
-      setClients(clients.map(c => c.id === editingClient.id ? updatedClient : c))
-      setEditingClient(null)
-      toast.success('Client updated successfully')
-    } else {
-      toast.error('Failed to update client')
+    setIsSavingClient(true)
+    try {
+      const formData = new FormData(e.currentTarget)
+      const res = await updateClient(editingClient.id, formData)
+      
+      if (res.success && res.client) {
+        const updatedClient = { ...res.client, invoices: editingClient.invoices }
+        setClients(clients.map(c => c.id === editingClient.id ? updatedClient : c))
+        setEditingClient(null)
+        toast.success('Client updated successfully')
+      } else {
+        toast.error('Failed to update client')
+      }
+    } finally {
+      setIsSavingClient(false)
     }
   }
 
@@ -318,7 +325,12 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
               </div>
               <div className="flex justify-end gap-3 mt-4 pt-6 border-t border-card-border">
                 <button type="button" onClick={() => setEditingClient(null)} className="px-5 py-2.5 font-medium text-zinc-500 hover:bg-sidebar-bg rounded-lg transition-colors">Cancel</button>
-                <button type="submit" className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-primary-hover transition-colors shadow-sm">Save Changes</button>
+                <button 
+                  type="submit" 
+                  disabled={isSavingClient}
+                  className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium hover:bg-primary-hover transition-colors shadow-sm disabled:opacity-50">
+                  {isSavingClient ? 'Saving...' : 'Save Changes'}
+                </button>
               </div>
             </form>
           </div>
@@ -347,7 +359,11 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
               setIsSubmittingEmail(true)
               toast.loading('Sending portal link via email...', { id: 'email' })
               const { sendPortalLink } = await import('@/app/actions/email')
-              const res = await sendPortalLink(selectedClientForEmail.email, selectedClientForEmail.name, selectedClientForEmail.portalToken, emailSubject, emailMessage)
+              
+              const ccList = emailCc ? emailCc.split(',').map(s => s.trim()).filter(s => s) : undefined;
+              const bccList = emailBcc ? emailBcc.split(',').map(s => s.trim()).filter(s => s) : undefined;
+              
+              const res = await sendPortalLink(selectedClientForEmail.email, selectedClientForEmail.name, selectedClientForEmail.portalToken, emailSubject, emailMessage, ccList, bccList)
               if (res.success) {
                 toast.success('Portal link sent!', { id: 'email' })
                 setEmailModalOpen(false)
@@ -357,8 +373,18 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
               setIsSubmittingEmail(false)
             }} className="flex flex-col gap-4 overflow-y-auto hide-scrollbar">
               <div>
-                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Recipient Email</label>
+                <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Recipient Email (To)</label>
                 <input type="email" readOnly value={selectedClientForEmail.email || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white opacity-70 cursor-not-allowed" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">CC (Comma Separated)</label>
+                  <input type="text" value={emailCc} onChange={e => setEmailCc(e.target.value)} placeholder="e.g. accounting@company.com" className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">BCC (Comma Separated)</label>
+                  <input type="text" value={emailBcc} onChange={e => setEmailBcc(e.target.value)} placeholder="e.g. secret@company.com" className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" />
+                </div>
               </div>
               <div>
                 <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Subject</label>

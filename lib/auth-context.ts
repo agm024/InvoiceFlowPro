@@ -35,7 +35,7 @@ export async function getCurrentUser() {
   })
   
   let permissions: string[] = []
-  if (dbUser?.role === 'admin') {
+  if (dbUser?.role === 'admin' || dbUser?.role === 'owner') {
     permissions = ['ALL']
   } else if (dbUser?.customRole) {
     try {
