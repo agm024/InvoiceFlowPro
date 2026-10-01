@@ -1,9 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 
-
 const prismaClientSingleton = () => {
-  const connectionString = `${process.env.DATABASE_URL}`
+  const connectionString = process.env.DATABASE_URL
   
+  if (!connectionString) {
+    return new PrismaClient()
+  }
+
   // Use Neon serverless adapter only for remote Neon databases
   if (connectionString.includes('neon.tech')) {
     const { Pool, neonConfig } = require('@neondatabase/serverless')
@@ -17,7 +20,9 @@ const prismaClientSingleton = () => {
   }
 
   // Fallback to standard native TCP Prisma connection for local development
-  return new PrismaClient()
+  return new PrismaClient({
+    datasourceUrl: connectionString
+  })
 }
 
 declare global {
@@ -29,4 +34,3 @@ const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
 export default prisma
 
 if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma
-
