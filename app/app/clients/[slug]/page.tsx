@@ -5,7 +5,18 @@ import { getCompanySettings, getBanks } from '../../settings/actions'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
+
+// Format dates strictly in IST (Asia/Kolkata) to avoid Vercel UTC shifts
 import { CheckCircle } from 'lucide-react'
+
+// Format dates strictly in IST (Asia/Kolkata) to avoid Vercel UTC shifts
+function formatIST(dateInput: Date | string | number | undefined, formatStr: string) {
+  if (!dateInput) return '';
+  const date = new Date(dateInput);
+  const offsetDiff = (330 + new Date().getTimezoneOffset()) * 60 * 1000;
+  const targetTime = date.getTime() + offsetDiff;
+  return format(new Date(targetTime), formatStr);
+} from 'lucide-react'
 import { getStateNameByCode } from '@/utils/stateCodes'
 import DeleteProjectButton from '../../projects/DeleteProjectButton'
 import InvoiceListClient from '../../invoices/InvoiceListClient'
@@ -301,7 +312,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
                         </div>
                         <div className="text-[10px] text-zinc-400 mt-2 font-mono bg-zinc-50 dark:bg-zinc-900 p-2 rounded-lg border border-zinc-100 dark:border-zinc-800">
                           <div className="flex justify-between mb-1"><span>Document:</span> <span className="text-zinc-600 dark:text-zinc-300">{log.action === 'CONTRACT_SIGNED' ? 'Standard Project Agreement' : 'Standard Project Handover'}</span></div>
-                          <div className="flex justify-between mb-1"><span>Timestamp:</span> <span className="text-zinc-600 dark:text-zinc-300">{format(new Date(log.createdAt), 'yyyy-MM-dd HH:mm:ss')}</span></div>
+                          <div className="flex justify-between mb-1"><span>Timestamp:</span> <span className="text-zinc-600 dark:text-zinc-300">{formatIST(log.createdAt, 'yyyy-MM-dd HH:mm:ss')}</span></div>
                           <div className="flex justify-between"><span>Verification:</span> <span className="text-zinc-600 dark:text-zinc-300">Logged Securely</span></div>
                         </div>
                       </div>
@@ -311,7 +322,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
                       </div>
                     )}
                     <div className="text-xs text-zinc-400 mt-2">
-                      {format(new Date(log.createdAt), 'MMM d, yyyy • h:mm a')}
+                      {formatIST(log.createdAt, 'MMM d, yyyy • h:mm a')}
                     </div>
                   </div>
                 ))}
@@ -338,4 +349,5 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ s
     </div>
   )
 }
+
 

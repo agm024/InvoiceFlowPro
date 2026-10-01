@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Providers from "./Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -160,6 +161,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <Providers>
         {children}
         <Toaster 
           position="top-right" 
@@ -189,7 +191,9 @@ export default function RootLayout({
         />
         <Analytics />
         <SpeedInsights />
+              </Providers>
       </body>
     </html>
   );
 }
+
