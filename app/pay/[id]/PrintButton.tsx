@@ -8,6 +8,7 @@ import jsPDF from 'jspdf'
 
 export default function PrintButton({ invoiceNumber }: { invoiceNumber?: string }) {
   const [isExporting, setIsExporting] = useState(false)
+  const [isAutoDownloading, setIsAutoDownloading] = useState(false)
 
   const generatePDF = async () => {
     try {
@@ -15,7 +16,7 @@ export default function PrintButton({ invoiceNumber }: { invoiceNumber?: string 
       const element = document.getElementById('invoice-content')
       if (!element) {
         toast.error('Could not find invoice content')
-        return
+        return false
       }
       
       const dataUrl = await htmlToImage.toPng(element, {
@@ -49,11 +50,12 @@ export default function PrintButton({ invoiceNumber }: { invoiceNumber?: string 
       
       const filename = invoiceNumber ? `Invoice_${invoiceNumber}.pdf` : 'Invoice.pdf';
       pdf.save(filename)
-      return true;
+      toast.success('Invoice downloaded!')
+      return true
     } catch (e) {
       toast.error('Failed to generate PDF')
       console.error(e)
-      return false;
+      return false
     } finally {
       setIsExporting(false)
     }
@@ -63,14 +65,25 @@ export default function PrintButton({ invoiceNumber }: { invoiceNumber?: string 
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('download') === 'true') {
+        setIsAutoDownloading(true)
         setTimeout(async () => {
-          await generatePDF();
-          // Close the tab after download if it was opened for this specific purpose
-          window.close();
-        }, 800); // Give fonts/images time to load
+          await generatePDF()
+          setTimeout(() => {
+            window.close()
+          }, 2000)
+        }, 1500)
       }
     }
   }, [])
+
+  if (isAutoDownloading) {
+    return (
+      <div className="flex items-center gap-2 text-primary font-medium">
+        <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
+        Downloading PDF...
+      </div>
+    )
+  }
 
   return (
     <button 

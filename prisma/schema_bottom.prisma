@@ -4,7 +4,6 @@ model User {
   passwordHash String?
   name         String?
   role         String        @default("admin") // admin, member
-  clerkId      String?       @unique
   isSuperAdmin Boolean       @default(false)
   companyId    String
   company      Company       @relation(fields: [companyId], references: [id])
@@ -30,6 +29,7 @@ model Client {
   stateCode    String?
   stateName    String?
   portalToken  String?       @unique
+  portalPassword String?
   status       String        @default("ACTIVE")
   invoices     Invoice[]
   projects     Project[]
@@ -180,6 +180,7 @@ model Project {
   currency           String        @default("INR")
   status             String        @default("ACTIVE")
   contractText       String?       @db.Text
+  customContractData String?       @db.Text
   stage              String        @default("PLANNING")
   clientId           String
   companyId          String
@@ -376,3 +377,4 @@ model SystemSettings {
   value     String   @db.Text
   updatedAt DateTime @updatedAt
 }
+

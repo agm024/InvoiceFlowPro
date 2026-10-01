@@ -76,6 +76,7 @@ export async function createClient(formData: FormData) {
   const stateCode = formData.get('stateCode') as string
   const providedStateName = formData.get('stateName') as string
   const status = (formData.get('status') as string) || 'ACTIVE'
+  const portalPassword = (formData.get('portalPassword') as string) || null
   
   const stateName = providedStateName || (stateCode ? getStateNameByCode(stateCode) : '')
   const slug = await generateUniqueSlug(name, prisma.client, companyId)
@@ -83,7 +84,7 @@ export async function createClient(formData: FormData) {
 
   try {
     const client = await prisma.client.create({
-      data: { companyId, name, slug, email, phone, address, gstin, panNo, stateCode, stateName, portalToken, status }
+      data: { companyId, name, slug, email, phone, address, gstin, panNo, stateCode, stateName, portalToken, status, portalPassword }
     })
     
     await prisma.activityLog.create({
@@ -175,6 +176,7 @@ export async function updateClient(id: string, formData: FormData) {
   const stateCode = formData.get('stateCode') as string
   const providedStateName = formData.get('stateName') as string
   const status = (formData.get('status') as string) || 'ACTIVE'
+  const portalPassword = (formData.get('portalPassword') as string) || null
 
   const stateName = providedStateName || (stateCode ? getStateNameByCode(stateCode) : '')
   const slug = await generateUniqueSlug(name, prisma.client, companyId, id)
@@ -184,7 +186,7 @@ export async function updateClient(id: string, formData: FormData) {
     
     const client = await prisma.client.update({
       where: { id, companyId },
-      data: { name, slug, email, phone, address, gstin, panNo, stateCode, stateName, status }
+      data: { name, slug, email, phone, address, gstin, panNo, stateCode, stateName, status, portalPassword }
     })
 
     if (existing && existing.status !== status) {

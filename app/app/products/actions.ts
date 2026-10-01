@@ -49,6 +49,7 @@ export async function createProduct(formData: FormData) {
   const taxInclusive = formData.get('taxInclusive') === 'true'
 
   if (!name || isNaN(price)) return { error: 'Name and valid price are required' }
+  if (price <= 0) return { error: 'Price must be greater than 0' }
 
   const slug = await generateUniqueSlug(name, prisma.product, companyId)
 
@@ -78,6 +79,7 @@ export async function updateProduct(id: string, formData: FormData) {
   const taxInclusive = formData.get('taxInclusive') === 'true'
 
   if (!name || isNaN(price)) return { error: 'Name and valid price are required' }
+  if (price <= 0) return { error: 'Price must be greater than 0' }
 
   const slug = await generateUniqueSlug(name, prisma.product, companyId, id)
 

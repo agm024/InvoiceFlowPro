@@ -173,3 +173,34 @@ export async function updateProjectContract(projectId: string, contractText: str
   }
 }
 
+export async function uploadCustomContract(projectId: string, customContractData: string) {
+  try {
+    const { companyId } = await requireCompany()
+    await prisma.project.update({
+      where: { id: projectId, companyId },
+      data: { customContractData }
+    })
+    revalidatePath('/app/clients', 'layout')
+    return { success: true }
+  } catch (error) {
+    return { error: 'Failed to upload contract' }
+  }
+}
+
+export async function markContractOfflineSigned(projectId: string, signed: boolean) {
+  try {
+    const { companyId } = await requireCompany()
+    await prisma.project.update({
+      where: { id: projectId, companyId },
+      data: { 
+        contractApprovedAt: signed ? new Date() : null,
+        contractSignedBy: signed ? 'Signed Offline' : null
+      }
+    })
+    revalidatePath('/app/clients', 'layout')
+    return { success: true }
+  } catch (error) {
+    return { error: 'Failed to update contract status' }
+  }
+}
+

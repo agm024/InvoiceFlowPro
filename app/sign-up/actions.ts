@@ -47,7 +47,7 @@ export async function signUpAction(data: any) {
         gstin: company.gstin,
         panNo: company.pan,
         address: company.address,
-        upiId: 'demo@upi'
+        upiId: ''
       }
     })
 

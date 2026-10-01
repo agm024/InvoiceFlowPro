@@ -67,7 +67,7 @@ export default async function PublicInvoicePage({ params }: { params: Promise<{ 
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-12">
             <div>
               {companySettings?.logoUrl && (
-                <img src={companySettings.logoUrl} alt="Company Logo" className="h-16 w-auto object-contain mb-4" />
+                <img src={companySettings.logoUrl} alt="Company Logo" className="h-16 w-auto object-contain mb-4" crossOrigin="anonymous" />
               )}
               <h2 className="text-xl font-bold">{companySettings?.brandName || companySettings?.companyName}</h2>
               {companySettings?.address && <p className="text-sm text-zinc-600 whitespace-pre-wrap mt-1">{companySettings.address}</p>}
@@ -309,3 +309,4 @@ export default async function PublicInvoicePage({ params }: { params: Promise<{ 
     </div>
   )
 }
+

@@ -3,12 +3,22 @@ import prisma from '@/utils/prisma'
 import { PricingClient } from './PricingClient'
 import { cookies } from 'next/headers'
 
+import { unstable_cache } from 'next/cache'
+
+const getCachedPlans = unstable_cache(
+  async () => {
+    return await prisma.plan.findMany({
+      orderBy: { monthlyPrice: 'asc' }
+    })
+  },
+  ['public-pricing-plans'],
+  { revalidate: 3600 } // Cache for 1 hour
+)
+
 export default async function PricingPage() {
   const token = (await cookies()).get('auth_token')?.value
   let user = { companyId: 'test' }; // mock user for testing
-let plans = await prisma.plan.findMany({
-    orderBy: { monthlyPrice: 'asc' }
-  })
+  let plans = await getCachedPlans()
 
   // Put popular plan in the middle
   const popularIndex = plans.findIndex(p => p.isPopular);

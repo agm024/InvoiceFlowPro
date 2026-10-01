@@ -30,7 +30,7 @@ export async function getCurrentUser() {
 
   // Fetch latest user details including custom role for permissions
   const dbUser = await prisma.user.findUnique({
-    where: { id: session.user.id || "" },
+    where: { email: session.user.email || "" },
     include: { customRole: true }
   })
   
@@ -96,7 +96,7 @@ export async function requireWriteAccess() {
     throw new Error('Write operations are blocked during read-only impersonation.')
   }
   if (user.role === 'member') {
-    const dbUser = await prisma.user.findUnique({ where: { id: user.id }, include: { customRole: true } });
+    const dbUser = await prisma.user.findUnique({ where: { email: user.email || "" }, include: { customRole: true } });
     if (!dbUser || !dbUser.customRole || dbUser.customRole.permissions === '[]' || !dbUser.customRole.permissions) {
       throw new Error('You do not have write access. Contact your administrator.');
     }

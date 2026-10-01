@@ -6,6 +6,7 @@ import { format, subDays, addDays, startOfMonth, subMonths, endOfMonth, startOfY
 import { RevenueChart } from '@/components/DashboardCharts'
 import OnboardingWidget from './OnboardingWidget'
 import { requireCompany } from '@/lib/auth-context'
+import { AlertTriangle } from 'lucide-react'
 
 export default async function DashboardPage({
   searchParams
@@ -240,6 +241,7 @@ export default async function DashboardPage({
   const hasClient = allClientsCount > 0;
   const hasInvoice = totalInvoicesCount > 0;
   const hasPaymentGateway = Boolean(getStr(company?.settings?.upiId) || getStr(company?.settings?.razorpayAccountId));
+  const hasUpi = Boolean(getStr(company?.settings?.upiId));
   
   // Only hide the checklist when they have actually created their first invoice and setup payments
   const isNewTenant = !(hasInvoice && hasPaymentGateway);
@@ -247,6 +249,20 @@ export default async function DashboardPage({
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto w-full text-zinc-950 dark:text-zinc-50 space-y-8 animate-in fade-in duration-500">
       
+      {!hasUpi && (
+        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-xl p-4 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+          <div>
+            <h3 className="font-bold text-amber-800 dark:text-amber-500 flex items-center gap-2">
+              <AlertTriangle size={18} /> Required Action: Add UPI ID
+            </h3>
+            <p className="text-sm text-amber-700 dark:text-amber-600 mt-1">You haven't configured a UPI ID. QR codes will not be generated on your invoices until you add one.</p>
+          </div>
+          <Link href="/app/settings?tab=bank" className="bg-amber-100 hover:bg-amber-200 dark:bg-amber-900 dark:hover:bg-amber-800 text-amber-800 dark:text-amber-400 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-colors">
+            Configure UPI ID
+          </Link>
+        </div>
+      )}
+
       {/* Header & Filter Controls */}
       {!(hasBusinessInfo && hasGst && hasClient && hasInvoice && hasPaymentGateway) && <OnboardingWidget hasBusinessInfo={hasBusinessInfo} hasGst={hasGst} hasClient={hasClient} hasInvoice={hasInvoice} hasPaymentGateway={hasPaymentGateway} />}
 

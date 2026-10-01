@@ -1,3 +1,5 @@
+export const revalidate = 3600 // Cache this page for 1 hour
+
 import prisma from '@/utils/prisma'
 import { OnboardingPlansClient } from './OnboardingPlansClient'
 

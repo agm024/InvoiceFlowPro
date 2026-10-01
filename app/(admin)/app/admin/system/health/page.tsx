@@ -7,16 +7,9 @@ export const dynamic = 'force-dynamic'
 export default async function SystemHealthPage() {
   await requireSuperAdmin()
 
-  // 1. Check Database
-  let dbStatus = "Operational"
+  // 1. Check Database (Ping removed to save Neon compute)
+  let dbStatus = "Not Monitored (Saves Compute)"
   let dbLatency = 0
-  try {
-    const start = Date.now()
-    await prisma.$queryRaw`SELECT 1`
-    dbLatency = Date.now() - start
-  } catch (e) {
-    dbStatus = "Down"
-  }
 
   // 2. Check Payment Gateway (Razorpay)
   let rzpStatus = "Operational"
@@ -33,20 +26,8 @@ export default async function SystemHealthPage() {
   const emailStatus = process.env.ZEPTOMAIL_SEND_MAIL_TOKEN ? "Operational" : "Degraded (No Token)"
   const emailLatency = emailStatus === "Operational" ? Math.floor(Math.random() * 20 + 30) : 0
 
-  // 4. Clerk Auth API
-  let clerkStatus = "Operational"
-  let clerkLatency = 0
-  try {
-    const start = Date.now()
-    await fetch("https://api.clerk.com/v1/public/ping", { method: "GET", cache: "no-store", signal: AbortSignal.timeout(3000) }).catch(() => {})
-    clerkLatency = Date.now() - start
-  } catch (e) {
-    clerkStatus = "Down"
-  }
-
   const services = [
     { name: "PostgreSQL Database", status: dbStatus, latency: `${dbLatency}ms`, icon: Database },
-    { name: "Clerk Authentication", status: clerkStatus, latency: clerkLatency > 0 ? `${clerkLatency}ms` : "32ms", icon: ShieldAlert },
     { name: "ZeptoMail (SMTP)", status: emailStatus, latency: `${emailLatency}ms`, icon: Mail },
     { name: "Razorpay Gateway", status: rzpStatus, latency: rzpLatency > 0 ? `${rzpLatency}ms` : "120ms", icon: CreditCard },
   ]
@@ -59,11 +40,14 @@ export default async function SystemHealthPage() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {services.map((service, idx) => (
+        {services.map((service, idx) => {
+          const isOperational = service.status === 'Operational';
+          const isMonitored = !service.status.includes('Not Monitored');
+          return (
           <div key={idx} className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${service.status === 'Operational' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20' : 'bg-red-50 text-red-600 dark:bg-red-950/20'}`}>
+                <div className={`p-2 rounded-lg ${!isMonitored ? 'bg-zinc-100 text-zinc-600 dark:bg-zinc-900' : isOperational ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20' : 'bg-red-50 text-red-600 dark:bg-red-950/20'}`}>
                   <service.icon size={18} />
                 </div>
                 <h3 className="text-xs font-bold text-zinc-900 dark:text-white">{service.name}</h3>
@@ -72,19 +56,21 @@ export default async function SystemHealthPage() {
             
             <div className="flex items-center justify-between mt-4">
               <div className="flex items-center gap-1.5">
-                {service.status === 'Operational' ? (
+                {!isMonitored ? (
+                  <CheckCircle2 size={14} className="text-zinc-500" />
+                ) : isOperational ? (
                   <CheckCircle2 size={14} className="text-emerald-500" />
                 ) : (
                   <XCircle size={14} className="text-red-500" />
                 )}
-                <span className={`text-xs font-semibold ${service.status === 'Operational' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                <span className={`text-xs font-semibold ${!isMonitored ? 'text-zinc-600 dark:text-zinc-400' : isOperational ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                   {service.status}
                 </span>
               </div>
-              <span className="text-[10px] text-zinc-500 font-mono font-semibold bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-1.5 py-0.5 rounded">{service.latency}</span>
+              {isMonitored && <span className="text-[10px] text-zinc-500 font-mono font-semibold bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-1.5 py-0.5 rounded">{service.latency}</span>}
             </div>
           </div>
-        ))}
+        )})}
       </div>
 
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm space-y-4">
@@ -115,3 +101,5 @@ export default async function SystemHealthPage() {
     </div>
   )
 }
+
+

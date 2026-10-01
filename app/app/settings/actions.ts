@@ -22,7 +22,7 @@ export async function getCompanySettings() {
         gstin: company?.gstin,
         panNo: company?.pan,
         address: company?.address,
-        upiId: 'demo@upi'
+        upiId: ''
       }
     })
   }

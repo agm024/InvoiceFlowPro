@@ -1,6 +1,7 @@
 'use server'
 
 import { checkRateLimit } from '@/lib/rate-limit'
+import prisma from '@/utils/prisma'
 
 
 import { SendMailClient } from 'zeptomail'
@@ -83,6 +84,8 @@ export async function sendEmail({
 export async function sendPortalLink(clientEmail: string, clientName: string, portalToken: string, customSubject?: string, customMessage?: string, cc?: string[], bcc?: string[]) {
   const portalUrl = `https://flow.siteradiant.co.in/portal/${portalToken}`;
   
+  const client = await prisma.client.findUnique({ where: { portalToken } });
+  
   const defaultMessage = `Here is the link to access your dedicated Client Portal. You can view your active projects, estimates, outstanding invoices, and statement of accounts.`;
   const messageBody = customMessage ? customMessage.replace(/\n/g, '<br/>') : defaultMessage;
 
@@ -97,6 +100,12 @@ export async function sendPortalLink(clientEmail: string, clientName: string, po
           <p style="color: #52525b; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
             ${messageBody}
           </p>
+          ${client?.portalPassword ? `
+          <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; text-align: center; margin-bottom: 24px;">
+            <p style="color: #475569; font-size: 14px; margin: 0 0 8px 0;">Your Secure Portal PIN</p>
+            <p style="color: #0f172a; font-size: 24px; font-weight: 700; letter-spacing: 4px; margin: 0; font-family: monospace;">${client.portalPassword}</p>
+          </div>
+          ` : ''}
           <div style="text-align: center; margin: 40px 0 20px 0;">
             <a href="${portalUrl}" style="display: inline-block; background-color: #18181b; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
               Access Client Portal

@@ -378,6 +378,11 @@ export default function PortalClient({
                         <div className="flex-1">
                           <h4 className="font-semibold text-sm text-zinc-900 dark:text-white mb-1">Contract Approval</h4>
                           <p className="text-xs text-zinc-500 mb-3">Sign off on the initial project scope.</p>
+                          {project.customContractData && (
+                            <a href={project.customContractData} download={`Contract-${project.name.replace(/\s+/g, '-')}.pdf`} className="mb-3 w-full justify-center flex items-center gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 rounded-lg transition-colors">
+                              <Download size={14} /> Download Custom Contract
+                            </a>
+                          )}
                           {project.contractApprovedAt ? (
                             <div className="flex flex-col gap-1 mt-2">
                               <div className="flex items-center gap-2 text-xs font-bold text-green-600">
@@ -534,3 +539,4 @@ export default function PortalClient({
     </div>
   )
 }
+

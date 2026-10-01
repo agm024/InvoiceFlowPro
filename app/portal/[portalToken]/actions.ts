@@ -2,6 +2,19 @@
 
 import prisma from '@/utils/prisma'
 import { revalidatePath } from 'next/cache'
+import { cookies } from 'next/headers'
+
+export async function verifyPortalPassword(portalToken: string, passwordAttempt: string) {
+  const client = await prisma.client.findUnique({ where: { portalToken } })
+  if (!client || !client.portalPassword) return { error: "No password set" }
+  
+  if (client.portalPassword === passwordAttempt) {
+    (await cookies()).set(`portal_auth_${portalToken}`, 'true', { maxAge: 60 * 60 * 24 * 30, httpOnly: true })
+    revalidatePath(`/portal/${portalToken}`)
+    return { success: true }
+  }
+  return { error: "Incorrect password" }
+}
 
 export async function updateClientProfile(portalToken: string, clientId: string, data: any) {
   try {

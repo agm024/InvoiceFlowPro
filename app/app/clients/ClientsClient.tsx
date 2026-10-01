@@ -205,7 +205,7 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
                         onClick={() => {
                           if (!client.portalToken) return toast.error('Token not generated yet.')
                           const url = `${window.location.origin}/portal/${client.portalToken}`
-                          const message = `Hi ${client.name.split(' ')[0]}, you can view your dashboard, outstanding balances, and pay your invoices directly through your secure client portal here: ${url}`
+                          const message = `Hi ${client.name.split(' ')[0]}, you can view your dashboard, outstanding balances, and pay your invoices directly through your secure client portal here: ${url}${client.portalPassword ? `\n\n*Your Secure PIN:* ${client.portalPassword}` : ''}`
                           window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer')
                         }} 
                         title="Share Portal via WhatsApp" 
@@ -305,6 +305,10 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
                 <div>
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">PAN Number</label>
                   <input type="text" name="panNo" defaultValue={editingClient.panNo || ''} className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white uppercase" />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">Portal Password (Optional PIN)</label>
+                  <input type="text" name="portalPassword" defaultValue={editingClient.portalPassword || ''} placeholder="Leave blank for no password" className="w-full rounded-lg px-4 py-2.5 bg-sidebar-bg border border-sidebar-border focus:outline-none focus:border-zinc-900 dark:border-white" />
                 </div>
                 <div className="sm:col-span-2">
                   <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 block">State Code (e.g. 27)</label>
@@ -408,6 +412,8 @@ export default function ClientsClient({ initialClients, isLimitReached }: { init
     </div>
   )
 }
+
+
 
 
 

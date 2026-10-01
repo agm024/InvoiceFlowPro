@@ -210,8 +210,10 @@ export default function CheckoutButton({ invoiceId, amount, currency, companyNam
             </div>
           </div>
         ) : (
-          <div className="text-center p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl text-zinc-500 text-sm">
-            No active payment methods configured by this business.
+          <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 p-6 rounded-2xl flex flex-col items-center text-center">
+            <AlertCircle size={32} className="text-amber-500 mb-3" />
+            <h3 className="text-lg font-bold text-amber-800 dark:text-amber-500 mb-1">Payments Unavailable</h3>
+            <p className="text-sm text-amber-700 dark:text-amber-600">This invoice cannot be paid online because the business has not configured a UPI ID or payment gateway yet.</p>
           </div>
         ))}
       </div>

@@ -1,7 +1,9 @@
 import prisma from '@/utils/prisma'
 import { notFound } from 'next/navigation'
 import PortalClient from './PortalClient'
+import PortalPasswordForm from './PortalPasswordForm'
 import { Suspense } from 'react'
+import { cookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,6 +36,14 @@ export default async function ClientPortalPage({ params }: { params: Promise<{ p
 
   if (!client) {
     notFound()
+  }
+
+  // Password Protection Check
+  if (client.portalPassword) {
+    const isAuthed = (await cookies()).get(`portal_auth_${resolvedParams.portalToken}`)?.value === 'true'
+    if (!isAuthed) {
+      return <PortalPasswordForm portalToken={resolvedParams.portalToken} />
+    }
   }
 
   const companySettings = await prisma.companySettings.findUnique({ where: { companyId: client.companyId } })

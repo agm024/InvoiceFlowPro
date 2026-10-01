@@ -175,6 +175,7 @@ export default function ProductForm({ initialData, action, title }: ProductFormP
                       <input 
                         type="number" 
                         step="0.01" 
+                        min="0.01"
                         name="price" 
                         defaultValue={initialData?.price}
                         required 
