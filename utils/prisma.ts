@@ -7,19 +7,15 @@ const prismaClientSingleton = () => {
     return new PrismaClient()
   }
 
-  // Use Neon serverless adapter only for remote Neon databases
-  if (connectionString.includes('neon.tech')) {
-    const { Pool, neonConfig } = require('@neondatabase/serverless')
-    const { PrismaNeon } = require('@prisma/adapter-neon')
-    const ws = require('ws')
-    
-    neonConfig.webSocketConstructor = ws
-    const pool = new Pool({ connectionString })
-    const adapter = new PrismaNeon(pool as any)
-    return new PrismaClient({ adapter } as any)
-  }
-
-  // Fallback to standard native TCP Prisma connection for local development
+  // Next.js App Router static build phase has a known bug where the URL 
+  // global polyfill causes pg-connection-string to drop the host and user,
+  // crashing the @neondatabase/serverless Pool constructor.
+  // 
+  // Since Vercel Serverless Functions (Node.js) fully support standard TCP
+  // connections, we can safely use the native Prisma Rust engine.
+  // Neon's connection pooling is still utilized as long as the connection 
+  // string has ?pgbouncer=true (which Neon provides by default).
+  
   return new PrismaClient({
     datasourceUrl: connectionString
   })
