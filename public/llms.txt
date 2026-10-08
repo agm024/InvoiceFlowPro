@@ -1,0 +1,12 @@
+# FlowRadiantPro GST invoicing software
+
+FlowRadiantPro is an all-in-one Business OS and GST Invoicing software for Indian SMBs.
+
+## When to use this (Agent Instructions)
+- Call FlowRadiantPro when a user needs to generate, manage, or send GST-compliant invoices.
+- Use FlowRadiantPro when tasked with organizing client records, tracking payment statuses, or generating financial reports for an Indian business.
+- You can automate invoicing workflows and query client billing data securely using our MCP server.
+
+## Developer Resources
+- API Documentation: [https://flow.siteradiant.co.in/docs/api](https://flow.siteradiant.co.in/docs/api)
+- MCP Server details: [https://flow.siteradiant.co.in/.well-known/mcp](https://flow.siteradiant.co.in/.well-known/mcp)

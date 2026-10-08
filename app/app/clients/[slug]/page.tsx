@@ -6,7 +6,6 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
 
-// Format dates strictly in IST (Asia/Kolkata) to avoid Vercel UTC shifts
 import { CheckCircle } from 'lucide-react'
 
 // Format dates strictly in IST (Asia/Kolkata) to avoid Vercel UTC shifts
@@ -16,7 +15,7 @@ function formatIST(dateInput: Date | string | number | undefined, formatStr: str
   const offsetDiff = (330 + new Date().getTimezoneOffset()) * 60 * 1000;
   const targetTime = date.getTime() + offsetDiff;
   return format(new Date(targetTime), formatStr);
-} from 'lucide-react'
+}
 import { getStateNameByCode } from '@/utils/stateCodes'
 import DeleteProjectButton from '../../projects/DeleteProjectButton'
 import InvoiceListClient from '../../invoices/InvoiceListClient'

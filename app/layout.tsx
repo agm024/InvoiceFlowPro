@@ -23,7 +23,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "FlowRadiantPro | The Business OS & GST Invoicing Software",
+    default: "FlowRadiantPro GST Invoicing Software | The Business OS",
     template: "%s | FlowRadiantPro",
   },
   description: "FlowRadiantPro is the all-in-one Business OS for Indian SMBs. Start with smart GST invoicing, payment tracking, and client management to scale your business.",
@@ -39,20 +39,20 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://flow.siteradiant.co.in",
     siteName: "FlowRadiantPro",
-    title: "FlowRadiantPro | The Business OS & GST Invoicing Software",
+    title: "FlowRadiantPro GST Invoicing Software | The Business OS",
     description: "FlowRadiantPro is the all-in-one Business OS for Indian SMBs. Start with smart GST invoicing, payment tracking, and client management to scale your business.",
     images: [
       {
         url: "https://flow.siteradiant.co.in/og-image.png",
         width: 1200,
         height: 630,
-        alt: "FlowRadiantPro | The Business OS & GST Invoicing Software",
+        alt: "FlowRadiantPro GST Invoicing Software | The Business OS",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FlowRadiantPro | The Business OS & GST Invoicing Software",
+    title: "FlowRadiantPro GST Invoicing Software | The Business OS",
     description: "FlowRadiantPro is the all-in-one Business OS for Indian SMBs. Start with smart GST invoicing, payment tracking, and client management to scale your business.",
     images: ["https://flow.siteradiant.co.in/og-image.png"],
   },
@@ -95,6 +95,7 @@ export default function RootLayout({
                 {
                   "@type": "SoftwareApplication",
                   "name": "FlowRadiantPro",
+                  "description": "FlowRadiantPro is the all-in-one Business OS for Indian SMBs, featuring smart GST invoicing, payment tracking, and client management.",
                   "applicationCategory": "BusinessApplication",
                   "operatingSystem": "Web",
                   "url": "https://flow.siteradiant.co.in/",
@@ -118,6 +119,20 @@ export default function RootLayout({
                   "name": "FlowRadiantPro",
                   "url": "https://flow.siteradiant.co.in/",
                   "logo": "https://flow.siteradiant.co.in/logo.png",
+                  "contactPoint": {
+                    "@type": "ContactPoint",
+                    "telephone": "+91-9876543210",
+                    "email": "support@siteradiant.co.in",
+                    "contactType": "customer support"
+                  },
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "SiteRadiant HQ",
+                    "addressLocality": "Mumbai",
+                    "addressRegion": "MH",
+                    "postalCode": "400001",
+                    "addressCountry": "IN"
+                  },
                   "parentOrganization": {
                     "@type": "Organization",
                     "name": "SiteRadiant",
@@ -196,4 +211,5 @@ export default function RootLayout({
     </html>
   );
 }
+
 
