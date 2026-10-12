@@ -2,8 +2,16 @@ import type { Metadata } from 'next'
 import { LegalLayout } from '@/components/landing/LegalLayout'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — FlowRadiant',
-  description: 'How FlowRadiant collects, uses, and protects your personal data.',
+  title: 'Privacy Policy',
+  description: 'Learn how FlowRadiantPro collects, uses, and protects your personal and business financial data.',
+  alternates: {
+    canonical: '/privacy',
+  },
+  openGraph: {
+    title: 'Privacy Policy | FlowRadiantPro',
+    description: 'Learn how FlowRadiantPro protects your personal and business data.',
+    url: 'https://flow.siteradiant.co.in/privacy',
+  },
 }
 
 export default function PrivacyPage() {

@@ -2,8 +2,16 @@ import type { Metadata } from 'next'
 import { LegalLayout } from '@/components/landing/LegalLayout'
 
 export const metadata: Metadata = {
-  title: 'Terms & Conditions — FlowRadiant',
-  description: 'Terms of service governing your use of FlowRadiant.',
+  title: 'Terms & Conditions',
+  description: 'Terms of service and usage conditions governing the FlowRadiantPro Business OS platform.',
+  alternates: {
+    canonical: '/terms',
+  },
+  openGraph: {
+    title: 'Terms & Conditions | FlowRadiantPro',
+    description: 'Terms of service and usage conditions governing FlowRadiantPro.',
+    url: 'https://flow.siteradiant.co.in/terms',
+  },
 }
 
 export default function TermsPage() {

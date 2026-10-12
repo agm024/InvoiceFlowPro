@@ -2,8 +2,16 @@ import type { Metadata } from 'next'
 import { LegalLayout } from '@/components/landing/LegalLayout'
 
 export const metadata: Metadata = {
-  title: 'Refund & Cancellation Policy — FlowRadiant',
-  description: 'FlowRadiant refund, cancellation, and chargeback policy.',
+  title: 'Refund & Cancellation Policy',
+  description: 'FlowRadiantPro subscription refund, cancellation, and chargeback policies for Indian SMBs.',
+  alternates: {
+    canonical: '/refund-policy',
+  },
+  openGraph: {
+    title: 'Refund & Cancellation Policy | FlowRadiantPro',
+    description: 'FlowRadiantPro subscription refund and cancellation policy.',
+    url: 'https://flow.siteradiant.co.in/refund-policy',
+  },
 }
 
 export default function RefundPage() {

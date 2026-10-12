@@ -1,5 +1,20 @@
 import { MarketingNav, MarketingFooter } from '@/components/MarketingShared'
 import { Mail, Phone, MapPin } from 'lucide-react'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Contact Us & Support',
+  description: 'Contact FlowRadiantPro support for questions regarding GST billing, onboarding, subscriptions, or technical assistance.',
+  alternates: {
+    canonical: '/contact',
+  },
+  openGraph: {
+    title: 'Contact FlowRadiantPro Support',
+    description: 'Get in touch with the FlowRadiantPro team for questions, sales inquiries, or technical support.',
+    url: 'https://flow.siteradiant.co.in/contact',
+    type: 'website',
+  },
+}
 
 export default function ContactPage() {
   return (

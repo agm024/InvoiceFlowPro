@@ -5,10 +5,16 @@ import { LandingFooter } from '@/components/landing/LandingFooter'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'About',
-  description: 'Learn what FlowRadiantPro is and how it functions as the all-in-one Business OS for Indian SMBs.',
+  title: 'About Us — The Business OS for Indian SMBs',
+  description: 'Learn what FlowRadiantPro is and how it functions as the all-in-one Business OS for Indian SMBs, built by SiteRadiant.',
   alternates: {
     canonical: '/about',
+  },
+  openGraph: {
+    title: 'About FlowRadiantPro | Built by SiteRadiant',
+    description: 'Learn about FlowRadiantPro: our mission to replace fragmented spreadsheets with modern GST billing and business workflows.',
+    url: 'https://flow.siteradiant.co.in/about',
+    type: 'website',
   },
 }
 

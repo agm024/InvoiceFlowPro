@@ -2,8 +2,16 @@ import type { Metadata } from 'next'
 import { LegalLayout } from '@/components/landing/LegalLayout'
 
 export const metadata: Metadata = {
-  title: 'Data Processing Agreement — FlowRadiant',
-  description: 'FlowRadiant Data Processing Agreement (DPA) — how we process end-customer data on your behalf.',
+  title: 'Data Processing Agreement',
+  description: 'FlowRadiantPro Data Processing Agreement (DPA) — how we securely process end-customer data on your behalf.',
+  alternates: {
+    canonical: '/dpa',
+  },
+  openGraph: {
+    title: 'Data Processing Agreement | FlowRadiantPro',
+    description: 'FlowRadiantPro Data Processing Agreement (DPA) details.',
+    url: 'https://flow.siteradiant.co.in/dpa',
+  },
 }
 
 export default function DPAPage() {

@@ -4,6 +4,21 @@ import { PricingClient } from './PricingClient'
 import { cookies } from 'next/headers'
 
 import { unstable_cache } from 'next/cache'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Pricing & Plans — Free, Pro & Max',
+  description: 'Transparent pricing for Indian SMBs and freelancers. Choose from Free, Pro, and Max tiers for GST invoicing, multi-user access, and client portals.',
+  alternates: {
+    canonical: '/pricing',
+  },
+  openGraph: {
+    title: 'FlowRadiantPro Pricing & Plans',
+    description: 'Transparent pricing for Indian SMBs and freelancers. Start free with GST invoicing, client portals, and cash flow tracking.',
+    url: 'https://flow.siteradiant.co.in/pricing',
+    type: 'website',
+  },
+}
 
 const getCachedPlans = unstable_cache(
   async () => {

@@ -121,16 +121,16 @@ export default function RootLayout({
                   "logo": "https://flow.siteradiant.co.in/logo.png",
                   "contactPoint": {
                     "@type": "ContactPoint",
-                    "telephone": "+91-9876543210",
+                    "telephone": "+91-7208999095",
                     "email": "support@siteradiant.co.in",
                     "contactType": "customer support"
                   },
                   "address": {
                     "@type": "PostalAddress",
-                    "streetAddress": "SiteRadiant HQ",
-                    "addressLocality": "Mumbai",
-                    "addressRegion": "MH",
-                    "postalCode": "400001",
+                    "streetAddress": "123 Business Hub, 4th Floor, Koramangala",
+                    "addressLocality": "Bengaluru",
+                    "addressRegion": "Karnataka",
+                    "postalCode": "560034",
                     "addressCountry": "IN"
                   },
                   "parentOrganization": {

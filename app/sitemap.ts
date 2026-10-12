@@ -1,25 +1,72 @@
 import { MetadataRoute } from 'next'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = 'https://flow.siteradiant.co.in'
+  const currentDate = new Date()
+
   return [
     {
-      url: 'https://flow.siteradiant.co.in',
-      lastModified: new Date(),
+      url: `${baseUrl}`,
+      lastModified: currentDate,
+      changeFrequency: 'daily',
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/pricing`,
+      lastModified: currentDate,
       changeFrequency: 'weekly',
-      priority: 1,
+      priority: 0.9,
     },
     {
-      url: 'https://flow.siteradiant.co.in/sign-in',
-      lastModified: new Date(),
+      url: `${baseUrl}/about`,
+      lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: 'https://flow.siteradiant.co.in/sign-up',
-      lastModified: new Date(),
+      url: `${baseUrl}/contact`,
+      lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.8,
-    }
+    },
+    {
+      url: `${baseUrl}/sign-up`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/sign-in`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: currentDate,
+      changeFrequency: 'yearly',
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: currentDate,
+      changeFrequency: 'yearly',
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/refund-policy`,
+      lastModified: currentDate,
+      changeFrequency: 'yearly',
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/dpa`,
+      lastModified: currentDate,
+      changeFrequency: 'yearly',
+      priority: 0.5,
+    },
   ]
 }
-
