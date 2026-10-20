@@ -56,6 +56,9 @@ export const metadata: Metadata = {
     description: "FlowRadiantPro is the all-in-one Business OS for Indian SMBs. Start with smart GST invoicing, payment tracking, and client management to scale your business.",
     images: ["https://flow.siteradiant.co.in/og-image.png"],
   },
+  verification: {
+    google: "1klKdxuRTc0ELNlVa5oi8k8kN5xuikQs6dMWvOk8xYM",
+  },
   robots: {
     index: true,
     follow: true,
