@@ -7,10 +7,10 @@ import { LandingTrustStrip }  from '@/components/landing/LandingTrustStrip'
 import { LandingProductTabs } from '@/components/landing/LandingProductTabs'
 import { LandingFeatures }    from '@/components/landing/LandingFeatures'
 import { LandingPricing }     from '@/components/landing/LandingPricing'
+import { LandingFAQ }         from '@/components/landing/LandingFAQ'
+import { HOME_FAQS }          from '@/components/landing/faqData'
 import { LandingFinalCTA }    from '@/components/landing/LandingFinalCTA'
 import { LandingFooter }      from '@/components/landing/LandingFooter'
-
-
 
 export default async function LandingPage() {
   const session = await auth()
@@ -20,8 +20,27 @@ export default async function LandingPage() {
     orderBy: { monthlyPrice: 'asc' },
   })
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': HOME_FAQS.map(faq => ({
+      '@type': 'Question',
+      'name': faq.q,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': faq.a,
+      },
+    })),
+  }
+
   return (
     <div data-landing="true" className="flex flex-col min-h-screen" style={{ overflowX: 'clip' }}>
+      {/* FAQ Structured Data for AEO/GEO and rich results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       {/* Skip to main content — keyboard accessibility */}
       <a
         href="#main-content"
@@ -50,7 +69,10 @@ export default async function LandingPage() {
         {/* 10. Pricing — DB-connected */}
         <LandingPricing plans={plans} isLoggedIn={!!session?.user} />
 
-        {/* 11. Final CTA */}
+        {/* 11. FAQ Section — AEO & conversion answers */}
+        <LandingFAQ />
+
+        {/* 12. Final CTA */}
         <LandingFinalCTA signupHref={signupHref} />
       </main>
 

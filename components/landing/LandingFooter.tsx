@@ -2,9 +2,19 @@ import Link from 'next/link'
 
 const footerLinks = {
   product: [
+    { href: '#product',  label: 'Product Overview' },
     { href: '#features', label: 'Features' },
-    { href: '#pricing',  label: 'Pricing'  },
-    { href: '/sign-in',  label: 'Sign in'  },
+    { href: '/pricing',  label: 'Pricing & Plans'  },
+    { href: '#faq',      label: 'FAQs' },
+    { href: '/sign-in',  label: 'Sign In'  },
+  ],
+  company: [
+    { href: '/about', label: 'About FlowRadiantPro' },
+    { href: '/contact', label: 'Contact & Support' },
+    { href: 'https://status.siteradiant.co.in', label: 'System Status', external: true },
+    { href: 'https://github.com/agm024', label: 'Creator: Agastya (agm024)', external: true },
+    { href: 'https://twitter.com/SiteRadiant', label: 'Twitter', external: true },
+    { href: 'https://www.linkedin.com/company/siteradiant', label: 'LinkedIn', external: true },
   ],
   legal: [
     { href: '/terms',         label: 'Terms & Conditions'    },
@@ -24,14 +34,23 @@ export function LandingFooter() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4 w-fit land-footer-link" aria-label="FlowRadiant home">
-              <img src="/logo.png" alt="FlowRadiant Logo" className="w-7 h-7 rounded-lg shrink-0" />
+            <Link href="/" className="flex items-center gap-2 mb-4 w-fit land-footer-link" aria-label="FlowRadiantPro home">
+              <img src="/logo.png" alt="FlowRadiantPro Logo by SiteRadiant" width={28} height={28} className="w-7 h-7 rounded-lg shrink-0" />
               <span className="font-black text-sm" style={{ color: '#E8E8E4' }}>
                 FlowRadiant<span style={{ color: '#06B6D4' }}>Pro</span>
               </span>
             </Link>
-            <p className="text-xs leading-relaxed" style={{ color: '#9B9B96', maxWidth: 200 }}>
-              Modern invoicing and billing for Indian businesses.
+            <p className="text-xs leading-relaxed" style={{ color: '#9B9B96', maxWidth: 220 }}>
+              The all-in-one Business OS and GST invoicing software for Indian SMBs. Built with precision by{' '}
+              <a
+                href="https://github.com/agm024"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-300 hover:text-white underline"
+              >
+                Agastya (agm024)
+              </a>{' '}
+              under SiteRadiant.
             </p>
           </div>
 
@@ -51,21 +70,17 @@ export function LandingFooter() {
           <nav aria-label="Company links">
             <h2 className="text-[10px] font-black uppercase tracking-widest mb-4" style={{ color: '#E8E8E4' }}>Company</h2>
             <ul className="space-y-3 text-sm" role="list">
-              <li>
-                <Link href="/about" className="land-footer-link">About FlowRadiantPro</Link>
-              </li>
-              <li>
-                <a href="mailto:support@siteradiant.co.in" className="land-footer-link">Contact</a>
-              </li>
-              <li>
-                <a href="https://twitter.com/SiteRadiant" target="_blank" rel="noopener noreferrer" className="land-footer-link">Twitter</a>
-              </li>
-              <li>
-                <a href="https://www.linkedin.com/company/siteradiant" target="_blank" rel="noopener noreferrer" className="land-footer-link">LinkedIn</a>
-              </li>
-              <li>
-                <a href="https://github.com/SiteRadiant" target="_blank" rel="noopener noreferrer" className="land-footer-link">GitHub</a>
-              </li>
+              {footerLinks.company.map(l => (
+                <li key={l.label}>
+                  {l.external ? (
+                    <a href={l.href} target="_blank" rel="noopener noreferrer" className="land-footer-link">
+                      {l.label}
+                    </a>
+                  ) : (
+                    <Link href={l.href} className="land-footer-link">{l.label}</Link>
+                  )}
+                </li>
+              ))}
             </ul>
           </nav>
 
@@ -89,7 +104,28 @@ export function LandingFooter() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2">
             <p>&copy; {new Date().getFullYear()} Global One Logistics And Distribution. All rights reserved.</p>
             <span className="hidden sm:inline" style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>
-            <p>Built by <a href="https://siteradiant.co.in" className="hover:text-white transition-colors" style={{ textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.2)' }}>SiteRadiant</a></p>
+            <p>
+              Crafted by{' '}
+              <a
+                href="https://github.com/agm024"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+                style={{ textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.2)' }}
+              >
+                Agastya
+              </a>{' '}
+              at{' '}
+              <a
+                href="https://siteradiant.co.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+                style={{ textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.2)' }}
+              >
+                SiteRadiant
+              </a>
+            </p>
           </div>
           <a 
             href="https://status.siteradiant.co.in"

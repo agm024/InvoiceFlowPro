@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://flow.siteradiant.co.in'
   const currentDate = new Date()
 
+  // Clean, indexable public URLs only (no private /app/ or noindexed /sign-in)
   return [
     {
       url: `${baseUrl}`,
@@ -37,12 +38,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/sign-in`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.6,
     },
     {
       url: `${baseUrl}/terms`,

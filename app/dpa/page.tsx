@@ -3,12 +3,12 @@ import { LegalLayout } from '@/components/landing/LegalLayout'
 
 export const metadata: Metadata = {
   title: 'Data Processing Agreement',
-  description: 'FlowRadiantPro Data Processing Agreement (DPA) — how we securely process end-customer data on your behalf.',
+  description: 'FlowRadiantPro Data Processing Agreement (DPA) by SiteRadiant — how we securely process business and client data on your behalf.',
   alternates: {
     canonical: '/dpa',
   },
   openGraph: {
-    title: 'Data Processing Agreement | FlowRadiantPro',
+    title: 'Data Processing Agreement | FlowRadiantPro by SiteRadiant',
     description: 'FlowRadiantPro Data Processing Agreement (DPA) details.',
     url: 'https://flow.siteradiant.co.in/dpa',
   },
@@ -18,10 +18,10 @@ export default function DPAPage() {
   return (
     <LegalLayout title="Data Processing Agreement" lastUpdated="August 2026">
       <h2>1. Background and Scope</h2>
-      <p>This Data Processing Agreement constitutes a legally binding contract between FlowRadiant (the &ldquo;Data Processor&rdquo;) and you (the &ldquo;Data Controller&rdquo;). It governs the processing of end-customer data that you upload into our platform, including names, emails, addresses, and invoice histories.</p>
+      <p>This Data Processing Agreement constitutes a legally binding contract between FlowRadiantPro (operated under SiteRadiant, the &ldquo;Data Processor&rdquo;) and you (the &ldquo;Data Controller&rdquo;). It governs the processing of end-customer data that you upload into our platform, including names, emails, addresses, and invoice histories.</p>
 
       <h2>2. Processor Obligations</h2>
-      <p>As a B2B platform, FlowRadiant agrees to process personal data strictly on behalf of the Data Controller and solely for the purpose of providing the invoicing and client management services outlined in the Terms of Service.</p>
+      <p>As a B2B platform, FlowRadiantPro agrees to process personal data strictly on behalf of the Data Controller and solely for the purpose of providing the invoicing and client management services outlined in the Terms of Service.</p>
 
       <h2>3. Security Measures</h2>
       <p>We implement robust technical and organizational security measures to protect end-customer data against unauthorized or unlawful processing, accidental loss, destruction, or damage. This includes AES-256 encryption at rest and TLS 1.3 in transit.</p>
@@ -33,7 +33,7 @@ export default function DPAPage() {
       <p>In the event of a security breach involving your end-customer data, we will notify you without undue delay (and in any event within 48 hours of becoming aware of it) to allow you to meet your own regulatory notification obligations.</p>
 
       <h2>6. Contact</h2>
-      <p>For DPA inquiries, contact our Data Protection Officer at <a href="mailto:privacy@flowradiant.in">privacy@flowradiant.in</a>.</p>
+      <p>For DPA inquiries or data compliance requests, contact our team at <a href="mailto:support@siteradiant.co.in">support@siteradiant.co.in</a>.</p>
     </LegalLayout>
   )
 }

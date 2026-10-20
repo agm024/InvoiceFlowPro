@@ -21,7 +21,10 @@ export function LandingNav({ isLoggedIn }: LandingNavProps) {
   const links = [
     { href: '#product', label: 'Product' },
     { href: '#features', label: 'Features' },
-    { href: '#pricing', label: 'Pricing' },
+    { href: '/pricing', label: 'Pricing' },
+    { href: '#faq', label: 'FAQ' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
   ]
 
   return (
@@ -35,24 +38,35 @@ export function LandingNav({ isLoggedIn }: LandingNavProps) {
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group" style={{ textDecoration: 'none' }}>
-            <img src="/logo.png" alt="FlowRadiantPro" className="w-8 h-8 rounded-lg" />
-            <span className="font-black text-[15px] tracking-tight" style={{ color: '#151515' }}>
-              FlowRadiant<span style={{ color: '#06B6D4' }}>Pro</span>
-            </span>
-          </Link>
+        <Link href="/" className="flex items-center gap-2.5 group" style={{ textDecoration: 'none' }}>
+          <img src="/logo.png" alt="FlowRadiantPro Logo by SiteRadiant" width={32} height={32} className="w-8 h-8 rounded-lg" />
+          <span className="font-black text-[15px] tracking-tight" style={{ color: '#151515' }}>
+            FlowRadiant<span style={{ color: '#06B6D4' }}>Pro</span>
+          </span>
+        </Link>
 
         {/* Desktop Nav */}
         <nav aria-label="Main navigation" className="hidden md:flex items-center gap-1">
           {links.map(l => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors text-[#6B6B67] hover:text-[#151515]"
-              style={{ textDecoration: 'none' }}
-            >
-              {l.label}
-            </a>
+            l.href.startsWith('#') ? (
+              <a
+                key={l.href}
+                href={l.href}
+                className="px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-[#6B6B67] hover:text-[#151515]"
+                style={{ textDecoration: 'none' }}
+              >
+                {l.label}
+              </a>
+            ) : (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-[#6B6B67] hover:text-[#151515]"
+                style={{ textDecoration: 'none' }}
+              >
+                {l.label}
+              </Link>
+            )
           ))}
         </nav>
 
@@ -98,30 +112,47 @@ export function LandingNav({ isLoggedIn }: LandingNavProps) {
           role="navigation"
           aria-label="Mobile navigation"
           className="md:hidden px-6 pb-6 flex flex-col gap-1"
-          style={{
-            background: 'rgba(247,246,242,0.96)',
-            backdropFilter: 'blur(16px)',
-            borderTop: '1px solid rgba(21,21,21,0.08)',
-          }}
+          style={{ background: 'rgba(247,246,242,0.98)', borderBottom: '1px solid rgba(21,21,21,0.08)' }}
         >
           {links.map(l => (
-            <a
-              key={l.href}
-              href={l.href}
-              onClick={() => setOpen(false)}
-              className="py-3 px-3 rounded-lg text-base font-medium transition-colors"
-              style={{ color: '#151515', textDecoration: 'none' }}
-            >
-              {l.label}
-            </a>
+            l.href.startsWith('#') ? (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="px-4 py-3 rounded-lg text-base font-semibold transition-colors text-[#151515]"
+                style={{ textDecoration: 'none' }}
+              >
+                {l.label}
+              </a>
+            ) : (
+              <Link
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="px-4 py-3 rounded-lg text-base font-semibold transition-colors text-[#151515]"
+                style={{ textDecoration: 'none' }}
+              >
+                {l.label}
+              </Link>
+            )
           ))}
-          <div className="h-px my-2" style={{ background: 'rgba(21,21,21,0.08)' }} />
-          <Link href="/sign-in" onClick={() => setOpen(false)} className="land-btn-ghost text-center justify-center mt-1">
-            Sign in
-          </Link>
-          <Link href="/sign-up" onClick={() => setOpen(false)} className="land-btn-primary text-center justify-center mt-1">
-            Start free →
-          </Link>
+          <div className="pt-4 flex flex-col gap-2">
+            {isLoggedIn ? (
+              <Link href="/app" className="land-btn-primary text-center">
+                Dashboard →
+              </Link>
+            ) : (
+              <>
+                <Link href="/sign-in" className="land-btn-ghost text-center">
+                  Sign in
+                </Link>
+                <Link href="/sign-up" className="land-btn-primary text-center">
+                  Start free →
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       )}
     </header>

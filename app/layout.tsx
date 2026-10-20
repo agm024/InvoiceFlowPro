@@ -28,8 +28,8 @@ export const metadata: Metadata = {
   },
   description: "FlowRadiantPro is the all-in-one Business OS for Indian SMBs. Start with smart GST invoicing, payment tracking, and client management to scale your business.",
   keywords: ["business OS", "GST invoicing software", "invoice generator", "business management", "FlowRadiantPro"],
-  authors: [{ name: "FlowRadiantPro" }],
-  creator: "FlowRadiantPro",
+  authors: [{ name: "Agastya (agm024)", url: "https://github.com/agm024" }, { name: "SiteRadiant", url: "https://siteradiant.co.in" }],
+  creator: "Agastya (agm024)",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://flow.siteradiant.co.in'),
   alternates: {
     canonical: '/',
@@ -101,6 +101,11 @@ export default function RootLayout({
                   "description": "FlowRadiantPro is the all-in-one Business OS for Indian SMBs, featuring smart GST invoicing, payment tracking, and client management.",
                   "applicationCategory": "BusinessApplication",
                   "operatingSystem": "Web",
+                  "author": {
+                    "@type": "Person",
+                    "name": "Agastya",
+                    "url": "https://github.com/agm024"
+                  },
                   "url": "https://flow.siteradiant.co.in/",
                   "brand": {
                     "@type": "Brand",

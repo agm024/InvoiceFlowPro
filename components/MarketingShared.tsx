@@ -15,13 +15,22 @@ export function MarketingFooter() {
           {/* Brand */}
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2.5 mb-5 group w-fit">
-              <img src="/logo.png" alt="FlowRadiant Logo" className="w-8 h-8 rounded-xl" />
+              <img src="/logo.png" alt="FlowRadiantPro Logo by SiteRadiant" width={32} height={32} className="w-8 h-8 rounded-xl" />
               <span className="font-black text-lg tracking-tight text-white">
                 FlowRadiant<span className="text-cyan-500">Pro</span>
               </span>
             </Link>
             <p className="text-sm leading-relaxed text-zinc-500 max-w-xs">
-              Simple, professional invoicing for logistics, transport, distribution, and growing Indian businesses.
+              The all-in-one Business OS and GST invoicing software for Indian SMBs, freelancers, and growing agencies. Built by{' '}
+              <a
+                href="https://github.com/agm024"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-300 hover:text-white underline"
+              >
+                Agastya (agm024)
+              </a>{' '}
+              at SiteRadiant.
             </p>
           </div>
 
@@ -29,18 +38,19 @@ export function MarketingFooter() {
           <div>
             <h4 className="font-bold mb-4 text-white text-sm uppercase tracking-wider">Navigation</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="#features" className="hover:text-white transition-colors">Features</Link></li>
-              <li><Link href="#how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
-              <li><Link href="#pricing" className="hover:text-white transition-colors">Pricing</Link></li>
-              <li><Link href="#faq" className="hover:text-white transition-colors">FAQ</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
+              <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing &amp; Plans</Link></li>
+              <li><Link href="/about" className="hover:text-white transition-colors">About FlowRadiantPro</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition-colors">Contact Support</Link></li>
               <li><Link href="/sign-in" className="hover:text-white transition-colors">Log In</Link></li>
             </ul>
           </div>
 
           {/* Legal */}
           <div>
-            <h4 className="font-bold mb-4 text-white text-sm uppercase tracking-wider">Legal</h4>
+            <h4 className="font-bold mb-4 text-white text-sm uppercase tracking-wider">Legal &amp; Creator</h4>
             <ul className="space-y-3 text-sm">
+              <li><a href="https://github.com/agm024" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Creator: Agastya (GitHub)</a></li>
               <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
               <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link href="/refund-policy" className="hover:text-white transition-colors">Refund Policy</Link></li>
@@ -49,11 +59,23 @@ export function MarketingFooter() {
           </div>
         </div>
 
-        <div className="border-t border-zinc-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-600">
-          <p>&copy; {new Date().getFullYear()} FlowRadiant — a product by Global One Logistics &amp; Distribution.</p>
-          <Link href="/sign-up" className="text-cyan-500 hover:text-blue-400 font-semibold transition-colors">
-            Start Free →
-          </Link>
+        <div className="border-t border-zinc-800/80 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+          <p>&copy; {new Date().getFullYear()} Global One Logistics And Distribution. All rights reserved.</p>
+          <p>
+            Crafted with care by{' '}
+            <a
+              href="https://github.com/agm024"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-300 hover:text-white underline"
+            >
+              Agastya
+            </a>{' '}
+            at{' '}
+            <a href="https://siteradiant.co.in" target="_blank" rel="noopener noreferrer" className="hover:text-white underline">
+              SiteRadiant
+            </a>
+          </p>
         </div>
       </div>
     </footer>

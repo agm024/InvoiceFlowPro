@@ -3,12 +3,12 @@ import { LegalLayout } from '@/components/landing/LegalLayout'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Learn how FlowRadiantPro collects, uses, and protects your personal and business financial data.',
+  description: 'Learn how FlowRadiantPro by SiteRadiant collects, uses, and protects your personal and business financial data.',
   alternates: {
     canonical: '/privacy',
   },
   openGraph: {
-    title: 'Privacy Policy | FlowRadiantPro',
+    title: 'Privacy Policy | FlowRadiantPro by SiteRadiant',
     description: 'Learn how FlowRadiantPro protects your personal and business data.',
     url: 'https://flow.siteradiant.co.in/privacy',
   },
@@ -30,7 +30,7 @@ export default function PrivacyPage() {
       <p>We may use third-party payment processors (e.g., Razorpay). Your payment information is securely transmitted directly to these processors and is never stored on our servers. We never sell your personal or client data to third parties.</p>
 
       <h2>5. Your Rights</h2>
-      <p>You have the right to access, update, or delete your personal information at any time from your account settings. For GDPR/CCPA specific requests (such as a &ldquo;Right to be Forgotten&rdquo; request), please contact our Data Protection Officer at <a href="mailto:privacy@flowradiant.in">privacy@flowradiant.in</a>.</p>
+      <p>You have the right to access, update, or delete your personal information at any time from your account settings. For GDPR/CCPA specific requests (such as a &ldquo;Right to be Forgotten&rdquo; request), please contact our Data Protection Officer at <a href="mailto:support@siteradiant.co.in">support@siteradiant.co.in</a>.</p>
     </LegalLayout>
   )
 }

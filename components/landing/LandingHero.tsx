@@ -99,7 +99,7 @@ function InvoiceWorkspace({ phase }: { phase: Phase }) {
                   style={{ borderBottom: '1px solid rgba(21,21,21,0.05)' }}
                 >
                   <span className="col-span-2 font-medium" style={{ color: '#151515' }}>{item.desc}</span>
-                  <span className="text-right land-mono" style={{ color: '#151515' }}>{fmt(item.amount)}</span>
+                  <span className="text-right land-mono font-medium" style={{ color: '#151515' }}>{fmt(item.amount)}</span>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -111,37 +111,62 @@ function InvoiceWorkspace({ phase }: { phase: Phase }) {
       <AnimatePresence>
         {totalsVisible && (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35 }}
-            className="px-6 pb-4 space-y-1.5 pt-1"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="px-6 py-4 space-y-1.5"
+            style={{ borderTop: '1px solid rgba(21,21,21,0.06)' }}
           >
-            <div className="flex justify-between text-sm" style={{ color: '#6B6B67' }}>
+            <div className="flex justify-between text-xs" style={{ color: '#6B6B67' }}>
               <span>Subtotal</span>
               <span className="land-mono">{fmt(subtotal)}</span>
             </div>
-            <div className="flex justify-between text-sm" style={{ color: '#6B6B67' }}>
+            <div className="flex justify-between text-xs" style={{ color: '#6B6B67' }}>
               <span>GST @18%</span>
               <span className="land-mono">{fmt(gst)}</span>
             </div>
             <div
-              className="flex justify-between pt-2 mt-2 font-black text-base"
-              style={{ color: '#151515', borderTop: '1px solid rgba(21,21,21,0.10)' }}
+              className="flex justify-between font-black text-sm pt-2"
+              style={{ borderTop: '1px solid rgba(21,21,21,0.1)', color: '#151515' }}
             >
               <span>Total</span>
-              <motion.span
-                key="total"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="land-mono"
-                style={{ color: '#06B6D4' }}
-              >
-                {fmt(total)}
-              </motion.span>
+              <span className="land-mono" style={{ color: '#20B26B' }}>{fmt(total)}</span>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Activity strip */}
+      <div
+        className="px-6 py-3 flex items-center justify-between text-[11px]"
+        style={{ background: '#ECEAE2', borderTop: '1px solid rgba(21,21,21,0.06)' }}
+      >
+        <span style={{ color: '#6B6B67' }}>Status update</span>
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={phase}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.2 }}
+            className="land-mono font-semibold"
+            style={{
+              color:
+                phase === 'paid' || phase === 'notify' ? '#20B26B'
+                : phase === 'sent' ? '#06B6D4'
+                : '#6B6B67',
+            }}
+          >
+            {phase === 'idle'    && 'Draft created'}
+            {phase === 'client'  && 'Adding recipient...'}
+            {phase === 'items'   && 'Adding line items...'}
+            {phase === 'totals'  && 'Tax calculated'}
+            {phase === 'sent'    && 'Invoice dispatched →'}
+            {phase === 'paid'    && '✓ Payment settled'}
+            {phase === 'notify'  && '✓ Payment settled'}
+          </motion.span>
+        </AnimatePresence>
+      </div>
     </div>
   )
 }
@@ -149,22 +174,16 @@ function InvoiceWorkspace({ phase }: { phase: Phase }) {
 function PaymentNotification() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16, scale: 0.96 }}
+      initial={{ opacity: 0, y: 16, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-      className="absolute bottom-6 right-4 md:right-8"
+      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      className="absolute bottom-6 right-6 md:right-10 land-invoice-card p-4 flex items-center gap-3 select-none"
       style={{
+        boxShadow: '0 8px 32px rgba(21,21,21,0.18)',
+        border: '1px solid rgba(6, 182, 212, 0.4)',
         background: '#151515',
-        color: '#E8E8E4',
-        borderRadius: 12,
-        padding: '10px 16px',
-        fontSize: 12,
-        fontWeight: 600,
-        boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        minWidth: 220,
+        color: '#F7F6F2',
       }}
     >
       <span style={{ fontSize: 18 }}>✓</span>
@@ -195,7 +214,6 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
     timerRef.current = t
   }
 
-  // Loop: skip animation for prefers-reduced-motion users — show 'paid' statically
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReduced) {
@@ -204,21 +222,18 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
     }
     runSequence()
     return clearTimers
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Restart loop whenever idle (skipped if reduced motion)
   useEffect(() => {
     if (phase === 'idle') {
       const t = setTimeout(runSequence, 800)
       return () => clearTimeout(t)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase])
 
   return (
     <section
-      aria-label="FlowRadiant hero"
+      aria-label="FlowRadiantPro Business OS hero"
       className="relative min-h-screen flex items-center pt-16"
       style={{ background: '#F7F6F2' }}
     >
@@ -244,21 +259,20 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col items-start"
         >
-          <div className="land-pill mb-8">
+          <div className="land-pill mb-6">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#06B6D4', animation: 'land-pulse-dot 4s ease-in-out infinite' }} />
-            GST-ready invoicing for Indian businesses
+            GST-Ready Invoicing &amp; Business OS for Indian SMBs
           </div>
 
           <h1
             className="font-black tracking-tighter leading-[1.0] mb-6"
             style={{
-              fontSize: 'clamp(2.6rem, 6vw, 4.8rem)',
+              fontSize: 'clamp(2.4rem, 5.5vw, 4.4rem)',
               color: '#151515',
               letterSpacing: '-0.03em',
             }}
           >
-            The Business OS<br />
-            that starts with{' '}
+            FlowRadiantPro: The Business OS for{' '}
             <span
               style={{
                 color: 'transparent',
@@ -267,20 +281,20 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
                 backgroundImage: 'linear-gradient(135deg, #151515 0%, #06B6D4 100%)',
               }}
             >
-              beautiful invoicing.
+              smart GST invoicing &amp; cash flow.
             </span>
           </h1>
 
           <p
-            className="text-lg leading-relaxed mb-10 max-w-lg"
+            className="text-lg leading-relaxed mb-8 max-w-lg"
             style={{ color: '#6B6B67', fontWeight: 450 }}
           >
-            FlowRadiantPro is the all-in-one platform for Indian small businesses. Ditch the spreadsheets—create GST-ready invoices, manage clients, and track cash flow in one seamless workspace.
+            Engineered by <strong>SiteRadiant</strong>, FlowRadiantPro gives Indian small businesses and growing teams an intuitive platform to generate GST-compliant invoices, track customer payments, manage expenses, and maintain financial clarity—without messy spreadsheets.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-start gap-3 mb-10">
+          <div className="flex flex-col sm:flex-row items-start gap-3 mb-8">
             <Link href={signupHref} className="land-btn-primary group">
-              Start for free
+              Start free today
               <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
             </Link>
             <a href="#product" className="land-btn-ghost">
@@ -289,7 +303,7 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
           </div>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            {['No credit card', 'Unlimited invoices on free plan', 'GST-ready'].map(t => (
+            {['No credit card required', 'GST-compliant (CGST/SGST/IGST)', '30+ currencies supported', 'Built by SiteRadiant'].map(t => (
               <span
                 key={t}
                 className="flex items-center gap-1.5 text-[12px] font-medium"
@@ -338,8 +352,9 @@ export function LandingHero({ signupHref }: { signupHref: string }) {
       {/* Bottom scroll indicator */}
       <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        animate={{ y: [0, 6, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2 }}
       >
         <div className="w-px h-12" style={{ background: 'linear-gradient(to bottom, transparent, rgba(21,21,21,0.3))' }} />
       </motion.div>

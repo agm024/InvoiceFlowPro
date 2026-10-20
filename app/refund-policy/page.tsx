@@ -3,12 +3,12 @@ import { LegalLayout } from '@/components/landing/LegalLayout'
 
 export const metadata: Metadata = {
   title: 'Refund & Cancellation Policy',
-  description: 'FlowRadiantPro subscription refund, cancellation, and chargeback policies for Indian SMBs.',
+  description: 'FlowRadiantPro subscription refund, cancellation, and chargeback policies for Indian SMBs by SiteRadiant.',
   alternates: {
     canonical: '/refund-policy',
   },
   openGraph: {
-    title: 'Refund & Cancellation Policy | FlowRadiantPro',
+    title: 'Refund & Cancellation Policy | FlowRadiantPro by SiteRadiant',
     description: 'FlowRadiantPro subscription refund and cancellation policy.',
     url: 'https://flow.siteradiant.co.in/refund-policy',
   },
@@ -31,10 +31,10 @@ export default function RefundPage() {
       </ul>
 
       <h2>4. Chargeback Procedures</h2>
-      <p>If you initiate a chargeback or dispute with your credit card provider or bank without first contacting us to seek a resolution, your FlowRadiant account will be immediately suspended pending the outcome of the dispute. Fraudulent chargebacks will result in a permanent ban.</p>
+      <p>If you initiate a chargeback or dispute with your credit card provider or bank without first contacting us to seek a resolution, your FlowRadiantPro account will be immediately suspended pending the outcome of the dispute. Fraudulent chargebacks will result in a permanent ban.</p>
 
       <h2>5. Contact</h2>
-      <p>For refund requests or billing queries, contact us at <a href="mailto:billing@flowradiant.in">billing@flowradiant.in</a>.</p>
+      <p>For refund requests or billing queries, contact our finance desk at <a href="mailto:support@siteradiant.co.in">support@siteradiant.co.in</a>.</p>
     </LegalLayout>
   )
 }
